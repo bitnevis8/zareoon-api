@@ -1,14 +1,14 @@
 {
   "SERVER": {
     "IP": "api.zareoon.ir",
-    "PORT": "3020"
+    "PORT": "3060"
   },
   "FRONTEND": {
     "HOST": "https://zareoon.ir",
-    "PORT": "3021"
+    "PORT": "3061"
   },
   "DB": {
-    "NAME": "farmer",
+    "NAME": "zareoon",
     "TYPE": "mysql",
     "HOST": "localhost",
     "USER": "taganehroot",
