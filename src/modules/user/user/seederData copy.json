@@ -1,0 +1,98 @@
+[
+  {
+    "firstName": "حسین",
+    "lastName": "بیت‌نویس",
+    "firstNameEn": "Hossein",
+    "lastNameEn": "Bitnevis",
+    "email": "bitnevis@yahoo.com",
+    "password": "88888888",
+    "roleId": 1,
+    "isActive": true,
+    "isEmailVerified": true,
+    "avatar": null
+  },
+  {
+    "firstName": "محمد",
+    "lastName": "محمدیان",
+    "firstNameEn": "Mohammad",
+    "lastNameEn": "Mohammadian",
+    "email": "info@imperialwaygroup.com",
+    "password": "12345678",
+    "roleId": 2,
+    "isActive": true,
+    "isEmailVerified": true,
+    "avatar": null
+  },
+  {
+    "firstName": "سارا",
+    "lastName": "محمدی",
+    "firstNameEn": "Sara",
+    "lastNameEn": "Mohammadi",
+    "email": "sara@example.com",
+    "password": "123456",
+    "roleId": 2,
+    "isActive": true,
+    "isEmailVerified": true,
+    "avatar": null
+  },
+  {
+    "firstName": "رضا",
+    "lastName": "کاظمی",
+    "firstNameEn": "Reza",
+    "lastNameEn": "Kazemi",
+    "email": "reza@example.com",
+    "password": "123456",
+    "roleId": 2,
+    "isActive": true,
+    "isEmailVerified": true,
+    "avatar": null
+  },
+  {
+    "firstName": "نیما",
+    "lastName": "حسینی",
+    "firstNameEn": "Nima",
+    "lastNameEn": "Hosseini",
+    "email": "nima@example.com",
+    "password": "123456",
+    "roleId": 2,
+    "isActive": true,
+    "isEmailVerified": true,
+    "avatar": null
+  },
+  {
+    "firstName": "زهرا",
+    "lastName": "رحیمی",
+    "firstNameEn": "Zaahra",
+    "lastNameEn": "Rahimi",
+    "email": "zahra@example.com",
+    "password": "123456",
+    "roleId": 2,
+    "isActive": true,
+    "isEmailVerified": true,
+    "avatar": null
+  },
+  {
+    "firstName": "مهدی",
+    "lastName": "اکبری",
+    "firstNameEn": "Mehdi",
+    "lastNameEn": "Akbari",
+    "email": "mehdi@example.com",
+    "password": "123456",
+    "roleId": 2,
+    "isActive": true,
+    "isEmailVerified": true,
+    "avatar": null
+  },
+  {
+    "firstName": "حامد",
+    "lastName": "غلامی",
+    "firstNameEn": "Hamed",
+    "lastNameEn": "Gholami",
+    "email": "hamed@example.com",
+    "password": "123456",
+    "roleId": 2,
+    "isActive": true,
+    "isEmailVerified": true,
+    "avatar": null
+  }
+]

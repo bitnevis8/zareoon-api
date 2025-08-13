@@ -1,0 +1,334 @@
+2025-03-11T03:01:38.466Z [INFO]: 🔹 Role 'admin' اضافه شد.
+2025-03-11T03:01:38.471Z [INFO]: 🔹 Role 'user' اضافه شد.
+2025-03-11T03:01:38.474Z [INFO]: 🔹 Role 'developer' اضافه شد.
+2025-03-11T03:01:38.476Z [INFO]: 🔹 Role 'agency' اضافه شد.
+2025-03-11T03:01:38.479Z [INFO]: 🔹 Role 'owner' اضافه شد.
+2025-03-11T03:01:38.482Z [INFO]: 🔹 Role 'agent' اضافه شد.
+2025-03-11T03:01:38.484Z [INFO]: 🔹 Role 'accountant' اضافه شد.
+2025-03-11T03:01:38.486Z [INFO]: 🔹 Role 'operator' اضافه شد.
+2025-03-11T03:01:38.488Z [INFO]: 🔹 Role 'content_manager' اضافه شد.
+2025-03-11T03:01:38.491Z [INFO]: 🔹 Role 'guest' اضافه شد.
+2025-03-11T03:01:38.494Z [INFO]: 🔹 Role 'inspector' اضافه شد.
+2025-03-11T03:01:38.496Z [INFO]: 🔹 Role 'inspection_manager' اضافه شد.
+2025-03-11T03:01:38.498Z [INFO]: 🔹 Role 'reception' اضافه شد.
+2025-03-11T03:01:38.500Z [INFO]: 🔹 Role 'client' اضافه شد.
+2025-03-11T03:01:38.503Z [INFO]: 🔹 Role 'inspection_accountant' اضافه شد.
+2025-03-11T03:01:38.503Z [INFO]: ✅ مقداردهی اولیه `roles` انجام شد.
+2025-03-11T03:01:38.578Z [INFO]: 🔹 کاربر 'حسین' اضافه شد.
+2025-03-11T03:01:38.643Z [INFO]: 🔹 کاربر 'محمد' اضافه شد.
+2025-03-11T03:01:38.713Z [INFO]: 🔹 کاربر 'سارا' اضافه شد.
+2025-03-11T03:01:38.777Z [INFO]: 🔹 کاربر 'رضا' اضافه شد.
+2025-03-11T03:01:38.841Z [INFO]: 🔹 کاربر 'نیما' اضافه شد.
+2025-03-11T03:01:38.904Z [INFO]: 🔹 کاربر 'زهرا' اضافه شد.
+2025-03-11T03:01:38.968Z [INFO]: 🔹 کاربر 'مهدی' اضافه شد.
+2025-03-11T03:01:39.033Z [INFO]: 🔹 کاربر 'حامد' اضافه شد.
+2025-03-11T03:01:39.033Z [INFO]: ✅ مقداردهی اولیه `users` انجام شد.
+2025-03-11T03:02:13.683Z [INFO]: 🔹 Role 'admin' اضافه شد.
+2025-03-11T03:02:13.688Z [INFO]: 🔹 Role 'user' اضافه شد.
+2025-03-11T03:02:13.692Z [INFO]: 🔹 Role 'developer' اضافه شد.
+2025-03-11T03:02:13.698Z [INFO]: 🔹 Role 'agency' اضافه شد.
+2025-03-11T03:02:13.705Z [INFO]: 🔹 Role 'owner' اضافه شد.
+2025-03-11T03:02:13.716Z [INFO]: 🔹 Role 'agent' اضافه شد.
+2025-03-11T03:02:13.720Z [INFO]: 🔹 Role 'accountant' اضافه شد.
+2025-03-11T03:02:13.724Z [INFO]: 🔹 Role 'operator' اضافه شد.
+2025-03-11T03:02:13.727Z [INFO]: 🔹 Role 'content_manager' اضافه شد.
+2025-03-11T03:02:13.731Z [INFO]: 🔹 Role 'guest' اضافه شد.
+2025-03-11T03:02:13.735Z [INFO]: 🔹 Role 'inspector' اضافه شد.
+2025-03-11T03:02:13.738Z [INFO]: 🔹 Role 'inspection_manager' اضافه شد.
+2025-03-11T03:02:13.742Z [INFO]: 🔹 Role 'reception' اضافه شد.
+2025-03-11T03:02:13.746Z [INFO]: 🔹 Role 'client' اضافه شد.
+2025-03-11T03:02:13.749Z [INFO]: 🔹 Role 'inspection_accountant' اضافه شد.
+2025-03-11T03:02:13.749Z [INFO]: ✅ مقداردهی اولیه `roles` انجام شد.
+2025-03-11T03:02:13.825Z [INFO]: 🔹 کاربر 'حسین' اضافه شد.
+2025-03-11T03:02:13.894Z [INFO]: 🔹 کاربر 'محمد' اضافه شد.
+2025-03-11T03:02:13.967Z [INFO]: 🔹 کاربر 'سارا' اضافه شد.
+2025-03-11T03:02:14.033Z [INFO]: 🔹 کاربر 'رضا' اضافه شد.
+2025-03-11T03:02:14.102Z [INFO]: 🔹 کاربر 'نیما' اضافه شد.
+2025-03-11T03:02:14.170Z [INFO]: 🔹 کاربر 'زهرا' اضافه شد.
+2025-03-11T03:02:14.240Z [INFO]: 🔹 کاربر 'مهدی' اضافه شد.
+2025-03-11T03:02:14.307Z [INFO]: 🔹 کاربر 'حامد' اضافه شد.
+2025-03-11T03:02:14.307Z [INFO]: ✅ مقداردهی اولیه `users` انجام شد.
+2025-03-11T15:43:17.862Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T15:43:17.865Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T15:44:17.150Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T15:44:17.152Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T15:47:36.485Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T15:47:36.487Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T15:48:24.958Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T15:48:24.960Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T15:49:06.472Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T15:49:06.475Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T17:16:06.627Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T17:16:06.629Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T22:37:27.786Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T22:37:27.789Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T22:37:32.175Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T22:37:32.178Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T22:38:29.816Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T22:38:29.820Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T22:38:32.468Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T22:38:32.470Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T22:38:45.646Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T22:38:45.650Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T22:38:49.290Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T22:38:49.292Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T22:39:00.385Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T22:39:00.387Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T22:40:34.053Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T22:40:34.056Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T22:41:05.960Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T22:41:05.962Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T22:41:39.030Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T22:41:39.033Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T22:42:14.680Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T22:42:14.683Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T23:29:23.582Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T23:29:23.584Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T23:29:46.083Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T23:29:46.086Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T23:31:16.820Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T23:31:16.823Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T23:32:34.482Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T23:32:34.485Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T23:33:30.750Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T23:33:30.752Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T23:36:13.824Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T23:36:13.826Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T23:39:15.735Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T23:39:15.738Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T23:50:14.391Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T23:50:14.393Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T23:51:23.436Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T23:51:23.438Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T23:52:02.546Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T23:52:02.548Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T23:56:26.719Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T23:56:26.721Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-11T23:56:51.927Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-11T23:56:51.930Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T00:01:46.320Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T00:01:46.322Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T00:05:10.130Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T00:05:10.132Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:16:35.315Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:16:35.317Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:23:27.154Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:23:27.159Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:29:11.203Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:29:11.206Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:43:33.690Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:43:33.693Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:43:37.688Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:43:37.691Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:43:48.560Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:43:48.564Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:43:53.364Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:43:53.367Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:46:10.914Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:46:10.919Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:46:25.385Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:46:25.387Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:49:44.765Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:49:47.408Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:49:47.411Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:50:20.949Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:50:20.952Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:51:59.721Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:51:59.723Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:53:18.409Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:53:18.412Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:53:23.630Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:53:23.635Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:53:36.228Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:53:36.232Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:53:39.117Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:53:39.120Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:53:48.047Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:53:48.050Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:53:51.433Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:53:51.435Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:54:19.053Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:54:19.056Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:55:52.221Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:55:52.223Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:55:55.070Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:55:55.073Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:57:04.369Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:57:04.371Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:58:28.719Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:58:28.721Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:58:31.670Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:58:31.672Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T02:58:49.399Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T02:58:49.402Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T23:25:12.366Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T23:25:12.368Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T23:33:23.200Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T23:33:23.203Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T23:38:28.164Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T23:38:28.167Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T23:38:33.663Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T23:38:33.666Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T23:38:36.623Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T23:38:36.627Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T23:38:39.918Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T23:38:39.922Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-12T23:39:22.840Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\roles.json'
+2025-03-12T23:39:22.843Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\Fadak\Desktop\parandx\api\src\modules\user\user\seeds\users.json'
+2025-03-17T02:18:58.354Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\IR\Desktop\Parandix\parandx-api\src\modules\user\user\seeds\roles.json'
+2025-03-17T02:18:58.358Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\IR\Desktop\Parandix\parandx-api\src\modules\user\user\seeds\users.json'
+2025-03-17T02:19:57.178Z [ERROR]: ❌ خطا در مقداردهی اولیه roles: ENOENT: no such file or directory, open 'C:\Users\IR\Desktop\Parandix\parandx-api\src\modules\user\user\seeds\roles.json'
+2025-03-17T02:19:57.181Z [ERROR]: ❌ خطا در مقداردهی اولیه users: ENOENT: no such file or directory, open 'C:\Users\IR\Desktop\Parandix\parandx-api\src\modules\user\user\seeds\users.json'
+2025-03-17T07:35:29.401Z [ERROR]: ❌ Login failed: Cannot read properties of undefined (reading 'findOne')
+2025-03-17T07:52:05.466Z [ERROR]: ❌ Login failed: Cannot read properties of undefined (reading 'findOne')
+2025-03-17T07:52:11.607Z [ERROR]: ❌ Login failed: Cannot read properties of undefined (reading 'findOne')
+2025-03-17T07:52:55.789Z [ERROR]: ❌ Login failed: Cannot read properties of undefined (reading 'findOne')
+2025-03-17T08:14:59.334Z [INFO]: ✅ User logged in successfully: bitnevis@yahoo.com
+2025-03-18T02:41:31.200Z [ERROR]: FTP connection failed: self-signed certificate
+2025-03-18T02:41:31.204Z [ERROR]: FTP upload failed: self-signed certificate
+2025-03-18T02:41:31.208Z [ERROR]: File upload failed: self-signed certificate
+2025-03-18T02:42:10.787Z [ERROR]: FTP connection failed: self-signed certificate
+2025-03-18T02:42:10.789Z [ERROR]: FTP upload failed: self-signed certificate
+2025-03-18T02:42:10.791Z [ERROR]: File upload failed: self-signed certificate
+2025-03-18T02:43:04.176Z [ERROR]: FTP connection failed: self-signed certificate
+2025-03-18T02:43:04.176Z [ERROR]: FTP upload failed: self-signed certificate
+2025-03-18T02:43:04.177Z [ERROR]: File upload failed: self-signed certificate
+2025-03-18T02:43:08.694Z [ERROR]: FTP connection failed: self-signed certificate
+2025-03-18T02:43:08.696Z [ERROR]: FTP upload failed: self-signed certificate
+2025-03-18T02:43:08.698Z [ERROR]: File upload failed: self-signed certificate
+2025-03-18T02:43:12.263Z [ERROR]: FTP connection failed: self-signed certificate
+2025-03-18T02:43:12.264Z [ERROR]: FTP upload failed: self-signed certificate
+2025-03-18T02:43:12.266Z [ERROR]: File upload failed: self-signed certificate
+2025-03-18T02:44:58.334Z [ERROR]: FTP connection failed: self-signed certificate
+2025-03-18T02:44:58.334Z [ERROR]: FTP upload failed: self-signed certificate
+2025-03-18T02:44:58.335Z [ERROR]: File upload failed: self-signed certificate
+2025-03-18T02:45:31.380Z [ERROR]: FTP connection failed: self-signed certificate
+2025-03-18T02:45:31.384Z [ERROR]: FTP upload failed: self-signed certificate
+2025-03-18T02:45:31.389Z [ERROR]: File upload failed: self-signed certificate
+2025-03-18T02:47:15.274Z [ERROR]: FTP connection failed: self-signed certificate
+2025-03-18T02:47:15.275Z [ERROR]: FTP upload failed: self-signed certificate
+2025-03-18T02:47:15.276Z [ERROR]: File upload failed: self-signed certificate
+2025-03-18T02:52:08.719Z [ERROR]: FTP connection failed: self-signed certificate
+2025-03-18T02:52:08.732Z [ERROR]: FTP upload failed: self-signed certificate
+2025-03-18T02:52:08.738Z [ERROR]: File upload failed: self-signed certificate
+2025-03-18T02:52:41.987Z [ERROR]: FTP connection failed: self-signed certificate
+2025-03-18T02:52:41.987Z [ERROR]: FTP upload failed: self-signed certificate
+2025-03-18T02:52:41.990Z [ERROR]: File upload failed: self-signed certificate
+2025-03-18T03:04:26.227Z [ERROR]: FTP connection failed: self-signed certificate
+2025-03-18T03:04:26.230Z [ERROR]: FTP upload failed: self-signed certificate
+2025-03-18T03:04:26.233Z [ERROR]: File upload failed: self-signed certificate
+2025-03-18T03:10:58.235Z [ERROR]: FTP connection failed: self-signed certificate
+2025-03-18T03:10:58.235Z [ERROR]: FTP upload failed: self-signed certificate
+2025-03-18T03:10:58.237Z [ERROR]: File upload failed: self-signed certificate
+2025-03-18T03:12:05.687Z [ERROR]: FTP connection failed: self-signed certificate
+2025-03-18T03:12:05.688Z [ERROR]: FTP upload failed: self-signed certificate
+2025-03-18T03:12:05.689Z [ERROR]: File upload failed: self-signed certificate
+2025-03-18T03:12:23.305Z [ERROR]: FTP connection failed: self-signed certificate
+2025-03-18T03:12:23.306Z [ERROR]: FTP upload failed: self-signed certificate
+2025-03-18T03:12:23.307Z [ERROR]: File upload failed: self-signed certificate
+2025-03-18T03:14:10.288Z [ERROR]: FTP connection failed: self-signed certificate
+2025-03-18T03:14:10.290Z [ERROR]: FTP upload failed: self-signed certificate
+2025-03-18T03:14:10.292Z [ERROR]: File upload failed: self-signed certificate
+2025-03-18T03:18:10.414Z [INFO]: FTP connection established successfully
+2025-03-18T03:18:10.607Z [INFO]: Created new directory: /public_html/files
+2025-03-18T03:18:10.723Z [INFO]: Created new directory: /public_html/files/properties
+2025-03-18T03:18:10.813Z [INFO]: Created new directory: /public_html/files/properties/2025
+2025-03-18T03:18:10.902Z [INFO]: Created new directory: /public_html/files/properties/2025/03
+2025-03-18T03:18:11.093Z [INFO]: File uploaded successfully to FTP: /public_html/files/properties/2025/03/1742267889692-9ea80620863ee527a1b1edf3c48affd2.jpg
+2025-03-18T03:18:11.097Z [ERROR]: File upload failed: notNull Violation: File.uploaderId cannot be null
+2025-03-18T03:21:35.833Z [INFO]: FTP connection established successfully
+2025-03-18T03:21:35.923Z [INFO]: Created new directory: /properties
+2025-03-18T03:21:36.013Z [INFO]: Created new directory: /properties/2025
+2025-03-18T03:21:36.104Z [INFO]: Created new directory: /properties/2025/03
+2025-03-18T03:21:36.309Z [INFO]: File uploaded successfully to FTP: /properties/2025/03/1742268095073-6e934c2ef58c772230416a3299372247.jpg
+2025-03-18T03:21:36.319Z [ERROR]: File upload failed: notNull Violation: File.uploaderId cannot be null
+2025-03-18T03:23:38.041Z [INFO]: FTP connection established successfully
+2025-03-18T03:23:39.404Z [INFO]: File uploaded successfully to FTP: /properties/2025/03/1742268213049-c989d91d17ce4556a1940af32f0952c7.jpg
+2025-03-18T03:23:39.413Z [INFO]: File uploaded successfully: 1742268213049-c989d91d17ce4556a1940af32f0952c7.jpg
+2025-03-18T03:36:22.144Z [INFO]: ✅ User logged in successfully: bitnevis@yahoo.com
+2025-03-18T03:42:31.342Z [INFO]: ✅ User logged in successfully: bitnevis@yahoo.com
+2025-03-18T03:44:22.310Z [INFO]: ✅ User logged in successfully: bitnevis@yahoo.com
+2025-03-18T03:52:03.578Z [INFO]: FTP connection established successfully
+2025-03-18T03:52:03.678Z [INFO]: Created new directory: /profiles
+2025-03-18T03:52:03.771Z [INFO]: Created new directory: /profiles/2025
+2025-03-18T03:52:03.865Z [INFO]: Created new directory: /profiles/2025/03
+2025-03-18T03:52:04.087Z [INFO]: File uploaded successfully to FTP: /profiles/2025/03/1742269922772-2958b1cde02289996286fc46040b6858.png
+2025-03-18T03:52:04.096Z [INFO]: File uploaded successfully: 1742269922772-2958b1cde02289996286fc46040b6858.png
+2025-03-18T03:53:36.393Z [INFO]: FTP connection established successfully
+2025-03-18T03:53:36.742Z [INFO]: File uploaded successfully to FTP: /properties/2025/03/1742270015830-7a8a019d173a13b4d9ca265d4edc4583.png
+2025-03-18T03:53:36.771Z [INFO]: File uploaded successfully: 1742270015830-7a8a019d173a13b4d9ca265d4edc4583.png
+2025-03-18T03:54:36.351Z [INFO]: FTP connection established successfully
+2025-03-18T03:54:36.437Z [INFO]: Created new directory: /properties
+2025-03-18T03:54:36.529Z [INFO]: Created new directory: /properties/2025
+2025-03-18T03:54:36.619Z [INFO]: Created new directory: /properties/2025/03
+2025-03-18T03:54:36.810Z [INFO]: File uploaded successfully to FTP: /properties/2025/03/1742270072253-0907d3a7f1f299ffce6b0462ed8b21c1.png
+2025-03-18T03:54:36.821Z [INFO]: File uploaded successfully: 1742270072253-0907d3a7f1f299ffce6b0462ed8b21c1.png
+2025-03-18T03:56:53.136Z [INFO]: FTP connection established successfully
+2025-03-18T03:56:53.197Z [ERROR]: FTP delete failed: 550 /properties/2025/03/1742270015830-7a8a019d173a13b4d9ca265d4edc4583.png: No such file or directory
+2025-03-18T03:56:53.198Z [ERROR]: Delete file failed: 550 /properties/2025/03/1742270015830-7a8a019d173a13b4d9ca265d4edc4583.png: No such file or directory
+2025-03-18T03:57:22.417Z [INFO]: FTP connection established successfully
+2025-03-18T03:57:22.556Z [INFO]: Created new directory: /public_html/properties
+2025-03-18T03:57:22.765Z [INFO]: Created new directory: /public_html/properties/2025
+2025-03-18T03:57:22.856Z [INFO]: Created new directory: /public_html/properties/2025/03
+2025-03-18T03:57:23.059Z [INFO]: File uploaded successfully to FTP: /public_html/properties/2025/03/1742270241624-3a28769964f755bca56a8aa8949a06b2.jpg
+2025-03-18T03:57:23.065Z [INFO]: File uploaded successfully: 1742270241624-3a28769964f755bca56a8aa8949a06b2.jpg
+2025-03-18T03:59:28.263Z [INFO]: FTP connection established successfully
+2025-03-18T03:59:28.637Z [INFO]: File uploaded successfully to FTP: /public_html/properties/2025/03/1742270367237-d2057a697b74a440fba066a078e74eef.jpg
+2025-03-18T03:59:28.650Z [INFO]: File uploaded successfully: 1742270367237-d2057a697b74a440fba066a078e74eef.jpg
+2025-03-18T03:59:40.833Z [INFO]: FTP connection established successfully
+2025-03-18T03:59:41.289Z [INFO]: File uploaded successfully to FTP: /public_html/properties/2025/03/1742270380245-53251bf04a830d16e37b8886176fcbd2.png
+2025-03-18T03:59:41.298Z [INFO]: File uploaded successfully: 1742270380245-53251bf04a830d16e37b8886176fcbd2.png
+2025-03-18T04:00:42.984Z [INFO]: FTP connection established successfully
+2025-03-18T04:00:43.387Z [INFO]: File uploaded successfully to FTP: /public_html/properties/2025/03/1742270442358-527490113ba0589953ed7060804256cb.png
+2025-03-18T04:00:43.394Z [INFO]: File uploaded successfully: 1742270442358-527490113ba0589953ed7060804256cb.png
+2025-03-18T04:02:05.707Z [INFO]: FTP connection established successfully
+2025-03-18T04:02:06.190Z [INFO]: File uploaded successfully to FTP: /public_html/properties/2025/03/1742270524846-5c725119ef7c0544e82e2a655ee21887.png
+2025-03-18T04:02:06.207Z [INFO]: File uploaded successfully: 1742270524846-5c725119ef7c0544e82e2a655ee21887.png
+2025-03-18T04:02:11.428Z [INFO]: FTP connection established successfully
+2025-03-18T04:02:11.931Z [INFO]: File uploaded successfully to FTP: /public_html/properties/2025/03/1742270530478-5afe5fb525669e4405380e8d75fb230f.jpg
+2025-03-18T04:02:11.942Z [INFO]: File uploaded successfully: 1742270530478-5afe5fb525669e4405380e8d75fb230f.jpg
+2025-03-18T04:02:22.714Z [INFO]: FTP connection established successfully
+2025-03-18T04:02:22.770Z [INFO]: File deleted successfully from FTP: /public_html/properties/2025/03/1742270530478-5afe5fb525669e4405380e8d75fb230f.jpg
+2025-03-18T04:02:22.774Z [INFO]: File deleted successfully: 1742270530478-5afe5fb525669e4405380e8d75fb230f.jpg
+2025-03-18T04:02:24.793Z [INFO]: FTP connection established successfully
+2025-03-18T04:02:24.849Z [INFO]: File deleted successfully from FTP: /public_html/properties/2025/03/1742270524846-5c725119ef7c0544e82e2a655ee21887.png
+2025-03-18T04:02:24.854Z [INFO]: File deleted successfully: 1742270524846-5c725119ef7c0544e82e2a655ee21887.png
+2025-03-18T04:02:25.977Z [INFO]: FTP connection established successfully
+2025-03-18T04:02:26.030Z [INFO]: File deleted successfully from FTP: /public_html/properties/2025/03/1742270442358-527490113ba0589953ed7060804256cb.png
+2025-03-18T04:02:26.032Z [INFO]: File deleted successfully: 1742270442358-527490113ba0589953ed7060804256cb.png
+2025-03-18T04:23:18.020Z [INFO]: FTP connection established successfully
+2025-03-18T04:23:18.403Z [INFO]: File uploaded successfully to FTP: /public_html/properties/2025/03/1742271797221-5cca74e47fb150d2e5cfda58df718c84.png
+2025-03-18T04:23:18.420Z [INFO]: File uploaded successfully: 1742271797221-5cca74e47fb150d2e5cfda58df718c84.png
+2025-03-18T04:23:30.763Z [INFO]: FTP connection established successfully
+2025-03-18T04:23:31.152Z [INFO]: File uploaded successfully to FTP: /public_html/properties/2025/03/1742271809894-1af7c586c4beaa5b2f3f340fbedd47d8.png
+2025-03-18T04:23:31.166Z [INFO]: File uploaded successfully: 1742271809894-1af7c586c4beaa5b2f3f340fbedd47d8.png
+2025-03-18T04:23:47.221Z [INFO]: FTP connection established successfully
+2025-03-18T04:23:47.687Z [INFO]: File uploaded successfully to FTP: /public_html/properties/2025/03/1742271826682-7e0c4ca6eef95d77ab2e1ee1f7c6a5bb.jpg
+2025-03-18T04:23:47.700Z [INFO]: File uploaded successfully: 1742271826682-7e0c4ca6eef95d77ab2e1ee1f7c6a5bb.jpg
+2025-03-18T04:35:42.768Z [INFO]: FTP connection established successfully
+2025-03-18T04:35:43.162Z [INFO]: File uploaded successfully to FTP: /public_html/properties/2025/03/1742272541090-c15dcc3d541ffa26b945199cc48b8f22.png
+2025-03-18T04:35:43.170Z [INFO]: File uploaded successfully: 1742272541090-c15dcc3d541ffa26b945199cc48b8f22.png
+2025-03-18T04:35:48.662Z [INFO]: FTP connection established successfully
+2025-03-18T04:35:48.717Z [INFO]: File deleted successfully from FTP: /public_html/properties/2025/03/1742271797221-5cca74e47fb150d2e5cfda58df718c84.png
+2025-03-18T04:35:48.720Z [INFO]: File deleted successfully: 1742271797221-5cca74e47fb150d2e5cfda58df718c84.png
+2025-03-18T04:35:50.072Z [INFO]: FTP connection established successfully
+2025-03-18T04:35:50.129Z [INFO]: File deleted successfully from FTP: /public_html/properties/2025/03/1742271809894-1af7c586c4beaa5b2f3f340fbedd47d8.png
+2025-03-18T04:35:50.135Z [INFO]: File deleted successfully: 1742271809894-1af7c586c4beaa5b2f3f340fbedd47d8.png
+2025-03-18T04:35:51.335Z [INFO]: FTP connection established successfully
+2025-03-18T04:35:51.398Z [INFO]: File deleted successfully from FTP: /public_html/properties/2025/03/1742271826682-7e0c4ca6eef95d77ab2e1ee1f7c6a5bb.jpg
+2025-03-18T04:35:51.403Z [INFO]: File deleted successfully: 1742271826682-7e0c4ca6eef95d77ab2e1ee1f7c6a5bb.jpg
+2025-03-18T04:35:53.936Z [INFO]: FTP connection established successfully
+2025-03-18T04:35:53.989Z [INFO]: File deleted successfully from FTP: /public_html/properties/2025/03/1742272541090-c15dcc3d541ffa26b945199cc48b8f22.png
+2025-03-18T04:35:53.998Z [INFO]: File deleted successfully: 1742272541090-c15dcc3d541ffa26b945199cc48b8f22.png
+2025-03-18T04:36:07.160Z [INFO]: FTP connection established successfully
+2025-03-18T04:36:11.629Z [INFO]: File uploaded successfully to FTP: /public_html/properties/2025/03/1742272563463-047a38e9396003d5defaae499e9d6295.png
+2025-03-18T04:36:11.644Z [INFO]: File uploaded successfully: 1742272563463-047a38e9396003d5defaae499e9d6295.png
+2025-03-18T04:37:48.509Z [INFO]: FTP connection established successfully
+2025-03-18T04:37:48.650Z [INFO]: Created new directory: /public_html/profiles
+2025-03-18T04:37:48.749Z [INFO]: Created new directory: /public_html/profiles/2025
+2025-03-18T04:37:48.836Z [INFO]: Created new directory: /public_html/profiles/2025/03
+2025-03-18T04:37:49.055Z [INFO]: File uploaded successfully to FTP: /public_html/profiles/2025/03/1742272667435-5c592bb50a9286b9ed323165f5eebca7.png
+2025-03-18T04:37:49.059Z [INFO]: File uploaded successfully: 1742272667435-5c592bb50a9286b9ed323165f5eebca7.png
+2025-03-18T04:55:14.759Z [INFO]: FTP connection established successfully
+2025-03-18T04:55:15.283Z [INFO]: File uploaded successfully to FTP: /public_html/properties/2025/03/1742273713613-fd6599c364c4f09c66bb515779c89139.png
+2025-03-18T04:55:15.301Z [INFO]: File uploaded successfully: 1742273713613-fd6599c364c4f09c66bb515779c89139.png

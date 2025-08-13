@@ -1,0 +1,31 @@
+{
+  "SERVER": {
+    "IP": "localhost",
+    "PORT": "3000"
+  },
+  "FRONTEND": {
+    "HOST": "http://localhost",
+    "PORT": "3001"
+  },
+  "DB": {
+    "NAME": "farmer",
+    "TYPE": "mysql",
+    "HOST": "localhost",
+    "USER": "root",
+    "PASSWORD": ""
+  },
+  "MONGODB_URI": "mongodb://localhost:27017/taganeh",
+  "EMAIL": {
+    "HOST": "smtp.gmail.com",
+    "PORT": 587,
+    "SECURE": false,
+    "AUTH": {
+      "USER": "fadakprogrammer@gmail.com",
+      "PASS": "yfid wjnv bxty lqzh"
+    }
+  },
+  "DEEPSEEK_API_KEY": "sk-be0927612e7f4a55bb059fc18f70bf13",
+  "JWT": {
+    "KEY": "8DFG85D1FG51S854GhwH4814JHA458H84W1GK+e:lwqlGKO"
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "admin": ["*"],
+  
+  "staff": [
+    "user.read",
+    "property.read",
+    "property.approve",
+    "agency.read",
+    "agency.approve",
+    "agent.read",
+    "transaction.read",
+    "transaction.approve",
+    "content.create",
+    "content.read",
+    "content.update",
+    "content.delete",
+    "content.approve"
+  ],
+
+  "developer": [
+    "property.create",
+    "property.read",
+    "property.update",
+    "property.delete",
+    "project.create",
+    "project.read",
+    "project.update",
+    "project.delete"
+  ],
+
+  "agency_owner": [
+    "agency.read",
+    "agency.update",
+    "agent.create",
+    "agent.read",
+    "agent.update",
+    "agent.delete",
+    "property.create",
+    "property.read",
+    "property.update",
+    "property.delete",
+    "transaction.create",
+    "transaction.read",
+    "transaction.update"
+  ],
+
+  "agency_agent": [
+    "property.create",
+    "property.read",
+    "property.update",
+    "transaction.create",
+    "transaction.read",
+    "transaction.update"
+  ],
+
+  "customer": [
+    "property.read",
+    "property.create",
+    "property.update",
+    "project.read",
+    "agency.read",
+    "agent.read",
+    "transaction.read"
+  ],
+
+  "guest": [
+    "property.read",
+    "project.read",
+    "agency.read",
+    "content.read"
+  ]
+} 

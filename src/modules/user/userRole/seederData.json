@@ -1,0 +1,6 @@
+[
+  { "email": "bitnevis@yahoo.com", "role": "admin" },
+  { "email": "farmer@example.com", "role": "farmer" },
+  { "email": "farmer2@example.com", "role": "farmer" },
+  { "email": "customer@example.com", "role": "customer" }
+] 

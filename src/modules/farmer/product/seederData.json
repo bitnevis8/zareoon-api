@@ -1,0 +1,2487 @@
+[
+  {
+    "id": 1,
+    "name": "غلات",
+    "slug": "cereals",
+    "englishName": "Cereals",
+    "description": "",
+    "imageUrl": null,
+    "parentId": null,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": true,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "metaTitle": "خرید و فروش غلات",
+    "metaDescription": "بازار آنلاین خرید و فروش غلات",
+    "unit": "kg"
+  },
+  {
+    "id": 2,
+    "name": "حبوبات",
+    "slug": "pulses",
+    "englishName": "Pulses",
+    "description": "",
+    "imageUrl": null,
+    "parentId": null,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": true,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "metaTitle": "خرید و فروش حبوبات",
+    "metaDescription": "بازار آنلاین خرید و فروش حبوبات",
+    "unit": "kg"
+  },
+  {
+    "id": 3,
+    "name": "میوه‌های درختی",
+    "slug": "tree-fruits",
+    "englishName": "Tree Fruits",
+    "description": "",
+    "imageUrl": null,
+    "parentId": null,
+    "isActive": true,
+    "sortOrder": 3,
+    "isFeatured": true,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box",
+      "Crate"
+    ],
+    "metaTitle": "خرید و فروش میوه‌های درختی",
+    "metaDescription": "بازار آنلاین خرید و فروش میوه‌های درختی",
+    "unit": "kg"
+  },
+  {
+    "id": 4,
+    "name": "میوه‌های گرمسیری و نیمه‌گرمسیری",
+    "slug": "tropical-subtropical-fruits",
+    "englishName": "Tropical & Subtropical Fruits",
+    "description": "",
+    "imageUrl": null,
+    "parentId": null,
+    "isActive": true,
+    "sortOrder": 4,
+    "isFeatured": true,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box",
+      "Crate"
+    ],
+    "metaTitle": "خرید و فروش میوه‌های گرمسیری",
+    "metaDescription": "بازار آنلاین خرید و فروش میوه‌های گرمسیری",
+    "unit": "kg"
+  },
+  {
+    "id": 5,
+    "name": "میوه‌های بوته‌ای و توت‌سانان",
+    "slug": "bush-berry-fruits",
+    "englishName": "Bush & Berry Fruits",
+    "description": "",
+    "imageUrl": null,
+    "parentId": null,
+    "isActive": true,
+    "sortOrder": 5,
+    "isFeatured": true,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box",
+      "Crate"
+    ],
+    "metaTitle": "خرید و فروش توت‌سانان",
+    "metaDescription": "بازار آنلاین خرید و فروش میوه‌های بوته‌ای و توت‌سانان",
+    "unit": "kg"
+  },
+  {
+    "id": 6,
+    "name": "خشکبار و آجیل",
+    "slug": "nuts-dried-fruits",
+    "englishName": "Nuts & Dried Fruits",
+    "description": "",
+    "imageUrl": null,
+    "parentId": null,
+    "isActive": true,
+    "sortOrder": 6,
+    "isFeatured": true,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton",
+      "Pack"
+    ],
+    "metaTitle": "خرید و فروش خشکبار و آجیل",
+    "metaDescription": "بازار آنلاین خرید و فروش خشکبار و آجیل",
+    "unit": "kg"
+  },
+  {
+    "id": 7,
+    "name": "سبزیجات و صیفی‌جات",
+    "slug": "vegetables",
+    "englishName": "Vegetables & Fruiting Vegetables",
+    "description": "",
+    "imageUrl": null,
+    "parentId": null,
+    "isActive": true,
+    "sortOrder": 7,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Bunch",
+      "Crate"
+    ],
+    "metaTitle": "خرید و فروش سبزیجات",
+    "metaDescription": "بازار آنلاین خرید و فروش سبزیجات",
+    "unit": "kg"
+  },
+  {
+    "id": 9,
+    "name": "گیاهان دارویی و صنعتی",
+    "slug": "medicinal-industrial-plants",
+    "englishName": "Medicinal & Industrial Plants",
+    "description": "",
+    "imageUrl": null,
+    "parentId": null,
+    "isActive": true,
+    "sortOrder": 9,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton",
+      "Bunch"
+    ],
+    "metaTitle": "خرید و فروش گیاهان دارویی",
+    "metaDescription": "بازار آنلاین خرید و فروش گیاهان دارویی و صنعتی",
+    "unit": "kg"
+  },
+  {
+    "id": 10,
+    "name": "دام، طیور و آبزیان",
+    "slug": "livestock-poultry-fisheries",
+    "englishName": "Livestock, Poultry & Fisheries",
+    "description": "",
+    "imageUrl": null,
+    "parentId": null,
+    "isActive": true,
+    "sortOrder": 10,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "count",
+      "kg "
+    ],
+    "metaTitle": "خرید و فروش دام و طیور",
+    "metaDescription": "بازار آنلاین خرید و فروش دام، طیور و آبزیان",
+    "unit": "kg"
+  },
+  {
+    "id": 11,
+    "name": "خوراک دام و طیور",
+    "slug": "animal-feed",
+    "englishName": "Animal Feed",
+    "description": "",
+    "imageUrl": null,
+    "parentId": null,
+    "isActive": true,
+    "sortOrder": 11,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton",
+      "Pack"
+    ],
+    "metaTitle": "خرید و فروش خوراک دام",
+    "metaDescription": "انواع خوراک دام و طیور",
+    "unit": "kg"
+  },
+  {
+    "id": 12,
+    "name": "نهاده‌های کشاورزی",
+    "slug": "agricultural-inputs",
+    "englishName": "Agricultural Inputs",
+    "description": "",
+    "imageUrl": null,
+    "parentId": null,
+    "isActive": true,
+    "sortOrder": 12,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "Pack",
+      "kg ",
+      "Liter"
+    ],
+    "metaTitle": "نهاده‌های کشاورزی",
+    "metaDescription": "بذر، نهال، کود و سموم",
+    "unit": "kg"
+  },
+  {
+    "id": 1001,
+    "name": "گندم",
+    "slug": "wheat",
+    "englishName": "Wheat",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 1,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "metaTitle": "خرید و فروش گندم",
+    "metaDescription": "انواع گندم",
+    "unit": "kg"
+  },
+  {
+    "id": 1002,
+    "name": "جو",
+    "slug": "barley",
+    "englishName": "Barley",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 1,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "metaTitle": "خرید و فروش جو",
+    "metaDescription": "جو نان و علوفه",
+    "unit": "kg"
+  },
+  {
+    "id": 1003,
+    "name": "برنج",
+    "slug": "rice",
+    "englishName": "Rice",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 1,
+    "isActive": true,
+    "sortOrder": 3,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "metaTitle": "خرید و فروش برنج",
+    "metaDescription": "انواع برنج",
+    "unit": "kg"
+  },
+  {
+    "id": 1004,
+    "name": "ذرت",
+    "slug": "maize",
+    "englishName": "Maize (Corn)",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 1,
+    "isActive": true,
+    "sortOrder": 4,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "metaTitle": "خرید و فروش ذرت",
+    "metaDescription": "ذرت دامی و خوراکی",
+    "unit": "kg"
+  },
+  {
+    "id": 1005,
+    "name": "جو دوسر",
+    "slug": "oats",
+    "englishName": "Oats",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 1,
+    "isActive": true,
+    "sortOrder": 5,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "metaTitle": "جوی دوسر",
+    "metaDescription": "",
+    "unit": "kg"
+  },
+  {
+    "id": 1006,
+    "name": "سورگوم",
+    "slug": "sorghum",
+    "englishName": "Sorghum",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 1,
+    "isActive": true,
+    "sortOrder": 6,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "metaTitle": "سورگوم",
+    "metaDescription": "",
+    "unit": "kg"
+  },
+  {
+    "id": 1007,
+    "name": "چاودار",
+    "slug": "rye",
+    "englishName": "Rye",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 1,
+    "isActive": true,
+    "sortOrder": 7,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "metaTitle": "چاودار",
+    "metaDescription": "",
+    "unit": "kg"
+  },
+  {
+    "id": 1008,
+    "name": "ارزن",
+    "slug": "millet",
+    "englishName": "Millet",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 1,
+    "isActive": true,
+    "sortOrder": 8,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "metaTitle": "ارزن",
+    "metaDescription": "",
+    "unit": "kg"
+  },
+  {
+    "id": 1101,
+    "name": "گندم نان",
+    "slug": "bread-wheat",
+    "englishName": "Bread Wheat",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 1001,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "metaTitle": "گندم نان",
+    "metaDescription": "",
+    "unit": "kg"
+  },
+  {
+    "id": 1102,
+    "name": "گندم دوروم",
+    "slug": "durum-wheat",
+    "englishName": "Durum Wheat",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 1001,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "metaTitle": "گندم دوروم",
+    "metaDescription": "",
+    "unit": "kg"
+  },
+  {
+    "id": 1103,
+    "name": "جو مالت",
+    "slug": "malting-barley",
+    "englishName": "Malting Barley",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 1002,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "metaTitle": "جو مالت",
+    "metaDescription": "",
+    "unit": "kg"
+  },
+  {
+    "id": 1104,
+    "name": "جو دامی",
+    "slug": "feed-barley",
+    "englishName": "Feed Barley",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 1002,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 1105,
+    "name": "برنج دانه‌بلند",
+    "slug": "long-grain-rice",
+    "englishName": "Long-grain Rice",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 1003,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 1106,
+    "name": "برنج باسماتی/طارم",
+    "slug": "basmati-rice",
+    "englishName": "Basmati/Tarom",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 1003,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 1107,
+    "name": "ذرت دامی",
+    "slug": "yellow-dent-corn",
+    "englishName": "Yellow Dent Corn",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 1004,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 1108,
+    "name": "ذرت شیرین",
+    "slug": "sweet-corn",
+    "englishName": "Sweet Corn",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 1004,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 2001,
+    "name": "عدس",
+    "slug": "lentil",
+    "englishName": "Lentil",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 2,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 2002,
+    "name": "نخود",
+    "slug": "chickpea",
+    "englishName": "Chickpea",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 2,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 2003,
+    "name": "لوبیا",
+    "slug": "beans",
+    "englishName": "Beans",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 2,
+    "isActive": true,
+    "sortOrder": 3,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 2004,
+    "name": "نخودفرنگی خشک",
+    "slug": "dry-pea",
+    "englishName": "Dry Pea",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 2,
+    "isActive": true,
+    "sortOrder": 4,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 2005,
+    "name": "باقلا",
+    "slug": "fava-bean",
+    "englishName": "Fava Bean",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 2,
+    "isActive": true,
+    "sortOrder": 5,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 2006,
+    "name": "ماش",
+    "slug": "mung-bean",
+    "englishName": "Mung Bean",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 2,
+    "isActive": true,
+    "sortOrder": 6,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 2101,
+    "name": "عدس قرمز",
+    "slug": "red-lentil",
+    "englishName": "Red Lentil",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 2001,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 2102,
+    "name": "عدس سبز",
+    "slug": "green-lentil",
+    "englishName": "Green Lentil",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 2001,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 2103,
+    "name": "نخود کابلی",
+    "slug": "kabuli-chickpea",
+    "englishName": "Kabuli Chickpea",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 2002,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 2104,
+    "name": "نخود دسی",
+    "slug": "desi-chickpea",
+    "englishName": "Desi Chickpea",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 2002,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 2105,
+    "name": "لوبیا قرمز",
+    "slug": "kidney-bean",
+    "englishName": "Kidney Bean",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 2003,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 2106,
+    "name": "لوبیا سفید",
+    "slug": "white-bean",
+    "englishName": "White Bean",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 2003,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 2107,
+    "name": "لوبیا چیتی",
+    "slug": "pinto-bean",
+    "englishName": "Pinto Bean",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 2003,
+    "isActive": true,
+    "sortOrder": 3,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 3001,
+    "name": "سیب",
+    "slug": "apple",
+    "englishName": "Apple",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 3,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 3002,
+    "name": "گلابی",
+    "slug": "pear",
+    "englishName": "Pear",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 3,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 3003,
+    "name": "هلو",
+    "slug": "peach",
+    "englishName": "Peach",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 3,
+    "isActive": true,
+    "sortOrder": 3,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 3004,
+    "name": "آلو",
+    "slug": "plum",
+    "englishName": "Plum",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 3,
+    "isActive": true,
+    "sortOrder": 4,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 3005,
+    "name": "زردآلو",
+    "slug": "apricot",
+    "englishName": "Apricot",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 3,
+    "isActive": true,
+    "sortOrder": 5,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 3006,
+    "name": "انار",
+    "slug": "pomegranate",
+    "englishName": "Pomegranate",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 3,
+    "isActive": true,
+    "sortOrder": 6,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 3007,
+    "name": "زیتون",
+    "slug": "olive",
+    "englishName": "Olive",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 3,
+    "isActive": true,
+    "sortOrder": 7,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 3008,
+    "name": "خرما",
+    "slug": "date",
+    "englishName": "Date",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 3,
+    "isActive": true,
+    "sortOrder": 8,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 3101,
+    "name": "سیب قرمز",
+    "slug": "red-delicious",
+    "englishName": "Red Delicious Apple",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 3001,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 3102,
+    "name": "سیب زرد",
+    "slug": "golden-delicious",
+    "englishName": "Golden Delicious Apple",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 3001,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 4001,
+    "name": "موز",
+    "slug": "banana",
+    "englishName": "Banana",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 4,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 4002,
+    "name": "انبه",
+    "slug": "mango",
+    "englishName": "Mango",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 4,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 4003,
+    "name": "آناناس",
+    "slug": "pineapple",
+    "englishName": "Pineapple",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 4,
+    "isActive": true,
+    "sortOrder": 3,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 4004,
+    "name": "پاپایا",
+    "slug": "papaya",
+    "englishName": "Papaya",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 4,
+    "isActive": true,
+    "sortOrder": 4,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 4005,
+    "name": "گواوا",
+    "slug": "guava",
+    "englishName": "Guava",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 4,
+    "isActive": true,
+    "sortOrder": 5,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 4006,
+    "name": "نارگیل",
+    "slug": "coconut",
+    "englishName": "Coconut",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 4,
+    "isActive": true,
+    "sortOrder": 6,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 5001,
+    "name": "توت‌فرنگی",
+    "slug": "strawberry",
+    "englishName": "Strawberry",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 5,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 5002,
+    "name": "تمشک",
+    "slug": "raspberry",
+    "englishName": "Raspberry",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 5,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 5003,
+    "name": "شاه‌توت",
+    "slug": "blackberry",
+    "englishName": "Blackberry",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 5,
+    "isActive": true,
+    "sortOrder": 3,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 5004,
+    "name": "بلوبری",
+    "slug": "blueberry",
+    "englishName": "Blueberry",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 5,
+    "isActive": true,
+    "sortOrder": 4,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 5005,
+    "name": "توت",
+    "slug": "mulberry",
+    "englishName": "Mulberry",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 5,
+    "isActive": true,
+    "sortOrder": 5,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 5006,
+    "name": "گیشنیز سیاه (کشمشک)",
+    "slug": "currant",
+    "englishName": "Currant",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 5,
+    "isActive": true,
+    "sortOrder": 6,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 5101,
+    "name": "توت سفید",
+    "slug": "white-mulberry",
+    "englishName": "White Mulberry",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 5005,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 5102,
+    "name": "توت سیاه",
+    "slug": "black-mulberry",
+    "englishName": "Black Mulberry",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 5005,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Box"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 6001,
+    "name": "پسته",
+    "slug": "pistachio",
+    "englishName": "Pistachio",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 6,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton",
+      "Pack"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 6002,
+    "name": "گردو",
+    "slug": "walnut",
+    "englishName": "Walnut",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 6,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton",
+      "Pack"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 6003,
+    "name": "بادام",
+    "slug": "almond",
+    "englishName": "Almond",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 6,
+    "isActive": true,
+    "sortOrder": 3,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton",
+      "Pack"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 6004,
+    "name": "فندق",
+    "slug": "hazelnut",
+    "englishName": "Hazelnut",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 6,
+    "isActive": true,
+    "sortOrder": 4,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton",
+      "Pack"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 6005,
+    "name": "بادام‌زمینی",
+    "slug": "peanut",
+    "englishName": "Peanut",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 6,
+    "isActive": true,
+    "sortOrder": 5,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton",
+      "Pack"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 6006,
+    "name": "بادام هندی",
+    "slug": "cashew",
+    "englishName": "Cashew",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 6,
+    "isActive": true,
+    "sortOrder": 6,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton",
+      "Pack"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 6007,
+    "name": "انجیر خشک",
+    "slug": "dried-fig",
+    "englishName": "Dried Fig",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 6,
+    "isActive": true,
+    "sortOrder": 7,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Pack"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 6008,
+    "name": "کشمش",
+    "slug": "raisin",
+    "englishName": "Raisin",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 6,
+    "isActive": true,
+    "sortOrder": 8,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Pack"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 6101,
+    "name": "کشمش سلطانا",
+    "slug": "sultana-raisin",
+    "englishName": "Sultana Raisin",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 6008,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Pack"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 6102,
+    "name": "کشمش طلایی",
+    "slug": "golden-raisin",
+    "englishName": "Golden Raisin",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 6008,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Pack"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 7001,
+    "name": "پیاز",
+    "slug": "onion",
+    "englishName": "Onion",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 7,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 7002,
+    "name": "سیر",
+    "slug": "garlic",
+    "englishName": "Garlic",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 7,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 7003,
+    "name": "هویج",
+    "slug": "carrot",
+    "englishName": "Carrot",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 7,
+    "isActive": true,
+    "sortOrder": 3,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 7004,
+    "name": "سیب‌زمینی",
+    "slug": "potato",
+    "englishName": "Potato",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 7,
+    "isActive": true,
+    "sortOrder": 4,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 7005,
+    "name": "کلم سفید",
+    "slug": "cabbage",
+    "englishName": "Cabbage",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 7,
+    "isActive": true,
+    "sortOrder": 5,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 7006,
+    "name": "گل‌کلم",
+    "slug": "cauliflower",
+    "englishName": "Cauliflower",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 7,
+    "isActive": true,
+    "sortOrder": 6,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 7007,
+    "name": "اسفناج",
+    "slug": "spinach",
+    "englishName": "Spinach",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 7,
+    "isActive": true,
+    "sortOrder": 7,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Bunch"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 7008,
+    "name": "کاهو",
+    "slug": "lettuce",
+    "englishName": "Lettuce",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 7,
+    "isActive": true,
+    "sortOrder": 8,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Bunch"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 7009,
+    "name": "جعفری",
+    "slug": "parsley",
+    "englishName": "Parsley",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 7,
+    "isActive": true,
+    "sortOrder": 9,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Bunch"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 7010,
+    "name": "چغندر",
+    "slug": "beetroot",
+    "englishName": "Beetroot",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 7,
+    "isActive": true,
+    "sortOrder": 10,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 8001,
+    "name": "گوجه‌فرنگی",
+    "slug": "tomato",
+    "englishName": "Tomato",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 7,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 8002,
+    "name": "خیار",
+    "slug": "cucumber",
+    "englishName": "Cucumber",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 7,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 8003,
+    "name": "فلفل شیرین",
+    "slug": "sweet-pepper",
+    "englishName": "Sweet Pepper",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 7,
+    "isActive": true,
+    "sortOrder": 3,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 8004,
+    "name": "فلفل تند",
+    "slug": "hot-pepper",
+    "englishName": "Hot Pepper",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 7,
+    "isActive": true,
+    "sortOrder": 4,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 8005,
+    "name": "بادمجان",
+    "slug": "eggplant",
+    "englishName": "Eggplant",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 7,
+    "isActive": true,
+    "sortOrder": 5,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 8006,
+    "name": "کدو سبز",
+    "slug": "zucchini",
+    "englishName": "Zucchini",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 7,
+    "isActive": true,
+    "sortOrder": 6,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 8007,
+    "name": "هندوانه",
+    "slug": "watermelon",
+    "englishName": "Watermelon",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 7,
+    "isActive": true,
+    "sortOrder": 7,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg "
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 8008,
+    "name": "طالبی/خربزه",
+    "slug": "melon",
+    "englishName": "Melon (Cantaloupe)",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 7,
+    "isActive": true,
+    "sortOrder": 8,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg "
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 8101,
+    "name": "گوجه گیلاسی",
+    "slug": "cherry-tomato",
+    "englishName": "Cherry Tomato",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 8001,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 8102,
+    "name": "گوجه گرد",
+    "slug": "round-tomato",
+    "englishName": "Round Tomato",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 8001,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Crate"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 9001,
+    "name": "زعفران",
+    "slug": "saffron",
+    "englishName": "Saffron",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 9,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Pack"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 9002,
+    "name": "زیره سبز",
+    "slug": "cumin",
+    "englishName": "Cumin",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 9,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Pack"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 9003,
+    "name": "گشنیز",
+    "slug": "coriander-seed",
+    "englishName": "Coriander Seed",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 9,
+    "isActive": true,
+    "sortOrder": 3,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Pack"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 9004,
+    "name": "انیسون",
+    "slug": "anise",
+    "englishName": "Anise",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 9,
+    "isActive": true,
+    "sortOrder": 4,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Pack"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 9005,
+    "name": "بابونه",
+    "slug": "chamomile",
+    "englishName": "Chamomile",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 9,
+    "isActive": true,
+    "sortOrder": 5,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Bunch"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 9006,
+    "name": "گل محمدی",
+    "slug": "rosa-damascena",
+    "englishName": "Rosa Damascena",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 9,
+    "isActive": true,
+    "sortOrder": 6,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Bunch"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 9007,
+    "name": "حناء",
+    "slug": "henna",
+    "englishName": "Henna",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 9,
+    "isActive": true,
+    "sortOrder": 7,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg "
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 9008,
+    "name": "سیاهدانه",
+    "slug": "nigella",
+    "englishName": "Nigella",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 9,
+    "isActive": true,
+    "sortOrder": 8,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg "
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 9009,
+    "name": "جوجوبا",
+    "slug": "jojoba",
+    "englishName": "Jojoba",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 9,
+    "isActive": true,
+    "sortOrder": 9,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg "
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 10001,
+    "name": "گاو",
+    "slug": "cattle",
+    "englishName": "Cattle",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 10,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "count",
+      "kg "
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 10002,
+    "name": "گوسفند",
+    "slug": "sheep",
+    "englishName": "Sheep",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 10,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "count",
+      "kg "
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 10003,
+    "name": "بز",
+    "slug": "goat",
+    "englishName": "Goat",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 10,
+    "isActive": true,
+    "sortOrder": 3,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "count",
+      "kg "
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 10004,
+    "name": "مرغ گوشتی",
+    "slug": "broiler-chicken",
+    "englishName": "Broiler Chicken",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 10,
+    "isActive": true,
+    "sortOrder": 4,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "count",
+      "kg "
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 10005,
+    "name": "تخم‌مرغ",
+    "slug": "egg",
+    "englishName": "Egg",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 10,
+    "isActive": true,
+    "sortOrder": 5,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "count",
+      "Pack"
+    ],
+    "unit": "count"
+  },
+  {
+    "id": 10006,
+    "name": "بوقلمون",
+    "slug": "turkey",
+    "englishName": "Turkey",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 10,
+    "isActive": true,
+    "sortOrder": 6,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "count",
+      "kg "
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 10007,
+    "name": "قزل‌آلا",
+    "slug": "trout",
+    "englishName": "Trout",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 10,
+    "isActive": true,
+    "sortOrder": 7,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg "
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 10008,
+    "name": "کپور",
+    "slug": "carp",
+    "englishName": "Carp",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 10,
+    "isActive": true,
+    "sortOrder": 8,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg "
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 10009,
+    "name": "میگو",
+    "slug": "shrimp",
+    "englishName": "Shrimp",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 10,
+    "isActive": true,
+    "sortOrder": 9,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg "
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 11001,
+    "name": "یونجه خشک",
+    "slug": "alfalfa-hay",
+    "englishName": "Alfalfa Hay",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 11,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton",
+      "Pack"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 11002,
+    "name": "سیلوی ذرت",
+    "slug": "corn-silage",
+    "englishName": "Corn Silage",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 11,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "Ton"
+    ],
+    "unit": "ton"
+  },
+  {
+    "id": 11003,
+    "name": "جو دامی",
+    "slug": "barley-feed",
+    "englishName": "Barley Feed",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 11,
+    "isActive": true,
+    "sortOrder": 3,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 11004,
+    "name": "سبوس گندم",
+    "slug": "wheat-bran",
+    "englishName": "Wheat Bran",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 11,
+    "isActive": true,
+    "sortOrder": 4,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 11005,
+    "name": "کنجاله سویا",
+    "slug": "soybean-meal",
+    "englishName": "Soybean Meal",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 11,
+    "isActive": true,
+    "sortOrder": 5,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 11006,
+    "name": "پودر ماهی",
+    "slug": "fish-meal",
+    "englishName": "Fish Meal",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 11,
+    "isActive": true,
+    "sortOrder": 6,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 11007,
+    "name": "کنجاله پنبه‌دانه",
+    "slug": "cottonseed-meal",
+    "englishName": "Cottonseed Meal",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 11,
+    "isActive": true,
+    "sortOrder": 7,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 12001,
+    "name": "بذرها",
+    "slug": "seeds",
+    "englishName": "Seeds",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 12,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "Pack",
+      "kg "
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 12002,
+    "name": "نهال‌ها",
+    "slug": "seedlings",
+    "englishName": "Seedlings",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 12,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "count",
+      "Pack"
+    ],
+    "unit": "count"
+  },
+  {
+    "id": 12003,
+    "name": "کودها",
+    "slug": "fertilizers",
+    "englishName": "Fertilizers",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 12,
+    "isActive": true,
+    "sortOrder": 3,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton",
+      "Pack"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 12004,
+    "name": "آفت‌کش‌ها",
+    "slug": "pesticides",
+    "englishName": "Pesticides",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 12,
+    "isActive": true,
+    "sortOrder": 4,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "Liter",
+      "Pack"
+    ],
+    "unit": "l"
+  },
+  {
+    "id": 12005,
+    "name": "علف‌کش‌ها",
+    "slug": "herbicides",
+    "englishName": "Herbicides",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 12,
+    "isActive": true,
+    "sortOrder": 5,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "Liter",
+      "Pack"
+    ],
+    "unit": "l"
+  },
+  {
+    "id": 12006,
+    "name": "تجهیزات گلخانه",
+    "slug": "greenhouse-supplies",
+    "englishName": "Greenhouse Supplies",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 12,
+    "isActive": true,
+    "sortOrder": 6,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "Pack"
+    ],
+    "unit": "pack"
+  },
+  {
+    "id": 12007,
+    "name": "تجهیزات آبیاری",
+    "slug": "irrigation-equipment",
+    "englishName": "Irrigation Equipment",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 12,
+    "isActive": true,
+    "sortOrder": 7,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "Pack"
+    ],
+    "unit": "pack"
+  },
+  {
+    "id": 12008,
+    "name": "بستر کشت",
+    "slug": "growing-media",
+    "englishName": "Growing Media",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 12,
+    "isActive": true,
+    "sortOrder": 8,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "Pack",
+      "kg "
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 12101,
+    "name": "بذر غلات",
+    "slug": "cereal-seeds",
+    "englishName": "Cereal Seeds",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 12001,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "Pack",
+      "kg "
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 12102,
+    "name": "بذر سبزیجات",
+    "slug": "vegetable-seeds",
+    "englishName": "Vegetable Seeds",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 12001,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "Pack",
+      "kg "
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 12103,
+    "name": "نهال درختان میوه",
+    "slug": "fruit-tree-seedlings",
+    "englishName": "Fruit Tree Seedlings",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 12002,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "count"
+    ],
+    "unit": "count"
+  },
+  {
+    "id": 12104,
+    "name": "نشا سبزی و صیفی",
+    "slug": "vegetable-seedlings",
+    "englishName": "Vegetable Seedlings",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 12002,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "count"
+    ],
+    "unit": "count"
+  },
+  {
+    "id": 12105,
+    "name": "کود اوره",
+    "slug": "urea-fertilizer",
+    "englishName": "Urea Fertilizer",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 12003,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 12106,
+    "name": "کود NPK",
+    "slug": "npk-fertilizer",
+    "englishName": "NPK Fertilizer",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 12003,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "kg ",
+      "Ton"
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 12107,
+    "name": "کوکوپیت",
+    "slug": "cocopeat",
+    "englishName": "Cocopeat",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 12008,
+    "isActive": true,
+    "sortOrder": 1,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "Pack",
+      "kg "
+    ],
+    "unit": "kg"
+  },
+  {
+    "id": 12108,
+    "name": "پرلیت",
+    "slug": "perlite",
+    "englishName": "Perlite",
+    "description": "",
+    "imageUrl": null,
+    "parentId": 12008,
+    "isActive": true,
+    "sortOrder": 2,
+    "isFeatured": false,
+    "icon": null,
+    "validUnits": [
+      "Pack",
+      "kg "
+    ],
+    "unit": "kg"
+  }
+]

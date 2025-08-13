@@ -1,0 +1,54 @@
+[
+
+  {
+    "firstName": "حسین",
+    "lastName": "پوردیان",
+    "firstNameEn": "Pourdian",
+    "lastNameEn": "Pourdian",
+    "username": "hpourdian",
+    "email": "bitnevis@yahoo.com",
+    "password": "12345678",
+    "isActive": true,
+    "isEmailVerified": true,
+    "avatar": "https://example.com/avatars/hasan.jpg",
+    "BusinessName": "فرآورده‌های کشاورزی پارس",
+    "BusinessContactInfo": "09309988776"
+  }
+  ,
+  {
+    "firstName": "کاظم",
+    "lastName": "زارع",
+    "firstNameEn": "Kazem",
+    "lastNameEn": "Zare",
+    "username": "farmer.kazem",
+    "email": "farmer@example.com",
+    "password": "farmer123",
+    "isActive": true,
+    "isEmailVerified": true,
+    "avatar": null
+  },
+  {
+    "firstName": "علی",
+    "lastName": "پالیزوان",
+    "firstNameEn": "ali",
+    "lastNameEn": "palizvan",
+    "username": "ali.palizvan",
+    "email": "farmer2@example.com",
+    "password": "farmer123",
+    "isActive": true,
+    "isEmailVerified": true,
+    "avatar": null
+  },
+  {
+    "firstName": "نیلوفر",
+    "lastName": "خریدار",
+    "firstNameEn": "Niloufar",
+    "lastNameEn": "Customer",
+    "username": "customer.niloufar",
+    "email": "customer@example.com",
+    "password": "customer123",
+    "isActive": true,
+    "isEmailVerified": true,
+    "avatar": null
+  }
+]

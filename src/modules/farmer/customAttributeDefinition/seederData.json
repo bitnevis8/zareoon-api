@@ -1,0 +1,20 @@
+{
+  "data": [
+    { "id": 1, "categorySlug": "seedlings", "name": "سن نهال", "type": "number" },
+    { "id": 2, "categorySlug": "seedlings", "name": "نوع پایه", "type": "text" },
+
+    { "id": 3, "categorySlug": "tree-fruits", "name": "اندازه", "type": "select", "options": ["کوچک", "متوسط", "درشت", "سوپر"] },
+    { "id": 4, "categorySlug": "tree-fruits", "name": "تاریخ برداشت", "type": "date" },
+    { "id": 5, "categorySlug": "tree-fruits", "name": "نوع بسته‌بندی", "type": "select", "options": ["فله", "جعبه", "کارتن", "سینی"] },
+
+    { "id": 6, "categorySlug": "vegetables", "name": "اندازه", "type": "select", "options": ["کوچک", "متوسط", "بزرگ"] },
+    { "id": 7, "categorySlug": "vegetables", "name": "تاریخ برداشت", "type": "date" },
+    { "id": 8, "categorySlug": "vegetables", "name": "نوع بسته‌بندی", "type": "select", "options": ["فله", "کیسه", "جعبه", "سبد"] },
+
+    { "id": 9, "categorySlug": "animal-feed", "name": "نوع بسته‌بندی", "type": "select", "options": ["فله", "کیسه 25kg", "کیسه 50kg", "بیگ‌بگ"] },
+    { "id": 10, "categorySlug": "animal-feed", "name": "درصد رطوبت", "type": "number" },
+    { "id": 11, "categorySlug": "animal-feed", "name": "درصد پروتئین", "type": "number" },
+    { "id": 12, "categorySlug": "animal-feed", "name": "تاریخ برداشت", "type": "date" },
+    { "id": 13, "categorySlug": "animal-feed", "name": "منطقه تولید", "type": "text" }
+  ]
+}

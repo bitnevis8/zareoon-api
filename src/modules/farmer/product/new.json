@@ -1,0 +1,1938 @@
+[
+    {
+      "id": 1,
+      "name": "غلات",
+      "slug": "غلات",
+      "englishName": "Cereals",
+      "description": "",
+      "imageUrl": null,
+      "parentId": null,
+      "isActive": true,
+      "sortOrder": 1,
+      "isFeatured": true,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton"
+      ],
+      "metaTitle": "خرید و فروش غلات",
+      "metaDescription": "بازار آنلاین خرید و فروش غلات به صورت عمده و خرده."
+    },
+    {
+      "id": 2,
+      "name": "حبوبات",
+      "slug": "حبوبات",
+      "englishName": "Pulses",
+      "description": "",
+      "imageUrl": null,
+      "parentId": null,
+      "isActive": true,
+      "sortOrder": 2,
+      "isFeatured": true,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton"
+      ],
+      "metaTitle": "خرید و فروش حبوبات",
+      "metaDescription": "بازار آنلاین خرید و فروش حبوبات به صورت عمده و خرده."
+    },
+    {
+      "id": 3,
+      "name": "میوه‌های درختی",
+      "slug": "میوه‌های-درختی",
+      "englishName": "Tree Fruits",
+      "description": "",
+      "imageUrl": null,
+      "parentId": null,
+      "isActive": true,
+      "sortOrder": 3,
+      "isFeatured": true,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton",
+        "Box",
+        "Crate"
+      ],
+      "metaTitle": "خرید و فروش میوه‌های درختی",
+      "metaDescription": "بازار آنلاین خرید و فروش میوه‌های درختی به صورت عمده و خرده."
+    },
+    {
+      "id": 4,
+      "name": "میوه‌های گرمسیری و نیمه‌گرمسیری",
+      "slug": "میوه‌های-گرمسیری-و-نیمه‌گرمسیری",
+      "englishName": "Tropical & Subtropical Fruits",
+      "description": "",
+      "imageUrl": null,
+      "parentId": null,
+      "isActive": true,
+      "sortOrder": 4,
+      "isFeatured": true,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box",
+        "Crate"
+      ],
+      "metaTitle": "خرید و فروش میوه‌های گرمسیری و نیمه‌گرمسیری",
+      "metaDescription": "بازار آنلاین خرید و فروش میوه‌های گرمسیری و نیمه‌گرمسیری به صورت عمده و خرده."
+    },
+    {
+      "id": 5,
+      "name": "میوه‌های بوته‌ای و توت‌سانان",
+      "slug": "میوه‌های-بوته‌ای-و-توت‌سانان",
+      "englishName": "Bush & Berry Fruits",
+      "description": "",
+      "imageUrl": null,
+      "parentId": null,
+      "isActive": true,
+      "sortOrder": 5,
+      "isFeatured": true,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box",
+        "Crate"
+      ],
+      "metaTitle": "خرید و فروش میوه‌های بوته‌ای و توت‌سانان",
+      "metaDescription": "بازار آنلاین خرید و فروش میوه‌های بوته‌ای و توت‌سانان به صورت عمده و خرده."
+    },
+    {
+      "id": 6,
+      "name": "خشکبار و آجیل",
+      "slug": "خشکبار-و-آجیل",
+      "englishName": "Nuts & Dried Fruits",
+      "description": "",
+      "imageUrl": null,
+      "parentId": null,
+      "isActive": true,
+      "sortOrder": 6,
+      "isFeatured": true,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton",
+        "Pack"
+      ],
+      "metaTitle": "خرید و فروش خشکبار و آجیل",
+      "metaDescription": "بازار آنلاین خرید و فروش خشکبار و آجیل به صورت عمده و خرده."
+    },
+    {
+      "id": 7,
+      "name": "سبزیجات",
+      "slug": "سبزیجات",
+      "englishName": "Vegetables",
+      "description": "",
+      "imageUrl": null,
+      "parentId": null,
+      "isActive": true,
+      "sortOrder": 7,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box",
+        "Bunch",
+        "Crate"
+      ],
+      "metaTitle": "خرید و فروش سبزیجات",
+      "metaDescription": "بازار آنلاین خرید و فروش سبزیجات به صورت عمده و خرده."
+    },
+    {
+      "id": 8,
+      "name": "صیفی‌جات",
+      "slug": "صیفی‌جات",
+      "englishName": "Melons & Fruiting Vegetables",
+      "description": "",
+      "imageUrl": null,
+      "parentId": null,
+      "isActive": true,
+      "sortOrder": 8,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box",
+        "Crate"
+      ],
+      "metaTitle": "خرید و فروش صیفی‌جات",
+      "metaDescription": "بازار آنلاین خرید و فروش صیفی‌جات به صورت عمده و خرده."
+    },
+    {
+      "id": 9,
+      "name": "گیاهان دارویی و صنعتی",
+      "slug": "گیاهان-دارویی-و-صنعتی",
+      "englishName": "Medicinal & Industrial Plants",
+      "description": "",
+      "imageUrl": null,
+      "parentId": null,
+      "isActive": true,
+      "sortOrder": 9,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton",
+        "Bunch"
+      ],
+      "metaTitle": "خرید و فروش گیاهان دارویی و صنعتی",
+      "metaDescription": "بازار آنلاین خرید و فروش گیاهان دارویی و صنعتی به صورت عمده و خرده."
+    },
+    {
+      "id": 10,
+      "name": "دام، طیور و آبزیان",
+      "slug": "دام-طیور-و-آبزیان",
+      "englishName": "Livestock, Poultry & Fisheries",
+      "description": "",
+      "imageUrl": null,
+      "parentId": null,
+      "isActive": true,
+      "sortOrder": 10,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Count",
+        "Crate"
+      ],
+      "metaTitle": "خرید و فروش دام، طیور و آبزیان",
+      "metaDescription": "بازار آنلاین خرید و فروش دام، طیور و آبزیان به صورت عمده و خرده."
+    },
+    {
+      "id": 11,
+      "name": "خوراک دام و طیور",
+      "slug": "خوراک-دام-و-طیور",
+      "englishName": "Animal Feed",
+      "description": "",
+      "imageUrl": null,
+      "parentId": null,
+      "isActive": true,
+      "sortOrder": 11,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton",
+        "Bale"
+      ],
+      "metaTitle": "خرید و فروش خوراک دام و طیور",
+      "metaDescription": "بازار آنلاین خرید و فروش خوراک دام و طیور به صورت عمده و خرده."
+    },
+    {
+      "id": 12,
+      "name": "نهاده‌های کشاورزی",
+      "slug": "نهاده‌های-کشاورزی",
+      "englishName": "Agricultural Inputs",
+      "description": "",
+      "imageUrl": null,
+      "parentId": null,
+      "isActive": true,
+      "sortOrder": 12,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Count",
+        "Kilogram",
+        "Liter"
+      ],
+      "metaTitle": "خرید و فروش نهاده‌های کشاورزی",
+      "metaDescription": "بازار آنلاین خرید و فروش نهاده‌های کشاورزی به صورت عمده و خرده."
+    },
+    {
+      "id": 100,
+      "name": "گندم",
+      "slug": "گندم",
+      "englishName": "Wheat",
+      "description": "محصول استراتژیک گندم - دیم و آبی",
+      "imageUrl": null,
+      "parentId": 1,
+      "isActive": true,
+      "sortOrder": 100,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton"
+      ],
+      "metaTitle": "خرید و فروش گندم",
+      "metaDescription": "خرید و فروش گندم به صورت عمده و خرده."
+    },
+    {
+      "id": 101,
+      "name": "برنج",
+      "slug": "برنج",
+      "englishName": "Rice",
+      "description": "انواع برنج ایرانی و خارجی (طارم، هاشمی، عنبر)",
+      "imageUrl": null,
+      "parentId": 1,
+      "isActive": true,
+      "sortOrder": 101,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton",
+        "Bag"
+      ],
+      "metaTitle": "خرید و فروش برنج",
+      "metaDescription": "خرید و فروش برنج به صورت عمده و خرده."
+    },
+    {
+      "id": 102,
+      "name": "جو",
+      "slug": "جو",
+      "englishName": "Barley",
+      "description": "جو خوراکی و علوفه‌ای",
+      "imageUrl": null,
+      "parentId": 1,
+      "isActive": true,
+      "sortOrder": 102,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton"
+      ],
+      "metaTitle": "خرید و فروش جو",
+      "metaDescription": "خرید و فروش جو به صورت عمده و خرده."
+    },
+    {
+      "id": 103,
+      "name": "ذرت",
+      "slug": "ذرت",
+      "englishName": "Maize / Corn",
+      "description": "ذرت دانه و علوفه‌ای",
+      "imageUrl": null,
+      "parentId": 1,
+      "isActive": true,
+      "sortOrder": 103,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton",
+        "Bag"
+      ],
+      "metaTitle": "خرید و فروش ذرت",
+      "metaDescription": "خرید و فروش ذرت به صورت عمده و خرده."
+    },
+    {
+      "id": 104,
+      "name": "چاودار",
+      "slug": "چاودار",
+      "englishName": "Rye",
+      "description": "چاودار (Rye)",
+      "imageUrl": null,
+      "parentId": 1,
+      "isActive": true,
+      "sortOrder": 104,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton"
+      ],
+      "metaTitle": "خرید و فروش چاودار",
+      "metaDescription": "خرید و فروش چاودار به صورت عمده و خرده."
+    },
+    {
+      "id": 105,
+      "name": "سورگوم",
+      "slug": "سورگوم",
+      "englishName": "Sorghum",
+      "description": "سورگوم (Sorghum)",
+      "imageUrl": null,
+      "parentId": 1,
+      "isActive": true,
+      "sortOrder": 105,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton"
+      ],
+      "metaTitle": "خرید و فروش سورگوم",
+      "metaDescription": "خرید و فروش سورگوم به صورت عمده و خرده."
+    },
+    {
+      "id": 106,
+      "name": "نخود",
+      "slug": "نخود",
+      "englishName": "Chickpea",
+      "description": "نخود (Chickpea)",
+      "imageUrl": null,
+      "parentId": 2,
+      "isActive": true,
+      "sortOrder": 106,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton",
+        "Bag"
+      ],
+      "metaTitle": "خرید و فروش نخود",
+      "metaDescription": "خرید و فروش نخود به صورت عمده و خرده."
+    },
+    {
+      "id": 107,
+      "name": "عدس",
+      "slug": "عدس",
+      "englishName": "Lentil",
+      "description": "عدس (Lentil)",
+      "imageUrl": null,
+      "parentId": 2,
+      "isActive": true,
+      "sortOrder": 107,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton",
+        "Bag"
+      ],
+      "metaTitle": "خرید و فروش عدس",
+      "metaDescription": "خرید و فروش عدس به صورت عمده و خرده."
+    },
+    {
+      "id": 108,
+      "name": "لوبیا چشم بلبلی",
+      "slug": "لوبیا-چشم-بلبلی",
+      "englishName": "Pinto Bean",
+      "description": "لوبیا چشم بلبلی (Pinto Bean)",
+      "imageUrl": null,
+      "parentId": 2,
+      "isActive": true,
+      "sortOrder": 108,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton"
+      ],
+      "metaTitle": "خرید و فروش لوبیا چشم بلبلی",
+      "metaDescription": "خرید و فروش لوبیا چشم بلبلی به صورت عمده و خرده."
+    },
+    {
+      "id": 109,
+      "name": "لوبیا سفید",
+      "slug": "لوبیا-سفید",
+      "englishName": "White Bean",
+      "description": "لوبیا سفید (White Bean)",
+      "imageUrl": null,
+      "parentId": 2,
+      "isActive": true,
+      "sortOrder": 109,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton"
+      ],
+      "metaTitle": "خرید و فروش لوبیا سفید",
+      "metaDescription": "خرید و فروش لوبیا سفید به صورت عمده و خرده."
+    },
+    {
+      "id": 110,
+      "name": "لوبیا قرمز",
+      "slug": "لوبیا-قرمز",
+      "englishName": "Red Kidney Bean",
+      "description": "لوبیا قرمز (Red Kidney Bean)",
+      "imageUrl": null,
+      "parentId": 2,
+      "isActive": true,
+      "sortOrder": 110,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton"
+      ],
+      "metaTitle": "خرید و فروش لوبیا قرمز",
+      "metaDescription": "خرید و فروش لوبیا قرمز به صورت عمده و خرده."
+    },
+    {
+      "id": 111,
+      "name": "ماش",
+      "slug": "ماش",
+      "englishName": "Mung Bean",
+      "description": "ماش (Mung Bean)",
+      "imageUrl": null,
+      "parentId": 2,
+      "isActive": true,
+      "sortOrder": 111,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton"
+      ],
+      "metaTitle": "خرید و فروش ماش",
+      "metaDescription": "خرید و فروش ماش به صورت عمده و خرده."
+    },
+    {
+      "id": 112,
+      "name": "نخود خامه‌ای (Chana)",
+      "slug": "نخود-خامه‌ای-(chana)",
+      "englishName": "Kabuli Chickpea",
+      "description": "نخود خامه‌ای (Chana) (Kabuli Chickpea)",
+      "imageUrl": null,
+      "parentId": 2,
+      "isActive": true,
+      "sortOrder": 112,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton"
+      ],
+      "metaTitle": "خرید و فروش نخود خامه‌ای (Chana)",
+      "metaDescription": "خرید و فروش نخود خامه‌ای (Chana) به صورت عمده و خرده."
+    },
+    {
+      "id": 113,
+      "name": "سیب",
+      "slug": "سیب",
+      "englishName": "Apple",
+      "description": "انواع سیب (لابن، گلستان، رد دلیشز)",
+      "imageUrl": null,
+      "parentId": 3,
+      "isActive": true,
+      "sortOrder": 113,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box",
+        "Crate"
+      ],
+      "metaTitle": "خرید و فروش سیب",
+      "metaDescription": "خرید و فروش سیب به صورت عمده و خرده."
+    },
+    {
+      "id": 114,
+      "name": "سیب سبز",
+      "slug": "سیب-سبز",
+      "englishName": "Green Apple",
+      "description": "سیب سبز (Green Apple)",
+      "imageUrl": null,
+      "parentId": 113,
+      "isActive": true,
+      "sortOrder": 114,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش سیب سبز",
+      "metaDescription": "خرید و فروش سیب سبز به صورت عمده و خرده."
+    },
+    {
+      "id": 115,
+      "name": "سیب قرمز",
+      "slug": "سیب-قرمز",
+      "englishName": "Red Apple",
+      "description": "سیب قرمز (Red Apple)",
+      "imageUrl": null,
+      "parentId": 113,
+      "isActive": true,
+      "sortOrder": 115,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش سیب قرمز",
+      "metaDescription": "خرید و فروش سیب قرمز به صورت عمده و خرده."
+    },
+    {
+      "id": 116,
+      "name": "گلابی",
+      "slug": "گلابی",
+      "englishName": "Pear",
+      "description": "گلابی تازه و صادراتی",
+      "imageUrl": null,
+      "parentId": 3,
+      "isActive": true,
+      "sortOrder": 116,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش گلابی",
+      "metaDescription": "خرید و فروش گلابی به صورت عمده و خرده."
+    },
+    {
+      "id": 117,
+      "name": "زردآلو",
+      "slug": "زردآلو",
+      "englishName": "Apricot",
+      "description": "زردآلوی باغی و صنعتی",
+      "imageUrl": null,
+      "parentId": 3,
+      "isActive": true,
+      "sortOrder": 117,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش زردآلو",
+      "metaDescription": "خرید و فروش زردآلو به صورت عمده و خرده."
+    },
+    {
+      "id": 118,
+      "name": "هلو",
+      "slug": "هلو",
+      "englishName": "Peach",
+      "description": "هلو (Peach)",
+      "imageUrl": null,
+      "parentId": 3,
+      "isActive": true,
+      "sortOrder": 118,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش هلو",
+      "metaDescription": "خرید و فروش هلو به صورت عمده و خرده."
+    },
+    {
+      "id": 119,
+      "name": "آلو",
+      "slug": "آلو",
+      "englishName": "Plum",
+      "description": "آلو (Plum)",
+      "imageUrl": null,
+      "parentId": 3,
+      "isActive": true,
+      "sortOrder": 119,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش آلو",
+      "metaDescription": "خرید و فروش آلو به صورت عمده و خرده."
+    },
+    {
+      "id": 120,
+      "name": "گردو (میوه)",
+      "slug": "گردو-(میوه)",
+      "englishName": "Walnut (in shell)",
+      "description": "گردو (میوه) (Walnut (in shell))",
+      "imageUrl": null,
+      "parentId": 3,
+      "isActive": true,
+      "sortOrder": 120,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش گردو (میوه)",
+      "metaDescription": "خرید و فروش گردو (میوه) به صورت عمده و خرده."
+    },
+    {
+      "id": 121,
+      "name": "آلوچه",
+      "slug": "آلوچه",
+      "englishName": "Sour Plum",
+      "description": "آلوچه (Sour Plum)",
+      "imageUrl": null,
+      "parentId": 3,
+      "isActive": true,
+      "sortOrder": 121,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش آلوچه",
+      "metaDescription": "خرید و فروش آلوچه به صورت عمده و خرده."
+    },
+    {
+      "id": 122,
+      "name": "سیب درختی ارگانیک",
+      "slug": "سیب-درختی-ارگانیک",
+      "englishName": "Organic Apple",
+      "description": "سیب درختی ارگانیک (Organic Apple)",
+      "imageUrl": null,
+      "parentId": 3,
+      "isActive": true,
+      "sortOrder": 122,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش سیب درختی ارگانیک",
+      "metaDescription": "خرید و فروش سیب درختی ارگانیک به صورت عمده و خرده."
+    },
+    {
+      "id": 123,
+      "name": "پرتقال",
+      "slug": "پرتقال",
+      "englishName": "Orange",
+      "description": "پرتقال (Orange)",
+      "imageUrl": null,
+      "parentId": 4,
+      "isActive": true,
+      "sortOrder": 123,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box",
+        "Crate"
+      ],
+      "metaTitle": "خرید و فروش پرتقال",
+      "metaDescription": "خرید و فروش پرتقال به صورت عمده و خرده."
+    },
+    {
+      "id": 124,
+      "name": "انبه",
+      "slug": "انبه",
+      "englishName": "Mango",
+      "description": "انبه (Mango)",
+      "imageUrl": null,
+      "parentId": 4,
+      "isActive": true,
+      "sortOrder": 124,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش انبه",
+      "metaDescription": "خرید و فروش انبه به صورت عمده و خرده."
+    },
+    {
+      "id": 125,
+      "name": "آناناس",
+      "slug": "آناناس",
+      "englishName": "Pineapple",
+      "description": "آناناس (Pineapple)",
+      "imageUrl": null,
+      "parentId": 4,
+      "isActive": true,
+      "sortOrder": 125,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش آناناس",
+      "metaDescription": "خرید و فروش آناناس به صورت عمده و خرده."
+    },
+    {
+      "id": 126,
+      "name": "گریپ فروت",
+      "slug": "گریپ-فروت",
+      "englishName": "Grapefruit",
+      "description": "گریپ فروت (Grapefruit)",
+      "imageUrl": null,
+      "parentId": 4,
+      "isActive": true,
+      "sortOrder": 126,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش گریپ فروت",
+      "metaDescription": "خرید و فروش گریپ فروت به صورت عمده و خرده."
+    },
+    {
+      "id": 127,
+      "name": "موز",
+      "slug": "موز",
+      "englishName": "Banana",
+      "description": "موز (Banana)",
+      "imageUrl": null,
+      "parentId": 4,
+      "isActive": true,
+      "sortOrder": 127,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش موز",
+      "metaDescription": "خرید و فروش موز به صورت عمده و خرده."
+    },
+    {
+      "id": 128,
+      "name": "کیوی",
+      "slug": "کیوی",
+      "englishName": "Kiwi",
+      "description": "کیوی (Kiwi)",
+      "imageUrl": null,
+      "parentId": 4,
+      "isActive": true,
+      "sortOrder": 128,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش کیوی",
+      "metaDescription": "خرید و فروش کیوی به صورت عمده و خرده."
+    },
+    {
+      "id": 129,
+      "name": "توت فرنگی",
+      "slug": "توت-فرنگی",
+      "englishName": "Strawberry",
+      "description": "توت فرنگی (Strawberry)",
+      "imageUrl": null,
+      "parentId": 5,
+      "isActive": true,
+      "sortOrder": 129,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box",
+        "Pack"
+      ],
+      "metaTitle": "خرید و فروش توت فرنگی",
+      "metaDescription": "خرید و فروش توت فرنگی به صورت عمده و خرده."
+    },
+    {
+      "id": 130,
+      "name": "تمشک",
+      "slug": "تمشک",
+      "englishName": "Raspberry",
+      "description": "تمشک (Raspberry)",
+      "imageUrl": null,
+      "parentId": 5,
+      "isActive": true,
+      "sortOrder": 130,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box",
+        "Pack"
+      ],
+      "metaTitle": "خرید و فروش تمشک",
+      "metaDescription": "خرید و فروش تمشک به صورت عمده و خرده."
+    },
+    {
+      "id": 131,
+      "name": "زغال اخته",
+      "slug": "زغال-اخته",
+      "englishName": "Blueberry",
+      "description": "زغال اخته (Blueberry)",
+      "imageUrl": null,
+      "parentId": 5,
+      "isActive": true,
+      "sortOrder": 131,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box",
+        "Pack"
+      ],
+      "metaTitle": "خرید و فروش زغال اخته",
+      "metaDescription": "خرید و فروش زغال اخته به صورت عمده و خرده."
+    },
+    {
+      "id": 132,
+      "name": "انگور",
+      "slug": "انگور",
+      "englishName": "Grapes",
+      "description": "انگور (Grapes)",
+      "imageUrl": null,
+      "parentId": 5,
+      "isActive": true,
+      "sortOrder": 132,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box",
+        "Crate"
+      ],
+      "metaTitle": "خرید و فروش انگور",
+      "metaDescription": "خرید و فروش انگور به صورت عمده و خرده."
+    },
+    {
+      "id": 133,
+      "name": "کیوی (بوته‌ای)",
+      "slug": "کیوی-(بوته‌ای)",
+      "englishName": "Bush Kiwi",
+      "description": "کیوی (بوته‌ای) (Bush Kiwi)",
+      "imageUrl": null,
+      "parentId": 5,
+      "isActive": true,
+      "sortOrder": 133,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش کیوی (بوته‌ای)",
+      "metaDescription": "خرید و فروش کیوی (بوته‌ای) به صورت عمده و خرده."
+    },
+    {
+      "id": 134,
+      "name": "پسته",
+      "slug": "پسته",
+      "englishName": "Pistachio",
+      "description": "پسته خام، شور و کلخنگی",
+      "imageUrl": null,
+      "parentId": 6,
+      "isActive": true,
+      "sortOrder": 134,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Pack",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش پسته",
+      "metaDescription": "خرید و فروش پسته به صورت عمده و خرده."
+    },
+    {
+      "id": 135,
+      "name": "گردو",
+      "slug": "گردو",
+      "englishName": "Walnut",
+      "description": "گردو (Walnut)",
+      "imageUrl": null,
+      "parentId": 6,
+      "isActive": true,
+      "sortOrder": 135,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Pack"
+      ],
+      "metaTitle": "خرید و فروش گردو",
+      "metaDescription": "خرید و فروش گردو به صورت عمده و خرده."
+    },
+    {
+      "id": 136,
+      "name": "بادام",
+      "slug": "بادام",
+      "englishName": "Almond",
+      "description": "بادام (Almond)",
+      "imageUrl": null,
+      "parentId": 6,
+      "isActive": true,
+      "sortOrder": 136,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Pack"
+      ],
+      "metaTitle": "خرید و فروش بادام",
+      "metaDescription": "خرید و فروش بادام به صورت عمده و خرده."
+    },
+    {
+      "id": 137,
+      "name": "کشمش",
+      "slug": "کشمش",
+      "englishName": "Raisin",
+      "description": "کشمش (Raisin)",
+      "imageUrl": null,
+      "parentId": 6,
+      "isActive": true,
+      "sortOrder": 137,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش کشمش",
+      "metaDescription": "خرید و فروش کشمش به صورت عمده و خرده."
+    },
+    {
+      "id": 138,
+      "name": "خرما",
+      "slug": "خرما",
+      "englishName": "Dates",
+      "description": "انواع خرما (مجول، پیارم، زاهدی)",
+      "imageUrl": null,
+      "parentId": 6,
+      "isActive": true,
+      "sortOrder": 138,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box",
+        "Crate"
+      ],
+      "metaTitle": "خرید و فروش خرما",
+      "metaDescription": "خرید و فروش خرما به صورت عمده و خرده."
+    },
+    {
+      "id": 139,
+      "name": "آلو خشک",
+      "slug": "آلو-خشک",
+      "englishName": "Dried Plum / Prune",
+      "description": "آلو خشک (Dried Plum / Prune)",
+      "imageUrl": null,
+      "parentId": 6,
+      "isActive": true,
+      "sortOrder": 139,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Pack"
+      ],
+      "metaTitle": "خرید و فروش آلو خشک",
+      "metaDescription": "خرید و فروش آلو خشک به صورت عمده و خرده."
+    },
+    {
+      "id": 140,
+      "name": "کاهو",
+      "slug": "کاهو",
+      "englishName": "Lettuce",
+      "description": "کاهو (Lettuce)",
+      "imageUrl": null,
+      "parentId": 7,
+      "isActive": true,
+      "sortOrder": 140,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Bunch",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش کاهو",
+      "metaDescription": "خرید و فروش کاهو به صورت عمده و خرده."
+    },
+    {
+      "id": 141,
+      "name": "اسفناج",
+      "slug": "اسفناج",
+      "englishName": "Spinach",
+      "description": "اسفناج (Spinach)",
+      "imageUrl": null,
+      "parentId": 7,
+      "isActive": true,
+      "sortOrder": 141,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Bunch",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش اسفناج",
+      "metaDescription": "خرید و فروش اسفناج به صورت عمده و خرده."
+    },
+    {
+      "id": 142,
+      "name": "ریحان",
+      "slug": "ریحان",
+      "englishName": "Basil",
+      "description": "ریحان (Basil)",
+      "imageUrl": null,
+      "parentId": 7,
+      "isActive": true,
+      "sortOrder": 142,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Bunch"
+      ],
+      "metaTitle": "خرید و فروش ریحان",
+      "metaDescription": "خرید و فروش ریحان به صورت عمده و خرده."
+    },
+    {
+      "id": 143,
+      "name": "گشنیز",
+      "slug": "گشنیز",
+      "englishName": "Coriander / Cilantro",
+      "description": "گشنیز (Coriander / Cilantro)",
+      "imageUrl": null,
+      "parentId": 7,
+      "isActive": true,
+      "sortOrder": 143,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Bunch"
+      ],
+      "metaTitle": "خرید و فروش گشنیز",
+      "metaDescription": "خرید و فروش گشنیز به صورت عمده و خرده."
+    },
+    {
+      "id": 144,
+      "name": "پیازچه",
+      "slug": "پیازچه",
+      "englishName": "Spring Onion",
+      "description": "پیازچه (Spring Onion)",
+      "imageUrl": null,
+      "parentId": 7,
+      "isActive": true,
+      "sortOrder": 144,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Bunch"
+      ],
+      "metaTitle": "خرید و فروش پیازچه",
+      "metaDescription": "خرید و فروش پیازچه به صورت عمده و خرده."
+    },
+    {
+      "id": 145,
+      "name": "تره",
+      "slug": "تره",
+      "englishName": "Chives",
+      "description": "تره (Chives)",
+      "imageUrl": null,
+      "parentId": 7,
+      "isActive": true,
+      "sortOrder": 145,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Bunch"
+      ],
+      "metaTitle": "خرید و فروش تره",
+      "metaDescription": "خرید و فروش تره به صورت عمده و خرده."
+    },
+    {
+      "id": 146,
+      "name": "کرفس",
+      "slug": "کرفس",
+      "englishName": "Celery",
+      "description": "کرفس (Celery)",
+      "imageUrl": null,
+      "parentId": 7,
+      "isActive": true,
+      "sortOrder": 146,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Bunch",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش کرفس",
+      "metaDescription": "خرید و فروش کرفس به صورت عمده و خرده."
+    },
+    {
+      "id": 147,
+      "name": "هویج",
+      "slug": "هویج",
+      "englishName": "Carrot",
+      "description": "هویج (Carrot)",
+      "imageUrl": null,
+      "parentId": 7,
+      "isActive": true,
+      "sortOrder": 147,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box",
+        "Crate"
+      ],
+      "metaTitle": "خرید و فروش هویج",
+      "metaDescription": "خرید و فروش هویج به صورت عمده و خرده."
+    },
+    {
+      "id": 148,
+      "name": "چغندر (لبو)",
+      "slug": "چغندر-(لبو)",
+      "englishName": "Beetroot",
+      "description": "چغندر (لبو) (Beetroot)",
+      "imageUrl": null,
+      "parentId": 7,
+      "isActive": true,
+      "sortOrder": 148,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش چغندر (لبو)",
+      "metaDescription": "خرید و فروش چغندر (لبو) به صورت عمده و خرده."
+    },
+    {
+      "id": 149,
+      "name": "سیب زمینی",
+      "slug": "سیب-زمینی",
+      "englishName": "Potato",
+      "description": "سیب زمینی (Potato)",
+      "imageUrl": null,
+      "parentId": 7,
+      "isActive": true,
+      "sortOrder": 149,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton",
+        "Bag"
+      ],
+      "metaTitle": "خرید و فروش سیب زمینی",
+      "metaDescription": "خرید و فروش سیب زمینی به صورت عمده و خرده."
+    },
+    {
+      "id": 150,
+      "name": "گوجه فرنگی",
+      "slug": "گوجه-فرنگی",
+      "englishName": "Tomato",
+      "description": "گوجه فرنگی (Tomato)",
+      "imageUrl": null,
+      "parentId": 8,
+      "isActive": true,
+      "sortOrder": 150,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box",
+        "Crate"
+      ],
+      "metaTitle": "خرید و فروش گوجه فرنگی",
+      "metaDescription": "خرید و فروش گوجه فرنگی به صورت عمده و خرده."
+    },
+    {
+      "id": 151,
+      "name": "خیار",
+      "slug": "خیار",
+      "englishName": "Cucumber",
+      "description": "خیار (Cucumber)",
+      "imageUrl": null,
+      "parentId": 8,
+      "isActive": true,
+      "sortOrder": 151,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش خیار",
+      "metaDescription": "خرید و فروش خیار به صورت عمده و خرده."
+    },
+    {
+      "id": 152,
+      "name": "بادمجان",
+      "slug": "بادمجان",
+      "englishName": "Eggplant",
+      "description": "بادمجان (Eggplant)",
+      "imageUrl": null,
+      "parentId": 8,
+      "isActive": true,
+      "sortOrder": 152,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش بادمجان",
+      "metaDescription": "خرید و فروش بادمجان به صورت عمده و خرده."
+    },
+    {
+      "id": 153,
+      "name": "فلفل دلمه‌ای",
+      "slug": "فلفل-دلمه‌ای",
+      "englishName": "Bell Pepper",
+      "description": "فلفل دلمه‌ای (Bell Pepper)",
+      "imageUrl": null,
+      "parentId": 8,
+      "isActive": true,
+      "sortOrder": 153,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش فلفل دلمه‌ای",
+      "metaDescription": "خرید و فروش فلفل دلمه‌ای به صورت عمده و خرده."
+    },
+    {
+      "id": 154,
+      "name": "کدو",
+      "slug": "کدو",
+      "englishName": "Squash / Zucchini",
+      "description": "کدو (Squash / Zucchini)",
+      "imageUrl": null,
+      "parentId": 8,
+      "isActive": true,
+      "sortOrder": 154,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش کدو",
+      "metaDescription": "خرید و فروش کدو به صورت عمده و خرده."
+    },
+    {
+      "id": 155,
+      "name": "طالبی",
+      "slug": "طالبی",
+      "englishName": "Melon",
+      "description": "طالبی (Melon)",
+      "imageUrl": null,
+      "parentId": 8,
+      "isActive": true,
+      "sortOrder": 155,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Crate"
+      ],
+      "metaTitle": "خرید و فروش طالبی",
+      "metaDescription": "خرید و فروش طالبی به صورت عمده و خرده."
+    },
+    {
+      "id": 156,
+      "name": "هندوانه",
+      "slug": "هندوانه",
+      "englishName": "Watermelon",
+      "description": "هندوانه (Watermelon)",
+      "imageUrl": null,
+      "parentId": 8,
+      "isActive": true,
+      "sortOrder": 156,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Crate"
+      ],
+      "metaTitle": "خرید و فروش هندوانه",
+      "metaDescription": "خرید و فروش هندوانه به صورت عمده و خرده."
+    },
+    {
+      "id": 157,
+      "name": "زعفران",
+      "slug": "زعفران",
+      "englishName": "Saffron",
+      "description": "محصول با ارزش افزوده بالا",
+      "imageUrl": null,
+      "parentId": 9,
+      "isActive": true,
+      "sortOrder": 157,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Gram",
+        "Kilogram",
+        "Pack"
+      ],
+      "metaTitle": "خرید و فروش زعفران",
+      "metaDescription": "خرید و فروش زعفران به صورت عمده و خرده."
+    },
+    {
+      "id": 158,
+      "name": "گل محمدی",
+      "slug": "گل-محمدی",
+      "englishName": "Damask Rose",
+      "description": "برای گلاب و عطر",
+      "imageUrl": null,
+      "parentId": 9,
+      "isActive": true,
+      "sortOrder": 158,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Bunch"
+      ],
+      "metaTitle": "خرید و فروش گل محمدی",
+      "metaDescription": "خرید و فروش گل محمدی به صورت عمده و خرده."
+    },
+    {
+      "id": 159,
+      "name": "آویشن",
+      "slug": "آویشن",
+      "englishName": "Thyme",
+      "description": "آویشن (Thyme)",
+      "imageUrl": null,
+      "parentId": 9,
+      "isActive": true,
+      "sortOrder": 159,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Bunch"
+      ],
+      "metaTitle": "خرید و فروش آویشن",
+      "metaDescription": "خرید و فروش آویشن به صورت عمده و خرده."
+    },
+    {
+      "id": 160,
+      "name": "زیره",
+      "slug": "زیره",
+      "englishName": "Cumin",
+      "description": "زیره (Cumin)",
+      "imageUrl": null,
+      "parentId": 9,
+      "isActive": true,
+      "sortOrder": 160,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Pack"
+      ],
+      "metaTitle": "خرید و فروش زیره",
+      "metaDescription": "خرید و فروش زیره به صورت عمده و خرده."
+    },
+    {
+      "id": 161,
+      "name": "بابونه",
+      "slug": "بابونه",
+      "englishName": "Chamomile",
+      "description": "بابونه (Chamomile)",
+      "imageUrl": null,
+      "parentId": 9,
+      "isActive": true,
+      "sortOrder": 161,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Pack"
+      ],
+      "metaTitle": "خرید و فروش بابونه",
+      "metaDescription": "خرید و فروش بابونه به صورت عمده و خرده."
+    },
+    {
+      "id": 162,
+      "name": "گوسفند (زنده)",
+      "slug": "گوسفند-(زنده)",
+      "englishName": "Sheep (Live)",
+      "description": "دام زنده برای فروش",
+      "imageUrl": null,
+      "parentId": 10,
+      "isActive": true,
+      "sortOrder": 162,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Count",
+        "Kilogram"
+      ],
+      "metaTitle": "خرید و فروش گوسفند (زنده)",
+      "metaDescription": "خرید و فروش گوسفند (زنده) به صورت عمده و خرده."
+    },
+    {
+      "id": 163,
+      "name": "گاو (زنده)",
+      "slug": "گاو-(زنده)",
+      "englishName": "Cattle (Live)",
+      "description": "گاو (زنده) (Cattle (Live))",
+      "imageUrl": null,
+      "parentId": 10,
+      "isActive": true,
+      "sortOrder": 163,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Count",
+        "Kilogram"
+      ],
+      "metaTitle": "خرید و فروش گاو (زنده)",
+      "metaDescription": "خرید و فروش گاو (زنده) به صورت عمده و خرده."
+    },
+    {
+      "id": 164,
+      "name": "مرغ (زنده)",
+      "slug": "مرغ-(زنده)",
+      "englishName": "Chicken (Live)",
+      "description": "مرغ (زنده) (Chicken (Live))",
+      "imageUrl": null,
+      "parentId": 10,
+      "isActive": true,
+      "sortOrder": 164,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Count",
+        "Kilogram"
+      ],
+      "metaTitle": "خرید و فروش مرغ (زنده)",
+      "metaDescription": "خرید و فروش مرغ (زنده) به صورت عمده و خرده."
+    },
+    {
+      "id": 165,
+      "name": "تخم مرغ",
+      "slug": "تخم-مرغ",
+      "englishName": "Eggs",
+      "description": "تخم مرغ (Eggs)",
+      "imageUrl": null,
+      "parentId": 10,
+      "isActive": true,
+      "sortOrder": 165,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Count",
+        "Dozen",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش تخم مرغ",
+      "metaDescription": "خرید و فروش تخم مرغ به صورت عمده و خرده."
+    },
+    {
+      "id": 166,
+      "name": "ماهی (پرورشی)",
+      "slug": "ماهی-(پرورشی)",
+      "englishName": "Fish (Farmed)",
+      "description": "ماهی (پرورشی) (Fish (Farmed))",
+      "imageUrl": null,
+      "parentId": 10,
+      "isActive": true,
+      "sortOrder": 166,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Crate"
+      ],
+      "metaTitle": "خرید و فروش ماهی (پرورشی)",
+      "metaDescription": "خرید و فروش ماهی (پرورشی) به صورت عمده و خرده."
+    },
+    {
+      "id": 167,
+      "name": "عسل",
+      "slug": "عسل",
+      "englishName": "Honey",
+      "description": "عسل (Honey)",
+      "imageUrl": null,
+      "parentId": 10,
+      "isActive": true,
+      "sortOrder": 167,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Jar",
+        "Pack"
+      ],
+      "metaTitle": "خرید و فروش عسل",
+      "metaDescription": "خرید و فروش عسل به صورت عمده و خرده."
+    },
+    {
+      "id": 168,
+      "name": "یونجه (خشک)",
+      "slug": "یونجه-(خشک)",
+      "englishName": "Alfalfa (Hay)",
+      "description": "یونجه (خشک) (Alfalfa (Hay))",
+      "imageUrl": null,
+      "parentId": 11,
+      "isActive": true,
+      "sortOrder": 168,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Bale",
+        "Kilogram",
+        "Ton"
+      ],
+      "metaTitle": "خرید و فروش یونجه (خشک)",
+      "metaDescription": "خرید و فروش یونجه (خشک) به صورت عمده و خرده."
+    },
+    {
+      "id": 169,
+      "name": "کنجاله سویا",
+      "slug": "کنجاله-سویا",
+      "englishName": "Soybean Meal",
+      "description": "کنجاله سویا (Soybean Meal)",
+      "imageUrl": null,
+      "parentId": 11,
+      "isActive": true,
+      "sortOrder": 169,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton",
+        "Bag"
+      ],
+      "metaTitle": "خرید و فروش کنجاله سویا",
+      "metaDescription": "خرید و فروش کنجاله سویا به صورت عمده و خرده."
+    },
+    {
+      "id": 170,
+      "name": "ذرت علوفه‌ای (خوراکی)",
+      "slug": "ذرت-علوفه‌ای-(خوراکی)",
+      "englishName": "Fodder Maize",
+      "description": "ذرت علوفه‌ای (خوراکی) (Fodder Maize)",
+      "imageUrl": null,
+      "parentId": 11,
+      "isActive": true,
+      "sortOrder": 170,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton"
+      ],
+      "metaTitle": "خرید و فروش ذرت علوفه‌ای (خوراکی)",
+      "metaDescription": "خرید و فروش ذرت علوفه‌ای (خوراکی) به صورت عمده و خرده."
+    },
+    {
+      "id": 171,
+      "name": "پودر ماهی (خوراک دام)",
+      "slug": "پودر-ماهی-(خوراک-دام)",
+      "englishName": "Fish Meal",
+      "description": "پودر ماهی (خوراک دام) (Fish Meal)",
+      "imageUrl": null,
+      "parentId": 11,
+      "isActive": true,
+      "sortOrder": 171,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Bag"
+      ],
+      "metaTitle": "خرید و فروش پودر ماهی (خوراک دام)",
+      "metaDescription": "خرید و فروش پودر ماهی (خوراک دام) به صورت عمده و خرده."
+    },
+    {
+      "id": 172,
+      "name": "نهال سیب",
+      "slug": "نهال-سیب",
+      "englishName": "Apple Sapling",
+      "description": "نهال شناسنامه‌دار سیب",
+      "imageUrl": null,
+      "parentId": 12,
+      "isActive": true,
+      "sortOrder": 172,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Count",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش نهال سیب",
+      "metaDescription": "خرید و فروش نهال سیب به صورت عمده و خرده."
+    },
+    {
+      "id": 173,
+      "name": "نهال گردو",
+      "slug": "نهال-گردو",
+      "englishName": "Walnut Sapling",
+      "description": "نهال گردو (Walnut Sapling)",
+      "imageUrl": null,
+      "parentId": 12,
+      "isActive": true,
+      "sortOrder": 173,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Count",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش نهال گردو",
+      "metaDescription": "خرید و فروش نهال گردو به صورت عمده و خرده."
+    },
+    {
+      "id": 174,
+      "name": "بذر گندم",
+      "slug": "بذر-گندم",
+      "englishName": "Wheat Seed",
+      "description": "بذر گندم (Wheat Seed)",
+      "imageUrl": null,
+      "parentId": 12,
+      "isActive": true,
+      "sortOrder": 174,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Pack"
+      ],
+      "metaTitle": "خرید و فروش بذر گندم",
+      "metaDescription": "خرید و فروش بذر گندم به صورت عمده و خرده."
+    },
+    {
+      "id": 175,
+      "name": "بذر ذرت",
+      "slug": "بذر-ذرت",
+      "englishName": "Maize Seed",
+      "description": "بذر ذرت (Maize Seed)",
+      "imageUrl": null,
+      "parentId": 12,
+      "isActive": true,
+      "sortOrder": 175,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Pack"
+      ],
+      "metaTitle": "خرید و فروش بذر ذرت",
+      "metaDescription": "خرید و فروش بذر ذرت به صورت عمده و خرده."
+    },
+    {
+      "id": 176,
+      "name": "کود شیمیایی (NPK)",
+      "slug": "کود-شیمیایی-(npk)",
+      "englishName": "Chemical Fertilizer (NPK)",
+      "description": "کود شیمیایی (NPK) (Chemical Fertilizer (NPK))",
+      "imageUrl": null,
+      "parentId": 12,
+      "isActive": true,
+      "sortOrder": 176,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Bag",
+        "Ton"
+      ],
+      "metaTitle": "خرید و فروش کود شیمیایی (NPK)",
+      "metaDescription": "خرید و فروش کود شیمیایی (NPK) به صورت عمده و خرده."
+    },
+    {
+      "id": 177,
+      "name": "کود دامی",
+      "slug": "کود-دامی",
+      "englishName": "Organic Manure",
+      "description": "کود دامی (Organic Manure)",
+      "imageUrl": null,
+      "parentId": 12,
+      "isActive": true,
+      "sortOrder": 177,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Ton",
+        "Bag"
+      ],
+      "metaTitle": "خرید و فروش کود دامی",
+      "metaDescription": "خرید و فروش کود دامی به صورت عمده و خرده."
+    },
+    {
+      "id": 178,
+      "name": "حشره‌کش (سموم)",
+      "slug": "حشره‌کش-(سموم)",
+      "englishName": "Insecticide / Pesticide",
+      "description": "حشره‌کش (سموم) (Insecticide / Pesticide)",
+      "imageUrl": null,
+      "parentId": 12,
+      "isActive": true,
+      "sortOrder": 178,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Liter",
+        "Pack"
+      ],
+      "metaTitle": "خرید و فروش حشره‌کش (سموم)",
+      "metaDescription": "خرید و فروش حشره‌کش (سموم) به صورت عمده و خرده."
+    },
+    {
+      "id": 179,
+      "name": "تهیه ادوات کشاورزی کوچک",
+      "slug": "تهیه-ادوات-کشاورزی-کوچک",
+      "englishName": "Small Farm Tools",
+      "description": "تهیه ادوات کشاورزی کوچک (Small Farm Tools)",
+      "imageUrl": null,
+      "parentId": 12,
+      "isActive": true,
+      "sortOrder": 179,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Count"
+      ],
+      "metaTitle": "خرید و فروش تهیه ادوات کشاورزی کوچک",
+      "metaDescription": "خرید و فروش تهیه ادوات کشاورزی کوچک به صورت عمده و خرده."
+    },
+    {
+      "id": 180,
+      "name": "برنج طارم",
+      "slug": "برنج-طارم",
+      "englishName": "Tarom Rice",
+      "description": "برنج طارم (Tarom Rice)",
+      "imageUrl": null,
+      "parentId": 101,
+      "isActive": true,
+      "sortOrder": 180,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Bag"
+      ],
+      "metaTitle": "خرید و فروش برنج طارم",
+      "metaDescription": "خرید و فروش برنج طارم به صورت عمده و خرده."
+    },
+    {
+      "id": 181,
+      "name": "برنج هاشمی",
+      "slug": "برنج-هاشمی",
+      "englishName": "Hashemi Rice",
+      "description": "برنج هاشمی (Hashemi Rice)",
+      "imageUrl": null,
+      "parentId": 101,
+      "isActive": true,
+      "sortOrder": 181,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Bag"
+      ],
+      "metaTitle": "خرید و فروش برنج هاشمی",
+      "metaDescription": "خرید و فروش برنج هاشمی به صورت عمده و خرده."
+    },
+    {
+      "id": 182,
+      "name": "برنج صدری",
+      "slug": "برنج-صدری",
+      "englishName": "Sadri Rice",
+      "description": "برنج صدری (Sadri Rice)",
+      "imageUrl": null,
+      "parentId": 101,
+      "isActive": true,
+      "sortOrder": 182,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Bag"
+      ],
+      "metaTitle": "خرید و فروش برنج صدری",
+      "metaDescription": "خرید و فروش برنج صدری به صورت عمده و خرده."
+    },
+    {
+      "id": 183,
+      "name": "انگور سفید",
+      "slug": "انگور-سفید",
+      "englishName": "White Grapes",
+      "description": "انگور سفید (White Grapes)",
+      "imageUrl": null,
+      "parentId": 132,
+      "isActive": true,
+      "sortOrder": 183,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش انگور سفید",
+      "metaDescription": "خرید و فروش انگور سفید به صورت عمده و خرده."
+    },
+    {
+      "id": 184,
+      "name": "انگور قرمز",
+      "slug": "انگور-قرمز",
+      "englishName": "Red Grapes",
+      "description": "انگور قرمز (Red Grapes)",
+      "imageUrl": null,
+      "parentId": 132,
+      "isActive": true,
+      "sortOrder": 184,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش انگور قرمز",
+      "metaDescription": "خرید و فروش انگور قرمز به صورت عمده و خرده."
+    },
+    {
+      "id": 185,
+      "name": "انگور انگشتی",
+      "slug": "انگور-انگشتی",
+      "englishName": "Table Grapes",
+      "description": "انگور انگشتی (Table Grapes)",
+      "imageUrl": null,
+      "parentId": 132,
+      "isActive": true,
+      "sortOrder": 185,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Box"
+      ],
+      "metaTitle": "خرید و فروش انگور انگشتی",
+      "metaDescription": "خرید و فروش انگور انگشتی به صورت عمده و خرده."
+    },
+    {
+      "id": 186,
+      "name": "سیب زمینی نشا",
+      "slug": "سیب-زمینی-نشا",
+      "englishName": "Seed Potato",
+      "description": "سیب زمینی نشا (Seed Potato)",
+      "imageUrl": null,
+      "parentId": 149,
+      "isActive": true,
+      "sortOrder": 186,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Bag"
+      ],
+      "metaTitle": "خرید و فروش سیب زمینی نشا",
+      "metaDescription": "خرید و فروش سیب زمینی نشا به صورت عمده و خرده."
+    },
+    {
+      "id": 187,
+      "name": "سیب زمینی صادراتی",
+      "slug": "سیب-زمینی-صادراتی",
+      "englishName": "Export Potato",
+      "description": "سیب زمینی صادراتی (Export Potato)",
+      "imageUrl": null,
+      "parentId": 149,
+      "isActive": true,
+      "sortOrder": 187,
+      "isFeatured": false,
+      "icon": null,
+      "validUnits": [
+        "Kilogram",
+        "Crate"
+      ],
+      "metaTitle": "خرید و فروش سیب زمینی صادراتی",
+      "metaDescription": "خرید و فروش سیب زمینی صادراتی به صورت عمده و خرده."
+    }
+  ]

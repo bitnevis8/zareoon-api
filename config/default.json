@@ -1,0 +1,42 @@
+{
+  "SMS": {
+    "API_KEY": "",
+    "TEMPLATE_ID": "",
+    "LINE_NUMBER": ""
+  },
+  "UPLOAD": {
+    "TEMP_PATH": "tmp/uploads",
+    "DOWNLOAD_HOST": "https://dl.zareoon.ir",
+    "MAX_FILE_SIZE": 5242880,
+    "ALLOWED_MIMES": [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ],
+    "FTP": {
+      "host": "dl.zareoon.ir",
+      "port": 21,
+      "user": "pz20435",
+      "password": "uhSUUsc9",
+      "secure": false,
+      "basePath": "/public_html"
+    },
+    "PATHS": {
+      "profile": "profiles",
+      "property": "properties",
+      "document": "documents",
+      "resume": "resumes",
+      "default": "others"
+    }
+  },
+  "PORT": 3000,
+  "DB_HOST": "localhost",
+  "DB_USER": "root",
+  "DB_PASS": "",
+  "DB_NAME": "farmer",
+  "JWT_SECRET": "your-secret-key",
+  "FRONTEND_URL": "http://localhost:3000"
+}
