@@ -15,20 +15,54 @@ class UserController extends BaseController {
   async getAll(req, res) {
     try {
       console.log("Starting getAll method...");
-      const { sortBy, sortOrder } = req.query; // Get sortBy and sortOrder from query
+      const { sortBy, sortOrder, q, role, isActive, isEmailVerified, isMobileVerified } = req.query;
+      
+      // ساخت where clause برای جستجو
+      const whereClause = {};
+      if (q) {
+        whereClause[Op.or] = [
+          { firstName: { [Op.like]: `%${q}%` } },
+          { lastName: { [Op.like]: `%${q}%` } },
+          { email: { [Op.like]: `%${q}%` } },
+          { mobile: { [Op.like]: `%${q}%` } },
+          { username: { [Op.like]: `%${q}%` } },
+        ];
+      }
+
+      // اضافه کردن فیلترها
+      if (isActive !== undefined && isActive !== '') {
+        whereClause.isActive = isActive === 'true';
+      }
+      if (isEmailVerified !== undefined && isEmailVerified !== '') {
+        whereClause.isEmailVerified = isEmailVerified === 'true';
+      }
+      if (isMobileVerified !== undefined && isMobileVerified !== '') {
+        whereClause.isMobileVerified = isMobileVerified === 'true';
+      }
+
+      // ساخت include برای فیلتر نقش
+      const includeOptions = [{
+        model: Role,
+        as: "userRoles"
+      }];
+
+      if (role) {
+        includeOptions[0].where = { name: role };
+        includeOptions[0].required = true;
+      }
+
+      // ساخت order
       const order = [];
-      const allowedSortColumns = ["firstName", "lastName", "email", "mobile", "username"];
+      const allowedSortColumns = ["id", "firstName", "lastName", "email", "mobile", "username", "createdAt"];
 
       if (sortBy && allowedSortColumns.includes(sortBy)) {
         order.push([sortBy, sortOrder && sortOrder.toUpperCase() === "DESC" ? "DESC" : "ASC"]);
       }
 
       const users = await User.findAll({
-        include: [{
-          model: Role,
-          as: "userRoles"
-        }],
-        order: order.length > 0 ? order : [['createdAt', 'DESC']] // Default sort by createdAt DESC
+        where: whereClause,
+        include: includeOptions,
+        order: order.length > 0 ? order : [['id', 'ASC']] // Default sort by id ASC
       });
       console.log("✅ Users found successfully");
       return this.response(res, 200, true, "لیست کاربران دریافت شد.", users);
@@ -254,7 +288,7 @@ class UserController extends BaseController {
       }
 
       const order = [];
-      const allowedSortColumns = ["firstName", "lastName", "email", "mobile", "username"];
+      const allowedSortColumns = ["id", "firstName", "lastName", "email", "mobile", "username", "createdAt"];
 
       if (sortBy && allowedSortColumns.includes(sortBy)) {
         order.push([sortBy, sortOrder && sortOrder.toUpperCase() === "DESC" ? "DESC" : "ASC"]);

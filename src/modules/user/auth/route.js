@@ -13,5 +13,6 @@ router.post("/verify/mobile", authController.verifyMobileCode); // تأیید ک
 router.post("/login", authController.login); // لاگین کاربر
 router.get("/me", authController.getUserData);
 router.post("/logout", authController.logout); // مسیر خروج
+router.post("/clear-sessions", authController.clearAllSessions); // پاک کردن تمام sessions
 
 module.exports = router;

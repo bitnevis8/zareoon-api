@@ -44,6 +44,40 @@ class AuthController extends BaseController {
     }
   }
 
+  // پاک کردن تمام sessions (برای حل مشکل JWT)
+  async clearAllSessions(req, res) {
+    try {
+      const isProduction = process.env.NODE_ENV === "production";
+      
+      // پاک کردن تمام cookies مربوط به احراز هویت
+      res.clearCookie("token", {
+        ...getCookieConfig(isProduction),
+        maxAge: 0
+      });
+      
+      res.clearCookie("token", {
+        httpOnly: true,
+        secure: false,
+        maxAge: 0,
+        path: "/",
+        domain: "localhost"
+      });
+      
+      res.clearCookie("token", {
+        httpOnly: true,
+        secure: false,
+        maxAge: 0,
+        path: "/"
+      });
+      
+      console.log("✅ All sessions cleared successfully");
+      return this.response(res, 200, true, "تمام sessions پاک شد. لطفاً دوباره وارد شوید.");
+    } catch (error) {
+      console.error("❌ Clear sessions failed:", error.message);
+      return this.response(res, 500, false, "خطای داخلی سرور");
+    }
+  }
+
   //----------------------------------------------------------------------------------
   async getUserData(req, res) {
     try {
@@ -53,7 +87,7 @@ class AuthController extends BaseController {
       }
 
       // ✅ بررسی صحت توکن
-      const secretKey = config.get("JWT.KEY");
+      const secretKey = config.get("JWT_SECRET");
 
       const encoder = new TextEncoder();
       const { payload } = await jwtVerify(token, encoder.encode(secretKey));
@@ -151,7 +185,7 @@ class AuthController extends BaseController {
       console.log("✅ Email verification sent to:", value.email);
 
       // ✅ تولید JWT و ست کردن کوکی httpOnly
-      const secretKey = config.get("JWT.KEY");
+      const secretKey = config.get("JWT_SECRET");
       const encoder = new TextEncoder();
       const token = await new SignJWT({
         userId: newUser.id,
@@ -286,7 +320,7 @@ class AuthController extends BaseController {
       }
 
       // ✅ تولید JWT
-      const secretKey = config.get("JWT.KEY");
+      const secretKey = config.get("JWT_SECRET");
       const encoder = new TextEncoder();
       const token = await new SignJWT({ userMobile: newUser.mobile })
         .setProtectedHeader({ alg: "HS256" })
@@ -386,7 +420,7 @@ class AuthController extends BaseController {
       await user.save();
 
       // بعد از تأیید موفق ایمیل، توکن صادر می‌شود
-      const secretKey = config.get("JWT.KEY");
+      const secretKey = config.get("JWT_SECRET");
       const encoder = new TextEncoder();
       const token = await new SignJWT({ 
         userId: user.id,
@@ -568,7 +602,7 @@ class AuthController extends BaseController {
       await user.save();
 
       // ✅ تولید توکن
-      const secretKey = config.get("JWT.KEY");
+      const secretKey = config.get("JWT_SECRET");
       const encoder = new TextEncoder();
       const token = await new SignJWT({ userId: user.id })
         .setProtectedHeader({ alg: "HS256" })
@@ -642,7 +676,7 @@ class AuthController extends BaseController {
       console.log("User roles for tokenPayload:", user.userRoles);
 
       // ✅ تولید `JWT`
-      const secretKey = config.get("JWT.KEY");
+      const secretKey = config.get("JWT_SECRET");
       const encoder = new TextEncoder();
       const tokenPayload = {
         userId: user.id,

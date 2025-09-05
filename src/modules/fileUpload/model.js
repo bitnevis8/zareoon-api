@@ -34,7 +34,12 @@ File.init(
     module: {
       type: DataTypes.STRING,
       allowNull: false,
-      comment: "نام ماژولی که فایل به آن تعلق دارد (مثلاً profile, property, etc.)",
+      comment: "نام ماژولی که فایل به آن تعلق دارد (مثلاً users, products, etc.)",
+    },
+    fileType: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      comment: "نوع فایل در ماژول (مثلاً avatars, images, documents, etc.)",
     },
     entityId: {
       type: DataTypes.INTEGER,

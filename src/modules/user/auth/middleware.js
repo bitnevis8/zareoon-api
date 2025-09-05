@@ -28,7 +28,7 @@ const authenticateUser = async (req, res, next) => {
     // بررسی اعتبار توکن
     const { payload } = await jwtVerify(
       token,
-      new TextEncoder().encode(config.get("JWT.KEY"))
+      new TextEncoder().encode(config.get("JWT_SECRET"))
     );
 
     console.log('Token payload:', payload);

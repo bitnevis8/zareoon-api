@@ -8,13 +8,32 @@
   {
     "name": "farmer",
     "nameEn": "Farmer",
-    "nameFa": "کشاورز/باغدار",
+    "nameFa": "تامین کننده",
     "description": "ثبت و مدیریت موجودی‌های شخصی و مشاهده وضعیت سفارش‌های مرتبط"
   },
+  {
+    "name": "loader",
+    "nameEn": "Loader",
+    "nameFa": "بار جمع کن",
+    "description": "مسئول جمع‌آوری و آماده‌سازی بار برای ارسال"
+  },
+  {
+    "name": "employee",
+    "nameEn": "Employee",
+    "nameFa": "کارمند",
+    "description": "کاربر سازمانی با دسترسی‌های عمومی سامانه"
+  },
+  {
+    "name": "driver",
+    "nameEn": "Driver",
+    "nameFa": "راننده",
+    "description": "تحویل سفارش‌ها و بروزرسانی وضعیت ارسال"
+  },  
   {
     "name": "customer",
     "nameEn": "Customer",
     "nameFa": "مشتری",
     "description": "ثبت سفارش بر اساس نمای تجمعی موجودی و مشاهده تاریخچه سفارش‌ها"
   }
+
 ]

@@ -19,17 +19,53 @@
     "FTP": {
       "host": "dl.zareoon.ir",
       "port": 21,
-      "user": "pz20435",
-      "password": "uhSUUsc9",
+      "user": "pz22008",
+      "password": "L3SvlSZC",
       "secure": false,
       "basePath": "/public_html"
     },
     "PATHS": {
-      "profile": "profiles",
-      "property": "properties",
-      "document": "documents",
-      "resume": "resumes",
-      "default": "others"
+      "users": {
+        "avatars": "media/users/avatars",
+        "documents": "media/users/documents",
+        "temp": "media/users/temp"
+      },
+      "products": {
+        "images": "media/products/images",
+        "videos": "media/products/videos",
+        "documents": "media/products/documents",
+        "icons": "media/products/icons"
+      },
+      "inventory": {
+        "images": "media/inventory/images",
+        "documents": "media/inventory/documents",
+        "certificates": "media/inventory/certificates"
+      },
+      "orders": {
+        "invoices": "media/orders/invoices",
+        "receipts": "media/orders/receipts",
+        "contracts": "media/orders/contracts",
+        "shipping": "media/orders/shipping"
+      },
+      "locations": {
+        "images": "media/locations/images",
+        "maps": "media/locations/maps",
+        "documents": "media/locations/documents"
+      },
+      "attributes": {
+        "documents": "media/attributes/documents"
+      },
+      "system": {
+        "temp": "media/system/temp",
+        "backups": "media/system/backups",
+        "logs": "media/system/logs"
+      },
+      "shared": {
+        "templates": "media/shared/templates",
+        "icons": "media/shared/icons",
+        "banners": "media/shared/banners",
+        "default": "media/shared/default"
+      }
     }
   },
   "PORT": 3000,
