@@ -8,7 +8,15 @@ Order.init(
   {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     customerId: { type: DataTypes.INTEGER, allowNull: false },
-    status: { type: DataTypes.ENUM("pending", "reserved", "completed", "cancelled"), allowNull: false, defaultValue: "pending" },
+    status: { 
+      type: DataTypes.ENUM("pending", "reserved", "approved", "assigned", "preparing", "ready", "shipped", "delivered", "completed", "cancelled"), 
+      allowNull: false, 
+      defaultValue: "pending" 
+    },
+    supplierId: { type: DataTypes.INTEGER, allowNull: true },
+    adminNotes: { type: DataTypes.TEXT, allowNull: true },
+    approvedAt: { type: DataTypes.DATE, allowNull: true },
+    approvedBy: { type: DataTypes.INTEGER, allowNull: true },
   },
   {
     sequelize,
@@ -22,6 +30,8 @@ Order.init(
     ]
   }
 );
+
+// Associations are defined in associations.js to avoid conflicts
 
 module.exports = Order;
 

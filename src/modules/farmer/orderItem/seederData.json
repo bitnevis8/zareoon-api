@@ -1,3 +1,64 @@
 {
-  "data": []
+  "data": [
+    {
+      "id": 1,
+      "orderId": 1,
+      "inventoryLotId": 1,
+      "productId": 1101,
+      "quantity": 100.0,
+      "unitPrice": 15000,
+      "totalPrice": 1500000,
+      "status": "approved",
+      "supplierMobile": "09161417432",
+      "supplierName": "عسی زیبای"
+    },
+    {
+      "id": 2,
+      "orderId": 1,
+      "inventoryLotId": 15,
+      "productId": 1101,
+      "quantity": 1000.0,
+      "unitPrice": 18000,
+      "totalPrice": 18000000,
+      "status": "pending",
+      "supplierMobile": "09161417432",
+      "supplierName": "عسی زیبای"
+    },
+    {
+      "id": 3,
+      "orderId": 1,
+      "inventoryLotId": 16,
+      "productId": 1101,
+      "quantity": 800.0,
+      "unitPrice": 15000,
+      "totalPrice": 12000000,
+      "status": "approved",
+      "supplierMobile": "09010450372",
+      "supplierName": "محسن کیارسی"
+    },
+    {
+      "id": 4,
+      "orderId": 1,
+      "inventoryLotId": 17,
+      "productId": 1101,
+      "quantity": 500.0,
+      "unitPrice": 18000,
+      "totalPrice": 9000000,
+      "status": "approved",
+      "supplierMobile": "09010450372",
+      "supplierName": "محسن کیارسی"
+    },
+    {
+      "id": 5,
+      "orderId": 1,
+      "inventoryLotId": 1,
+      "productId": 1101,
+      "quantity": 100.0,
+      "unitPrice": 15000,
+      "totalPrice": 1500000,
+      "status": "pending",
+      "supplierMobile": "09161417432",
+      "supplierName": "عسی زیبای"
+    }
+  ]
 }

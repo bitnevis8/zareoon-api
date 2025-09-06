@@ -27,6 +27,7 @@ CartItem.init(
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     cartId: { type: DataTypes.INTEGER, allowNull: false },
     productId: { type: DataTypes.INTEGER, allowNull: false },
+    inventoryLotId: { type: DataTypes.INTEGER, allowNull: true },
     qualityGrade: { type: DataTypes.STRING(50), allowNull: false },
     unit: { type: DataTypes.STRING(50), allowNull: true },
     quantity: { type: DataTypes.DECIMAL(18, 3), allowNull: false },

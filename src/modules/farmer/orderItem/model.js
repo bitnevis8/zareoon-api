@@ -10,20 +10,25 @@ OrderItem.init(
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     orderId: { type: DataTypes.INTEGER, allowNull: false },
     inventoryLotId: { type: DataTypes.INTEGER, allowNull: false },
+    productId: { type: DataTypes.INTEGER, allowNull: false },
     quantity: { type: DataTypes.DECIMAL(18, 3), allowNull: false },
     // Supplier processing status for this allocation (per inventory lot)
     status: {
       type: DataTypes.ENUM(
+        "pending",
+        "approved",
         "assigned",
         "reviewing",
         "preparing",
         "ready",
         "shipped",
         "delivered",
-        "cancelled"
+        "cancelled",
+        "rejected",
+        "processing"
       ),
       allowNull: false,
-      defaultValue: "assigned",
+      defaultValue: "pending",
     },
     statusNotes: { type: DataTypes.STRING(1000), allowNull: true }
   },

@@ -35,6 +35,13 @@ const authenticateUser = async (req, res, next) => {
 
     // ذخیره اطلاعات کاربر در req برای استفاده در کنترلرها
     req.user = payload;
+    req.user.id = payload.userId; // اضافه کردن id برای سازگاری
+    
+    console.log("Middleware - Final req.user:", req.user);
+    console.log("Middleware - req.user.id:", req.user.id);
+    console.log("Middleware - req.user.userId:", req.user.userId);
+    console.log("Middleware - payload.userId:", payload.userId);
+    console.log("Middleware - payload.id:", payload.id);
 
     next(); // ادامه پردازش درخواست
   } catch (error) {

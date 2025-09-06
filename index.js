@@ -100,7 +100,7 @@ const startServer = async () => {
             callback(new Error(`Origin ${origin} not allowed by CORS`));
           }
         },
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
         allowedHeaders: [
           "Content-Type", 
           "Authorization", 

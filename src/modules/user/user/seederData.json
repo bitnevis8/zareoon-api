@@ -761,7 +761,7 @@
       "mobile": "09120000000",
       "username": "customer1",
       "email": "customer1@example.com",
-      "password": "C12345678",
+      "password": "12345678",
       "isActive": true,
       "isEmailVerified": true,
       "isMobileVerified": true,

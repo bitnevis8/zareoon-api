@@ -201,14 +201,31 @@ const defineAssociations = () => {
     // Orders & Cart
     User.hasMany(Order, { foreignKey: 'customerId', as: 'orders', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
     Order.belongsTo(User, { foreignKey: 'customerId', as: 'customer', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
+    
+    // Order management associations
+    Order.belongsTo(User, { foreignKey: 'supplierId', as: 'supplier', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
+    Order.belongsTo(User, { foreignKey: 'approvedBy', as: 'approver', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
+    
     Order.hasMany(OrderItem, { foreignKey: 'orderId', as: 'items', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
     OrderItem.belongsTo(Order, { foreignKey: 'orderId', as: 'order', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
     InventoryLot.hasMany(OrderItem, { foreignKey: 'inventoryLotId', as: 'orderItems', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
     OrderItem.belongsTo(InventoryLot, { foreignKey: 'inventoryLotId', as: 'inventoryLot', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
+    
+    // OrderItem -> Product association
+    Product.hasMany(OrderItem, { foreignKey: 'productId', as: 'orderItems', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
+    OrderItem.belongsTo(Product, { foreignKey: 'productId', as: 'product', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
 
     // Order request items (pre-allocation)
     Order.hasMany(OrderRequestItem, { foreignKey: 'orderId', as: 'requestItems', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
     OrderRequestItem.belongsTo(Order, { foreignKey: 'orderId', as: 'order', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    
+    // OrderRequestItem -> Product association
+    Product.hasMany(OrderRequestItem, { foreignKey: 'productId', as: 'orderRequestItems', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
+    OrderRequestItem.belongsTo(Product, { foreignKey: 'productId', as: 'product', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
+    
+    // OrderRequestItem -> InventoryLot association
+    InventoryLot.hasMany(OrderRequestItem, { foreignKey: 'inventoryLotId', as: 'orderRequestItems', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
+    OrderRequestItem.belongsTo(InventoryLot, { foreignKey: 'inventoryLotId', as: 'inventoryLot', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
 
     // Cart relations (local require to avoid circular at top)
     const { Cart, CartItem } = require('./farmer/cart/model');

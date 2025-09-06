@@ -10,7 +10,17 @@ const sequelize = require("../../../core/database/mysql/connection");
 const meId = (req) => {
   const q = req.query?.customerId;
   if (q && Number.isFinite(Number(q))) return Number(q);
-  return req.user?.id || req.body?.customerId || 1;
+  
+  console.log("meId - req.user:", req.user);
+  console.log("meId - req.user.id:", req.user?.id);
+  console.log("meId - req.user.userId:", req.user?.userId);
+  console.log("meId - req.body.customerId:", req.body?.customerId);
+  
+  // اولویت: req.user.userId > req.user.id > req.body.customerId > 1
+  const customerId = req.user?.userId || req.user?.id || req.body?.customerId || 1;
+  console.log("meId - final customerId:", customerId);
+  console.log("meId - customerId type:", typeof customerId);
+  return customerId;
 };
 
 const getMyCart = async (req, res) => {
@@ -33,11 +43,11 @@ const getMyCart = async (req, res) => {
 
 const addItem = async (req, res) => {
   const customerId = meId(req);
-  const { productId, qualityGrade, quantity, unit } = req.body;
+  const { productId, qualityGrade, quantity, unit, inventoryLotId } = req.body;
   if (!productId || !qualityGrade || !quantity) return res.status(400).json({ success: false, message: "Invalid payload" });
   let cart = await Cart.findOne({ where: { customerId, status: "active" } });
   if (!cart) cart = await Cart.create({ customerId, status: "active" });
-  const item = await CartItem.create({ cartId: cart.id, productId, qualityGrade, quantity, unit: unit || null });
+  const item = await CartItem.create({ cartId: cart.id, productId, inventoryLotId, qualityGrade, quantity, unit: unit || null });
   res.status(201).json({ success: true, data: item });
 };
 
@@ -59,23 +69,33 @@ const removeItem = async (req, res) => {
 // Checkout: create order with request items only (pending). Admin will allocate later.
 const checkout = async (req, res) => {
   const customerId = meId(req);
+  console.log("Checkout - customerId:", customerId);
+  console.log("Checkout - req.user:", req.user);
+  
   const cart = await Cart.findOne({ where: { customerId, status: "active" } });
   if (!cart) return res.status(404).json({ success: false, message: "سبد خالی است" });
   const items = await CartItem.findAll({ where: { cartId: cart.id } });
   if (items.length === 0) return res.status(400).json({ success: false, message: "سبد خالی است" });
 
+  console.log("Checkout - cart items:", items.length);
+
   const tx = await sequelize.transaction();
   try {
     const order = await Order.create({ customerId, status: "pending" }, { transaction: tx });
+    console.log("Checkout - created order:", order.id);
+    
     for (const it of items) {
-      await OrderRequestItem.create({ orderId: order.id, productId: it.productId, qualityGrade: it.qualityGrade, unit: it.unit || null, quantity: it.quantity }, { transaction: tx });
+      await OrderRequestItem.create({ orderId: order.id, productId: it.productId, inventoryLotId: it.inventoryLotId, qualityGrade: it.qualityGrade, unit: it.unit || null, quantity: it.quantity }, { transaction: tx });
+      console.log("Checkout - created request item for product:", it.productId, "inventoryLot:", it.inventoryLotId);
     }
 
     await Cart.update({ status: "checked_out" }, { where: { id: cart.id }, transaction: tx });
     await tx.commit();
+    console.log("Checkout - completed successfully for customer:", customerId);
     res.json({ success: true, data: { orderId: order.id } });
   } catch (e) {
     await tx.rollback();
+    console.error("Checkout - error:", e);
     res.status(400).json({ success: false, message: e.message });
   }
 };

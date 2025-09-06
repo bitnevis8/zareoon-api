@@ -13,6 +13,8 @@ router.get("/export/english-csv/all", controller.exportEnglishCsv);
 router.get("/:id/order-history", controller.orderHistory);
 // Active cart items for a given product
 router.get("/:id/cart-items", controller.cartItemsForProduct);
+// Hierarchical stock calculation for products and categories
+router.get("/:id/hierarchical-stock", controller.getHierarchicalStock);
 
 module.exports = router;
 

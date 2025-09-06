@@ -1,4 +1,5 @@
 const sequelize = require("../../../core/database/mysql/connection");
+const { QueryTypes, Op } = require("sequelize");
 const Order = require("./model");
 const OrderItem = require("../orderItem/model");
 const InventoryLot = require("../inventoryLot/model");
@@ -67,7 +68,7 @@ const create = async (req, res) => {
       lot.status = "reserved";
       await lot.save({ transaction: tx });
 
-      await OrderItem.create({ orderId: order.id, inventoryLotId: lot.id, quantity: it.quantity }, { transaction: tx });
+      await OrderItem.create({ orderId: order.id, inventoryLotId: lot.id, productId: lot.productId, quantity: it.quantity }, { transaction: tx });
       await TransactionHistory.create({ changeType: "reserve", inventoryLotId: lot.id, deltaQuantity: it.quantity, actorUserId: req.user?.id || customerId }, { transaction: tx });
     }
 
@@ -155,21 +156,51 @@ const listItems = async (req, res) => {
 const updateItemStatus = async (req, res) => {
   const { itemId } = req.params;
   const { status, notes } = req.body || {};
-  const allowed = ["assigned","reviewing","preparing","ready","shipped","delivered","cancelled"];
-  if (!allowed.includes(status)) return res.status(400).json({ success: false, message: "Invalid status" });
+  const allowed = ["pending","approved","assigned","reviewing","preparing","ready","shipped","delivered","cancelled","rejected","processing"];
+  if (!allowed.includes(status)) {
+    console.log("Invalid status:", status, "Allowed:", allowed);
+    return res.status(400).json({ success: false, message: "Invalid status" });
+  }
 
   const item = await OrderItem.findByPk(itemId, { include: [{ model: InventoryLot, as: "inventoryLot" }] });
   if (!item) return res.status(404).json({ success: false, message: "Not found" });
 
-  // Authorization: supplier must own the lot
+  // Authorization: supplier must own the lot OR user must be admin
   const actorId = req.user?.id;
-  if (actorId && item.inventoryLot?.farmerId && item.inventoryLot.farmerId !== actorId) {
+  const userRoles = Array.isArray(req.user?.roles) ? req.user.roles.map(r => r.nameEn) : [];
+  const isAdmin = userRoles.includes('Administrator');
+  
+  if (!isAdmin && actorId && item.inventoryLot?.farmerId && item.inventoryLot.farmerId !== actorId) {
     return res.status(403).json({ success: false, message: "Unauthorized to update this item" });
   }
 
-  item.status = status;
-  if (typeof notes === 'string') item.statusNotes = notes;
-  await item.save();
+  try {
+    // Try to update the status
+    item.status = status;
+    if (typeof notes === 'string') item.statusNotes = notes;
+    await item.save();
+    console.log("Item status updated successfully:", item.id, "to", status);
+  } catch (error) {
+    console.error("Error saving item status:", error);
+    // If ENUM error, try to update using raw SQL
+    if (error.message.includes('ENUM')) {
+      try {
+        await sequelize.query(
+          'UPDATE order_items SET status = ?, status_notes = ? WHERE id = ?',
+          {
+            replacements: [status, notes || null, itemId],
+            type: QueryTypes.UPDATE
+          }
+        );
+        console.log("Item status updated using raw SQL");
+      } catch (sqlError) {
+        console.error("Raw SQL update failed:", sqlError);
+        return res.status(500).json({ success: false, message: "Failed to update status" });
+      }
+    } else {
+      return res.status(500).json({ success: false, message: "Failed to update status" });
+    }
+  }
   return res.json({ success: true, data: item });
 };
 
@@ -184,6 +215,11 @@ const listForFarmer = async (req, res) => {
         model: OrderItem,
         as: 'items',
         required: true,
+        where: {
+          status: {
+            [Op.ne]: 'pending' // Only show items that are NOT pending
+          }
+        },
         include: [
           { model: InventoryLot, as: 'inventoryLot', where: { farmerId: actorId }, include: [ { model: Product, as: 'product', attributes: ['id','name'] } ] }
         ]
@@ -192,6 +228,54 @@ const listForFarmer = async (req, res) => {
     order: [["id","DESC"]]
   });
   return res.json({ success: true, data: rows });
+};
+
+// List orders for the logged-in customer
+const listForCustomer = async (req, res) => {
+  const customerId = req.user?.userId || req.user?.id;
+  console.log("listForCustomer - customerId:", customerId);
+  console.log("listForCustomer - req.user:", req.user);
+  console.log("listForCustomer - req.user.userId:", req.user?.userId);
+  console.log("listForCustomer - req.user.id:", req.user?.id);
+  
+  if (!customerId) {
+    console.log("listForCustomer - No customerId found");
+    return res.status(401).json({ success: false, message: 'Unauthorized - No customer ID' });
+  }
+
+  try {
+    // First, let's check if there are any orders for this customer
+    const orderCount = await Order.count({ where: { customerId } });
+    console.log("listForCustomer - order count for customer", customerId, ":", orderCount);
+    
+    const rows = await Order.findAll({
+      where: { customerId },
+      include: [
+        {
+          model: OrderItem,
+          as: 'items',
+          include: [
+            { 
+              model: InventoryLot, 
+              as: 'inventoryLot', 
+              include: [ 
+                { model: Product, as: 'product', attributes: ['id','name'] },
+                { model: User, as: 'farmer', attributes: ['id','firstName','lastName','username','mobile'] }
+              ] 
+            }
+          ]
+        },
+        { model: OrderRequestItem, as: 'requestItems' }
+      ],
+      order: [["id","DESC"]]
+    });
+    console.log("listForCustomer - found orders:", rows.length);
+    console.log("listForCustomer - orders data:", JSON.stringify(rows, null, 2));
+    return res.json({ success: true, data: rows });
+  } catch (error) {
+    console.error("listForCustomer - error:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 // Admin allocation: replace current lot reservations of an order with provided allocation
@@ -249,5 +333,257 @@ const allocate = async (req, res) => {
   }
 };
 
-module.exports = { list, getById, create, cancel, complete, listItems, updateItemStatus, listForFarmer, allocate };
+// Get orders for admin management
+const listForAdmin = async (req, res) => {
+  try {
+    console.log("=== Admin Order Management ===");
+    console.log("Admin user:", req.user);
+    
+    const orders = await Order.findAll({
+      include: [
+        {
+          model: User,
+          as: 'customer',
+          attributes: ['id', 'firstName', 'lastName', 'email', 'phone']
+        },
+        {
+          model: User,
+          as: 'supplier',
+          attributes: ['id', 'firstName', 'lastName', 'email', 'phone']
+        },
+        {
+          model: User,
+          as: 'approver',
+          attributes: ['id', 'firstName', 'lastName', 'email', 'phone']
+        },
+        {
+          model: OrderItem,
+          as: 'items',
+          include: [
+            {
+              model: Product,
+              as: 'product',
+              attributes: ['id', 'name', 'englishName', 'unit']
+            },
+            {
+              model: InventoryLot,
+              as: 'inventoryLot',
+              include: [
+                {
+                  model: User,
+                  as: 'farmer',
+                  attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'mobile']
+                }
+              ]
+            }
+          ]
+        },
+        {
+          model: OrderRequestItem,
+          as: 'requestItems',
+          include: [
+            {
+              model: Product,
+              as: 'product',
+              attributes: ['id', 'name', 'englishName', 'unit']
+            },
+            {
+              model: InventoryLot,
+              as: 'inventoryLot',
+              include: [
+                {
+                  model: User,
+                  as: 'farmer',
+                  attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'mobile']
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      order: [['createdAt', 'DESC']]
+    });
+
+    console.log("Admin orders count:", orders.length);
+    console.log("Admin orders:", JSON.stringify(orders, null, 2));
+
+    res.json({
+      success: true,
+      data: orders
+    });
+  } catch (error) {
+    console.error("Admin order management error:", error);
+    res.status(500).json({
+      success: false,
+      message: "خطا در دریافت سفارشات",
+      error: error.message
+    });
+  }
+};
+
+// Approve order and send to supplier
+const approveOrder = async (req, res) => {
+  try {
+    const orderId = req.params.id; // Route is /:id/approve, so use req.params.id
+    const { supplierId, notes } = req.body;
+    
+    console.log("=== Approve Order ===");
+    console.log("Order ID:", orderId);
+    console.log("Supplier ID:", supplierId);
+    console.log("Notes:", notes);
+    
+    const order = await Order.findByPk(orderId);
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "سفارش یافت نشد"
+      });
+    }
+    
+    // Auto-detect supplier from OrderRequestItem's inventoryLot if supplierId is 'auto'
+    let finalSupplierId = supplierId;
+    if (supplierId === 'auto' || !supplierId) {
+      const requestItems = await OrderRequestItem.findAll({
+        where: { orderId: orderId },
+        include: [
+          {
+            model: InventoryLot,
+            as: 'inventoryLot',
+            include: [
+              {
+                model: User,
+                as: 'farmer',
+                attributes: ['id', 'firstName', 'lastName']
+              }
+            ]
+          }
+        ]
+      });
+      
+      if (requestItems.length > 0 && requestItems[0].inventoryLot?.farmer) {
+        finalSupplierId = requestItems[0].inventoryLot.farmer.id;
+        console.log("Auto-detected supplier:", finalSupplierId, requestItems[0].inventoryLot.farmer.firstName, requestItems[0].inventoryLot.farmer.lastName);
+      } else {
+        return res.status(400).json({
+          success: false,
+          message: "نمی‌توان تامین‌کننده را شناسایی کرد"
+        });
+      }
+    }
+    
+    // Get order request items
+    const requestItems = await OrderRequestItem.findAll({
+      where: { orderId: orderId }
+    });
+    
+    console.log("Request items found:", requestItems.length);
+    
+    // Convert OrderRequestItem to OrderItem for each request
+    for (const requestItem of requestItems) {
+      // Find available inventory lots for this product and quality grade
+      const availableLots = await InventoryLot.findAll({
+        where: {
+          productId: requestItem.productId,
+          qualityGrade: requestItem.qualityGrade,
+          status: 'harvested'
+        },
+        include: [
+          {
+            model: User,
+            as: 'farmer',
+            attributes: ['id', 'firstName', 'lastName', 'email', 'phone']
+          }
+        ],
+        order: [['totalQuantity', 'DESC']] // Order by highest quantity first
+      });
+      
+      console.log(`Available lots for product ${requestItem.productId}, grade ${requestItem.qualityGrade}:`, availableLots.length);
+      
+      if (availableLots.length > 0) {
+        // Use the first available lot (highest quantity)
+        const selectedLot = availableLots[0];
+        
+        // Create OrderItem
+        await OrderItem.create({
+          orderId: orderId,
+          inventoryLotId: selectedLot.id,
+          productId: requestItem.productId,
+          quantity: requestItem.quantity,
+          status: 'assigned'
+        });
+        
+        console.log(`Created OrderItem for lot ${selectedLot.id}, farmer: ${selectedLot.farmer?.firstName} ${selectedLot.farmer?.lastName}`);
+      } else {
+        console.log(`No available lots for product ${requestItem.productId}, grade ${requestItem.qualityGrade}`);
+      }
+    }
+    
+    // Update order status to approved
+    await order.update({
+      status: 'approved',
+      supplierId: finalSupplierId,
+      adminNotes: notes,
+      approvedAt: new Date(),
+      approvedBy: req.user.id
+    });
+    
+    console.log("Order approved successfully");
+    
+    res.json({
+      success: true,
+      message: "سفارش تایید شد و به تامین‌کننده ارسال شد"
+    });
+  } catch (error) {
+    console.error("Approve order error:", error);
+    res.status(500).json({
+      success: false,
+      message: "خطا در تایید سفارش",
+      error: error.message
+    });
+  }
+};
+
+// Update order status
+const updateStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { status, notes } = req.body;
+    
+    console.log("=== Update Order Status ===");
+    console.log("Order ID:", orderId);
+    console.log("New status:", status);
+    console.log("Notes:", notes);
+    
+    const order = await Order.findByPk(orderId);
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "سفارش یافت نشد"
+      });
+    }
+    
+    // Update order status
+    await order.update({
+      status: status,
+      adminNotes: notes,
+      updatedAt: new Date()
+    });
+    
+    console.log("Order status updated successfully");
+    
+    res.json({
+      success: true,
+      message: "وضعیت سفارش به‌روزرسانی شد"
+    });
+  } catch (error) {
+    console.error("Update order status error:", error);
+    res.status(500).json({
+      success: false,
+      message: "خطا در به‌روزرسانی وضعیت سفارش",
+      error: error.message
+    });
+  }
+};
+
+module.exports = { list, getById, create, cancel, complete, listItems, updateItemStatus, listForFarmer, listForCustomer, allocate, listForAdmin, approveOrder, updateStatus };
 

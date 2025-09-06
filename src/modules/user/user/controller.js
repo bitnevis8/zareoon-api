@@ -85,7 +85,9 @@ class UserController extends BaseController {
       const user = await User.findByPk(req.params.id, {
         include: [{
           model: Role,
-          as: "userRoles"
+          as: "userRoles",
+          attributes: ['id', 'name', 'nameEn', 'nameFa'],
+          through: { attributes: [] }
         }]
       });
       
@@ -94,8 +96,14 @@ class UserController extends BaseController {
         return this.response(res, 404, false, "کاربر یافت نشد.");
       }
 
+      // تبدیل userRoles به roles برای سازگاری با frontend
+      const userData = user.toJSON();
+      userData.roles = userData.userRoles || [];
+      delete userData.userRoles;
+
       console.log("✅ User retrieved successfully:", req.params.id);
-      return this.response(res, 200, true, "کاربر دریافت شد.", user);
+      console.log("User roles:", userData.roles);
+      return this.response(res, 200, true, "کاربر دریافت شد.", userData);
     } catch (error) {
       console.error("❌ Error in getOne:", error);
       return this.response(res, 500, false, "خطا در دریافت داده", null, error);

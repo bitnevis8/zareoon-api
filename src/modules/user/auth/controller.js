@@ -680,6 +680,7 @@ class AuthController extends BaseController {
       const encoder = new TextEncoder();
       const tokenPayload = {
         userId: user.id,
+        id: user.id, // اضافه کردن id برای سازگاری
         email: user.email,
         username: user.username,
         roles: user.userRoles && user.userRoles.length > 0 ? user.userRoles.map(role => ({ // Include all roles in the payload safely
@@ -689,6 +690,9 @@ class AuthController extends BaseController {
           nameFa: role.nameFa,
         })) : [], // If no roles, send an empty array
       };
+      
+      console.log("Token payload created:", tokenPayload);
+      console.log("User ID in token:", user.id);
 
       const token = await new SignJWT(tokenPayload)
         .setProtectedHeader({ alg: "HS256" })

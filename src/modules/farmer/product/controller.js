@@ -176,3 +176,125 @@ const cartItemsForProduct = async (req, res) => {
 
 module.exports.cartItemsForProduct = cartItemsForProduct;
 
+// محاسبه موجودی سلسله مراتبی برای محصولات و دسته‌ها
+const getHierarchicalStock = async (req, res) => {
+  try {
+    const productId = parseInt(req.params.id);
+    if (!productId) {
+      return res.status(400).json({ success: false, message: "Product ID is required" });
+    }
+
+    // دریافت محصول اصلی
+    const product = await Product.findByPk(productId);
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found" });
+    }
+
+    // دریافت همه محصولات برای محاسبه سلسله مراتبی
+    const allProducts = await Product.findAll({
+      where: { isActive: true },
+      order: [["id", "ASC"]]
+    });
+
+    // دریافت همه موجودی‌ها
+    const allInventoryLots = await InventoryLot.findAll({
+      where: { status: { [Op.in]: ["harvested", "reserved"] } }
+    });
+
+    // محاسبه موجودی سلسله مراتبی
+    const stockData = calculateHierarchicalStock(product, allProducts, allInventoryLots);
+
+    res.json({ 
+      success: true, 
+      data: {
+        product: {
+          id: product.id,
+          name: product.name,
+          parentId: product.parentId,
+          isOrderable: product.isOrderable
+        },
+        stock: stockData
+      }
+    });
+  } catch (error) {
+    console.error("Error calculating hierarchical stock:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+// تابع محاسبه موجودی سلسله مراتبی
+const calculateHierarchicalStock = (product, allProducts, inventoryLots) => {
+  const result = {
+    totalStock: 0,
+    availableStock: 0,
+    reservedStock: 0,
+    batches: [],
+    children: []
+  };
+
+  if (product.isOrderable) {
+    // محصول نهایی - محاسبه از بچ‌ها
+    const productLots = inventoryLots.filter(lot => lot.productId === product.id);
+    
+    // گروه‌بندی بر اساس درجه کیفیت
+    const batchesByGrade = {};
+    productLots.forEach(lot => {
+      const grade = lot.qualityGrade || 'بدون درجه';
+      if (!batchesByGrade[grade]) {
+        batchesByGrade[grade] = {
+          grade: grade,
+          totalStock: 0,
+          availableStock: 0,
+          reservedStock: 0,
+          lots: []
+        };
+      }
+      
+      const total = parseFloat(lot.totalQuantity || 0);
+      const reserved = parseFloat(lot.reservedQuantity || 0);
+      const available = total - reserved;
+      
+      batchesByGrade[grade].totalStock += total;
+      batchesByGrade[grade].availableStock += available;
+      batchesByGrade[grade].reservedStock += reserved;
+      batchesByGrade[grade].lots.push({
+        id: lot.id,
+        totalQuantity: total,
+        availableQuantity: available,
+        reservedQuantity: reserved,
+        unit: lot.unit,
+        status: lot.status
+      });
+    });
+
+    result.batches = Object.values(batchesByGrade);
+    result.totalStock = result.batches.reduce((sum, batch) => sum + batch.totalStock, 0);
+    result.availableStock = result.batches.reduce((sum, batch) => sum + batch.availableStock, 0);
+    result.reservedStock = result.batches.reduce((sum, batch) => sum + batch.reservedStock, 0);
+
+  } else {
+    // دسته - محاسبه از زیرمجموعه‌ها
+    const children = allProducts.filter(p => p.parentId === product.id && p.isActive);
+    
+    for (const child of children) {
+      const childStock = calculateHierarchicalStock(child, allProducts, inventoryLots);
+      result.children.push({
+        product: {
+          id: child.id,
+          name: child.name,
+          isOrderable: child.isOrderable
+        },
+        stock: childStock
+      });
+      
+      result.totalStock += childStock.totalStock;
+      result.availableStock += childStock.availableStock;
+      result.reservedStock += childStock.reservedStock;
+    }
+  }
+
+  return result;
+};
+
+module.exports.getHierarchicalStock = getHierarchicalStock;
+
