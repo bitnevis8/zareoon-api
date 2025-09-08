@@ -20,7 +20,9 @@ const ALLOWED_ORIGINS = {
   production: [
     "https://zareoon.ir",
     "https://www.zareoon.ir",
-    "https://api.zareoon.ir"
+    "https://api.zareoon.ir",
+    "https://zareoon.ir:3000",
+    "https://www.zareoon.ir:3000"
   ],
   development: [
     "http://localhost:3003",
