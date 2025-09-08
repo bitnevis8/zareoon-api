@@ -1,5 +1,6 @@
 const express = require("express");
 const authController = require("./controller");
+const { authenticateUser } = require("./middleware");
 
 const router = express.Router();
 
@@ -11,7 +12,7 @@ router.post("/verify/email", authController.verifyEmailCode); // تأیید کد
 router.post("/resend-code/mobile", authController.resendMobileVerificationCode); // ارسال مجدد کد تأیید موبایل
 router.post("/verify/mobile", authController.verifyMobileCode); // تأیید کد احراز موبایل
 router.post("/login", authController.login); // لاگین کاربر
-router.get("/me", authController.getUserData);
+router.get("/me", authenticateUser, authController.getUserData); // محافظت شده با middleware
 router.post("/logout", authController.logout); // مسیر خروج
 
 // مسیرهای جدید سیستم احراز هویت

@@ -81,29 +81,16 @@ class AuthController extends BaseController {
   //----------------------------------------------------------------------------------
   async getUserData(req, res) {
     try {
-      let token = null;
-
-      // 1. بررسی HttpOnly cookie (اولویت اول)
-      if (req.cookies && req.cookies.token) {
-        token = req.cookies.token;
-      }
-      // 2. بررسی Authorization header (برای mobile apps)
-      else if (req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
-        token = req.headers.authorization.substring(7);
-      }
-
-      if (!token) {
-        return this.response(res, 401, false, "کاربر لاگین نیست.");
-      }
-
-      // ✅ بررسی صحت توکن
-      const secretKey = config.get("JWT_SECRET");
-      const encoder = new TextEncoder();
-      const { payload } = await jwtVerify(token, encoder.encode(secretKey));
+      // کاربر از طریق middleware احراز هویت شده است
+      const userId = req.user.userId || req.user.id;
       
+      if (!userId) {
+        return this.response(res, 400, false, "شناسه کاربر یافت نشد.");
+      }
+
       // ✅ یافتن اطلاعات کامل کاربر
       const user = await this.User.findOne({
-        where: { id: payload.userId },
+        where: { id: userId },
         include: [{
           model: Role,
           as: "userRoles",
@@ -116,7 +103,7 @@ class AuthController extends BaseController {
         return this.response(res, 404, false, "کاربر یافت نشد.");
       }
 
-      // ✅ ارسال اطلاعات کاربر بدون نیاز به `JWT`
+      // ✅ ارسال اطلاعات کاربر
       return this.response(res, 200, true, "اطلاعات کاربر دریافت شد.", {
         id: user.id,
         userId: user.id,
