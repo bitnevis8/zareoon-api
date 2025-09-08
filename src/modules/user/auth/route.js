@@ -13,6 +13,13 @@ router.post("/verify/mobile", authController.verifyMobileCode); // تأیید ک
 router.post("/login", authController.login); // لاگین کاربر
 router.get("/me", authController.getUserData);
 router.post("/logout", authController.logout); // مسیر خروج
+
+// مسیرهای جدید سیستم احراز هویت
+router.post("/check-identifier", authController.checkIdentifier); // بررسی وجود کاربر
+router.post("/verify-code", authController.verifyCode); // تایید کد
+router.post("/resend-code", authController.resendCode); // ارسال مجدد کد
+router.post("/send-code-for-registration", authController.sendCodeForRegistration); // ارسال کد برای ثبت‌نام
+router.post("/complete-registration", authController.completeRegistration); // تکمیل ثبت‌نام
 router.post("/clear-sessions", authController.clearAllSessions); // پاک کردن تمام sessions
 
 module.exports = router;

@@ -45,6 +45,5 @@
   { "mobile": "09166415563", "role": "farmer" },
   { "mobile": "09167550421", "role": "farmer" },
   { "mobile": "09168439639", "role": "farmer" },
-  { "mobile": "09169456171", "role": "farmer" },
-  { "email": "customer1@example.com", "role": "customer" }
+  { "mobile": "09169456171", "role": "farmer" }
 ]

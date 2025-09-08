@@ -11,11 +11,11 @@ const moment = require("moment");
 const { Op } = require("sequelize");
 
 // تابع کمکی برای تنظیمات کوکی
-function getCookieConfig(isProduction) {
+function getCookieConfig(isProduction, rememberMe = false) {
   return {
     httpOnly: true,
     secure: isProduction, // در سرور `true` باشد، در لوکال `false`
-    maxAge: 24 * 60 * 60 * 1000, // 24 ساعت
+    maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000, // 30 روز یا 24 ساعت
     path: "/",
     domain: isProduction ? ".zareoon.ir" : undefined, // برای دسترسی از همه ساب‌دامین‌ها
     sameSite: isProduction ? "None" : "Lax", // در سرور `None`، در لوکال `Lax`
@@ -81,17 +81,26 @@ class AuthController extends BaseController {
   //----------------------------------------------------------------------------------
   async getUserData(req, res) {
     try {
-      const token = req.cookies.token; // توکن را از کوکی دریافت کن
+      let token = null;
+
+      // 1. بررسی HttpOnly cookie (اولویت اول)
+      if (req.cookies && req.cookies.token) {
+        token = req.cookies.token;
+      }
+      // 2. بررسی Authorization header (برای mobile apps)
+      else if (req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
+        token = req.headers.authorization.substring(7);
+      }
+
       if (!token) {
         return this.response(res, 401, false, "کاربر لاگین نیست.");
       }
 
       // ✅ بررسی صحت توکن
       const secretKey = config.get("JWT_SECRET");
-
       const encoder = new TextEncoder();
       const { payload } = await jwtVerify(token, encoder.encode(secretKey));
-      console.log("fff" + payload);
+      
       // ✅ یافتن اطلاعات کامل کاربر
       const user = await this.User.findOne({
         where: { id: payload.userId },
@@ -109,12 +118,16 @@ class AuthController extends BaseController {
 
       // ✅ ارسال اطلاعات کاربر بدون نیاز به `JWT`
       return this.response(res, 200, true, "اطلاعات کاربر دریافت شد.", {
+        id: user.id,
         userId: user.id,
         email: user.email,
         username: user.username,
         firstName: user.firstName,
         lastName: user.lastName,
+        mobile: user.mobile,
         isEmailVerified: user.isEmailVerified,
+        isMobileVerified: user.isMobileVerified,
+        isActive: user.isActive,
         roles: user.userRoles.map(role => ({
           id: role.id,
           name: role.name,
@@ -132,13 +145,13 @@ class AuthController extends BaseController {
     try {
       const value = req.body;
 
-      // ✅ یافتن نقش 'User'
+      // ✅ یافتن نقش 'Customer'
       const defaultUserRole = await Role.findOne({
-        where: { name: "User" }, // یا نام فارسی: { nameFa: "کاربر" }
+        where: { name: "customer" }, // یا نام فارسی: { nameFa: "مشتری" }
       });
 
       if (!defaultUserRole) {
-        console.error("❌ Default 'User' role not found. Please create it.");
+        console.error("❌ Default 'customer' role not found. Please create it.");
         return this.response(res, 500, false, "نقش پیش‌فرض یافت نشد.");
       }
 
@@ -168,7 +181,11 @@ class AuthController extends BaseController {
       });
 
       // ✅ اختصاص نقش پیش‌فرض به کاربر جدید
-      await newUser.addRole(defaultUserRole);
+      const UserRole = require("../userRole/model");
+      await UserRole.create({
+        userId: newUser.id,
+        roleId: defaultUserRole.id
+      });
 
       // ✅ ارسال ایمیل تأییدیه
       await main(
@@ -208,7 +225,7 @@ class AuthController extends BaseController {
       });
 
       // ✅ بازیابی نقش‌ها برای کاربر جدید
-      const roles = await newUser.getRoles(); // فرض می‌کنیم متد getRoles در مدل User وجود دارد
+      const roles = await newUser.getUserRoles();
 
       this.response(
         res,
@@ -241,13 +258,13 @@ class AuthController extends BaseController {
     try {
       const value = req.body;
 
-      // ✅ یافتن نقش 'User'
+      // ✅ یافتن نقش 'Customer'
       const defaultUserRole = await Role.findOne({
-        where: { name: "User" }, // یا نام فارسی: { nameFa: "کاربر" }
+        where: { name: "customer" }, // یا نام فارسی: { nameFa: "مشتری" }
       });
 
       if (!defaultUserRole) {
-        console.error("❌ Default 'User' role not found. Please create it.");
+        console.error("❌ Default 'customer' role not found. Please create it.");
         return this.response(res, 500, false, "نقش پیش‌فرض یافت نشد.");
       }
 
@@ -281,7 +298,11 @@ class AuthController extends BaseController {
       });
 
       // ✅ اختصاص نقش پیش‌فرض به کاربر جدید
-      await newUser.addRole(defaultUserRole);
+      const UserRole = require("../userRole/model");
+      await UserRole.create({
+        userId: newUser.id,
+        roleId: defaultUserRole.id
+      });
 
       // ✅ ارسال پیامک تأییدیه با `sms.ir`
       const data = JSON.stringify({
@@ -339,7 +360,7 @@ class AuthController extends BaseController {
       });
 
       // ✅ بازیابی نقش‌ها برای کاربر جدید
-      const roles = await newUser.getRoles(); // فرض می‌کنیم متد getRoles در مدل User وجود دارد
+      const roles = await newUser.getUserRoles();
 
       this.response(
         res,
@@ -620,7 +641,29 @@ class AuthController extends BaseController {
         sameSite: isProduction ? "None" : "Lax",
       });
 
-      return this.response(res, 200, true, "موبایل با موفقیت تایید شد.");
+      // بازیابی نقش‌های کاربر
+      const roles = await user.getUserRoles();
+
+      return this.response(res, 200, true, "موبایل با موفقیت تایید شد.", {
+        token: token, // برای Mobile apps
+        user: {
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          mobile: user.mobile,
+          email: user.email,
+          username: user.username,
+          isEmailVerified: user.isEmailVerified,
+          isMobileVerified: user.isMobileVerified,
+          isActive: user.isActive,
+          roles: roles.map(role => ({
+            id: role.id,
+            name: role.name,
+            nameEn: role.nameEn,
+            nameFa: role.nameFa,
+          }))
+        }
+      });
     } catch (error) {
       console.error("❌ Mobile verification failed:", error);
       return this.response(res, 500, false, "خطا در تایید موبایل");
@@ -704,20 +747,28 @@ class AuthController extends BaseController {
       await user.save();
 
       const isProduction = process.env.NODE_ENV === "production";
+      const rememberMe = value.rememberMe || false;
 
-      res.cookie("token", token, getCookieConfig(isProduction));
+      res.cookie("token", token, getCookieConfig(isProduction, rememberMe));
 
       console.log("✅ User logged in successfully:", user.email || user.mobile);
       console.log("Set-Cookie header sent:", res.getHeaders()['set-cookie']);
-      console.log("Cookie config used:", getCookieConfig(isProduction));
+      console.log("Cookie config used:", getCookieConfig(isProduction, rememberMe));
+      console.log("Remember Me:", rememberMe);
 
       this.response(res, 200, true, "ورود موفقیت‌آمیز بود.", {
+        token: token, // برای Mobile apps
         user: {
+          id: user.id,
           userId: user.id,
           email: user.email,
           username: user.username,
           firstName: user.firstName,
           lastName: user.lastName,
+          mobile: user.mobile,
+          isEmailVerified: user.isEmailVerified,
+          isMobileVerified: user.isMobileVerified,
+          isActive: user.isActive,
           roles: user.userRoles && user.userRoles.length > 0 ? user.userRoles.map(role => ({ // Return all roles in the response safely
             id: role.id,
             name: role.name,
@@ -728,6 +779,420 @@ class AuthController extends BaseController {
       });
     } catch (error) {
       console.error("❌ Login failed:", error.message);
+      this.response(res, 500, false, "خطای داخلی سرور", null, error);
+    }
+  }
+
+  // 📌 بررسی وجود کاربر بر اساس شناسه
+  async checkIdentifier(req, res) {
+    try {
+      const { identifier } = req.body;
+
+      if (!identifier) {
+        return this.response(res, 400, false, "شناسه الزامی است");
+      }
+
+      // تشخیص نوع شناسه
+      const isEmail = identifier.includes("@");
+      const isMobile = /^09\d{9}$/.test(identifier);
+
+      if (!isEmail && !isMobile) {
+        return this.response(res, 400, false, "فرمت شناسه نامعتبر است");
+      }
+
+      let user = null;
+      
+      if (isEmail) {
+        user = await this.User.findOne({ where: { email: identifier } });
+      } else if (isMobile) {
+        user = await this.User.findOne({ where: { mobile: identifier } });
+      }
+
+      console.log(`🔍 Checking identifier: ${identifier}, isEmail: ${isEmail}, isMobile: ${isMobile}, userExists: ${!!user}`);
+
+      return this.response(res, 200, true, "بررسی انجام شد", {
+        userExists: !!user,
+        identifier: identifier,
+        isEmail: isEmail,
+        isMobile: isMobile
+      });
+    } catch (error) {
+      console.error("❌ Check identifier failed:", error);
+      this.response(res, 500, false, "خطای داخلی سرور", null, error);
+    }
+  }
+
+  // 📌 تایید کد و تعیین نوع عملیات
+  async verifyCode(req, res) {
+    try {
+      const { identifier, code, action } = req.body;
+
+      if (!identifier || !code || !action) {
+        return this.response(res, 400, false, "تمام فیلدها الزامی است");
+      }
+
+      // یافتن کاربر
+      const isEmail = identifier.includes("@");
+      let user = null;
+      
+      if (isEmail) {
+        user = await this.User.findOne({ where: { email: identifier } });
+      } else {
+        user = await this.User.findOne({ where: { mobile: identifier } });
+      }
+
+      if (!user) {
+        return this.response(res, 404, false, "کاربر یافت نشد");
+      }
+
+      // بررسی کد تایید
+      if (user.mobileVerifyCode !== code) {
+        return this.response(res, 400, false, "کد تایید اشتباه است");
+      }
+
+      // بررسی انقضای کد (2 دقیقه)
+      if (!user.mobileVerificationSentAt) {
+        console.log(`❌ mobileVerificationSentAt is null`);
+        return this.response(res, 400, false, "زمان ارسال کد مشخص نیست");
+      }
+
+      const now = new Date();
+      const codeSentAt = new Date(user.mobileVerificationSentAt);
+      const diffInMinutes = (now - codeSentAt) / (1000 * 60);
+      
+      console.log(`🕐 Code verification time check:`);
+      console.log(`   Now: ${now.toISOString()}`);
+      console.log(`   Code sent at: ${codeSentAt.toISOString()}`);
+      console.log(`   Difference: ${diffInMinutes.toFixed(2)} minutes`);
+      
+      if (diffInMinutes > 2) {
+        console.log(`❌ Code expired: ${diffInMinutes.toFixed(2)} minutes > 2 minutes`);
+        return this.response(res, 400, false, "کد تایید منقضی شده است");
+      }
+
+      if (action === "register") {
+        // برای ثبت‌نام - کد تایید شد
+        user.isMobileVerified = true;
+        await user.save();
+        
+        // بازیابی نقش‌های کاربر
+        const roles = await user.getUserRoles();
+        
+        return this.response(res, 200, true, "کد تایید شد", {
+          action: "register",
+          identifier: identifier,
+          user: {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            mobile: user.mobile,
+            email: user.email,
+            username: user.username,
+            isEmailVerified: user.isEmailVerified,
+            isMobileVerified: user.isMobileVerified,
+            isActive: user.isActive,
+            roles: roles.map(role => ({
+              id: role.id,
+              name: role.name,
+              nameEn: role.nameEn,
+              nameFa: role.nameFa,
+            }))
+          }
+        });
+      } else if (action === "login") {
+        // برای ورود - تولید JWT و ورود
+        const secretKey = config.get("JWT_SECRET");
+        const encoder = new TextEncoder();
+        const token = await new SignJWT({ userMobile: user.mobile })
+          .setProtectedHeader({ alg: "HS256" })
+          .setExpirationTime("30d")
+          .sign(encoder.encode(secretKey));
+
+        const isProduction = process.env.NODE_ENV === "production";
+
+        // HttpOnly cookie برای Web
+        res.cookie("token", token, {
+          httpOnly: true,
+          secure: isProduction,
+          maxAge: 30 * 24 * 60 * 60 * 1000,
+          path: "/",
+          domain: isProduction ? ".zareoon.ir" : undefined,
+          sameSite: isProduction ? "None" : "Lax",
+        });
+
+        // بازیابی نقش‌های کاربر
+        const roles = await user.getUserRoles();
+
+        return this.response(res, 200, true, "ورود موفق", {
+          action: "login",
+          token: token, // برای Mobile apps
+          user: {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            mobile: user.mobile,
+            email: user.email,
+            username: user.username,
+            isEmailVerified: user.isEmailVerified,
+            isMobileVerified: user.isMobileVerified,
+            isActive: user.isActive,
+            roles: roles.map(role => ({
+              id: role.id,
+              name: role.name,
+              nameEn: role.nameEn,
+              nameFa: role.nameFa,
+            }))
+          }
+        });
+      } else if (action === "forgot") {
+        // برای بازیابی رمز عبور
+        return this.response(res, 200, true, "کد تایید شد", {
+          action: "forgot",
+          identifier: identifier
+        });
+      }
+
+      return this.response(res, 400, false, "عملیات نامعتبر");
+    } catch (error) {
+      console.error("❌ Verify code failed:", error);
+      this.response(res, 500, false, "خطای داخلی سرور", null, error);
+    }
+  }
+
+  // 📌 ارسال مجدد کد
+  async resendCode(req, res) {
+    try {
+      const { identifier, action } = req.body;
+
+      if (!identifier || !action) {
+        return this.response(res, 400, false, "شناسه و نوع عملیات الزامی است");
+      }
+
+      // یافتن کاربر
+      const isEmail = identifier.includes("@");
+      let user = null;
+      
+      if (isEmail) {
+        user = await this.User.findOne({ where: { email: identifier } });
+      } else {
+        user = await this.User.findOne({ where: { mobile: identifier } });
+      }
+
+      if (!user) {
+        return this.response(res, 404, false, "کاربر یافت نشد");
+      }
+
+      // تولید کد جدید
+      const mobileVerifyCode = Math.floor(100000 + Math.random() * 900000);
+      user.mobileVerifyCode = mobileVerifyCode;
+      user.mobileVerificationSentAt = new Date();
+      await user.save();
+
+      // ارسال پیامک
+      const data = JSON.stringify({
+        mobile: user.mobile,
+        templateId: config.get("SMS.TEMPLATE_ID"),
+        parameters: [
+          { name: "CODE", value: mobileVerifyCode.toString() }
+        ]
+      });
+
+      const smsConfig = {
+        method: "post",
+        url: "https://api.sms.ir/v1/send/verify",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "text/plain",
+          "x-api-key": config.get("SMS.API_KEY")
+        },
+        data: data
+      };
+
+      try {
+        const response = await axios(smsConfig);
+        console.log("✅ SMS verification sent to:", user.mobile);
+        console.log("📱 SMS Response:", response.data);
+      } catch (smsError) {
+        console.error("❌ SMS sending failed:", smsError.response?.data || smsError.message);
+        return this.response(res, 500, false, "خطا در ارسال پیامک");
+      }
+
+      return this.response(res, 200, true, "کد جدید ارسال شد");
+    } catch (error) {
+      console.error("❌ Resend code failed:", error);
+      this.response(res, 500, false, "خطای داخلی سرور", null, error);
+    }
+  }
+
+  // 📌 ارسال کد برای ثبت‌نام (ایجاد کاربر موقت)
+  async sendCodeForRegistration(req, res) {
+    try {
+      const { mobile } = req.body;
+
+      if (!mobile) {
+        return this.response(res, 400, false, "شماره موبایل الزامی است");
+      }
+
+      // بررسی فرمت موبایل
+      if (!/^09\d{9}$/.test(mobile)) {
+        return this.response(res, 400, false, "فرمت شماره موبایل نامعتبر است");
+      }
+
+      // بررسی وجود کاربر
+      const existingUser = await this.User.findOne({
+        where: { mobile: mobile },
+      });
+      
+      if (existingUser) {
+        return this.response(res, 409, false, "این شماره موبایل قبلاً ثبت شده است");
+      }
+
+      // یافتن نقش 'Customer'
+      const defaultUserRole = await Role.findOne({
+        where: { name: "customer" },
+      });
+
+      if (!defaultUserRole) {
+        console.error("❌ Default 'customer' role not found. Please create it.");
+        return this.response(res, 500, false, "نقش پیش‌فرض یافت نشد.");
+      }
+
+      // تولید کد احراز هویت
+      const mobileVerifyCode = Math.floor(100000 + Math.random() * 900000);
+
+      // ایجاد کاربر موقت (بدون firstName, lastName, password)
+      const tempUser = await this.User.create({
+        firstName: "temp", // موقت
+        lastName: "temp", // موقت
+        mobile: mobile,
+        username: `temp_${Date.now()}`, // موقت
+        password: "temp123", // موقت
+        mobileVerifyCode,
+        mobileVerificationSentAt: new Date(), // زمان ارسال کد
+        isMobileVerified: false,
+        isActive: false, // غیرفعال تا تکمیل ثبت‌نام
+      });
+
+      // اختصاص نقش پیش‌فرض
+      const UserRole = require("../userRole/model");
+      await UserRole.create({
+        userId: tempUser.id,
+        roleId: defaultUserRole.id
+      });
+
+      // ارسال پیامک
+      const data = JSON.stringify({
+        mobile: mobile,
+        templateId: config.get("SMS.TEMPLATE_ID"),
+        parameters: [
+          { name: "CODE", value: mobileVerifyCode.toString() }
+        ]
+      });
+
+      const smsConfig = {
+        method: "post",
+        url: "https://api.sms.ir/v1/send/verify",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "text/plain",
+          "x-api-key": config.get("SMS.API_KEY")
+        },
+        data: data
+      };
+
+      try {
+        const response = await axios(smsConfig);
+        console.log("✅ SMS verification sent to:", mobile);
+        console.log("📱 SMS Response:", response.data);
+      } catch (smsError) {
+        console.error("❌ SMS sending failed:", smsError.response?.data || smsError.message);
+        return this.response(res, 500, false, "خطا در ارسال پیامک");
+      }
+
+      return this.response(res, 200, true, "کد تایید ارسال شد");
+    } catch (error) {
+      console.error("❌ Send code for registration failed:", error);
+      this.response(res, 500, false, "خطای داخلی سرور", null, error);
+    }
+  }
+
+  // 📌 تکمیل ثبت‌نام
+  async completeRegistration(req, res) {
+    try {
+      const { fullName, email, mobile, password } = req.body;
+
+      if (!fullName || !password) {
+        return this.response(res, 400, false, "نام کامل و رمز عبور الزامی است");
+      }
+
+      // یافتن کاربر بر اساس موبایل یا ایمیل
+      let user = null;
+      if (mobile) {
+        user = await this.User.findOne({ where: { mobile: mobile } });
+      } else if (email) {
+        user = await this.User.findOne({ where: { email: email } });
+      }
+
+      if (!user) {
+        return this.response(res, 404, false, "کاربر یافت نشد");
+      }
+
+      if (!user.isMobileVerified) {
+        return this.response(res, 400, false, "شماره موبایل تایید نشده است");
+      }
+
+      // به‌روزرسانی اطلاعات کاربر
+      user.firstName = fullName.split(" ")[0] || fullName;
+      user.lastName = fullName.split(" ").slice(1).join(" ") || "";
+      user.password = password; // hooks مدل رمزنگاری می‌کند
+      user.isActive = true;
+      await user.save();
+
+      // تولید JWT
+      const secretKey = config.get("JWT_SECRET");
+      const encoder = new TextEncoder();
+      const token = await new SignJWT({ userMobile: user.mobile })
+        .setProtectedHeader({ alg: "HS256" })
+        .setExpirationTime("30d")
+        .sign(encoder.encode(secretKey));
+
+      const isProduction = process.env.NODE_ENV === "production";
+
+      // HttpOnly cookie برای Web
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: isProduction,
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        path: "/",
+        domain: isProduction ? ".zareoon.ir" : undefined,
+        sameSite: isProduction ? "None" : "Lax",
+      });
+
+      // بازیابی نقش‌های کاربر
+      const roles = await user.getUserRoles();
+
+      return this.response(res, 200, true, "ثبت‌نام تکمیل شد", {
+        token: token, // برای Mobile apps
+        user: {
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          mobile: user.mobile,
+          email: user.email,
+          username: user.username,
+          isEmailVerified: user.isEmailVerified,
+          isMobileVerified: user.isMobileVerified,
+          isActive: user.isActive,
+          roles: roles.map(role => ({
+            id: role.id,
+            name: role.name,
+            nameEn: role.nameEn,
+            nameFa: role.nameFa,
+          }))
+        }
+      });
+    } catch (error) {
+      console.error("❌ Complete registration failed:", error);
       this.response(res, 500, false, "خطای داخلی سرور", null, error);
     }
   }
