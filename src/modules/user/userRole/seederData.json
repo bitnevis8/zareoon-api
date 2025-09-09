@@ -1,6 +1,7 @@
 [
   { "email": "bitnevis@yahoo.com", "role": "admin" },
   { "email": "palizvan@zareoon.ir", "role": "admin" },
+  { "email": "mp@zareoon.ir", "role": "admin" },
   { "mobile": "09166419481", "role": "farmer" },
   { "mobile": "09163419865", "role": "farmer" },
   { "mobile": "09161417432", "role": "farmer" },
