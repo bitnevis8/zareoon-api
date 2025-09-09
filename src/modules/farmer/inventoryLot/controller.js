@@ -4,6 +4,7 @@ const User = require("../../user/user/model");
 const TransactionHistory = require("../transactionHistory/model");
 const CustomAttributeValue = require("../customAttributeValue/model");
 const CustomAttributeDefinition = require("../customAttributeDefinition/model");
+const { getInventoryPricing } = require("../../../utils/inventoryPricingUtils");
 
 const list = async (req, res) => {
   const items = await InventoryLot.findAll({
@@ -107,5 +108,124 @@ const release = async (req, res) => {
   res.json({ success: true, data: lot });
 };
 
-module.exports = { list, getById, create, update, remove, reserve, release };
+// محاسبه قیمت بر اساس tiered pricing برای موجودی
+const calculatePrice = async (req, res) => {
+  try {
+    const inventoryLotId = parseInt(req.params.id);
+    const quantity = parseFloat(req.query.quantity);
+
+    if (!inventoryLotId || !quantity || quantity <= 0) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Inventory lot ID and valid quantity are required" 
+      });
+    }
+
+    const inventoryLot = await InventoryLot.findByPk(inventoryLotId, {
+      include: [
+        { model: User, as: "farmer", attributes: ["id","firstName","lastName","username","mobile"] }
+      ]
+    });
+
+    if (!inventoryLot) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Inventory lot not found" 
+      });
+    }
+
+    // Check if requested quantity is available
+    const availableQuantity = parseFloat(inventoryLot.totalQuantity) - parseFloat(inventoryLot.reservedQuantity || 0);
+    if (quantity > availableQuantity) {
+      return res.status(400).json({
+        success: false,
+        message: `موجودی کافی نیست. موجودی قابل فروش: ${availableQuantity} ${inventoryLot.unit}`
+      });
+    }
+
+    const pricing = getInventoryPricing(inventoryLot, quantity);
+    
+    res.json({ 
+      success: true, 
+      data: {
+        ...pricing,
+        inventoryLot: {
+          id: inventoryLot.id,
+          farmer: inventoryLot.farmer,
+          productId: inventoryLot.productId,
+          qualityGrade: inventoryLot.qualityGrade,
+          unit: inventoryLot.unit,
+          availableQuantity: availableQuantity
+        }
+      }
+    });
+  } catch (error) {
+    console.error("Error calculating inventory price:", error);
+    res.status(500).json({ 
+      success: false, 
+      message: "Internal server error" 
+    });
+  }
+};
+
+// تنظیم قیمت‌گذاری پلکانی برای موجودی
+const setTieredPricing = async (req, res) => {
+  try {
+    const inventoryLotId = parseInt(req.params.id);
+    const { tieredPricing, minimumOrderQuantity } = req.body;
+
+    if (!inventoryLotId) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Inventory lot ID is required" 
+      });
+    }
+
+    const inventoryLot = await InventoryLot.findByPk(inventoryLotId);
+    if (!inventoryLot) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Inventory lot not found" 
+      });
+    }
+
+    // Validate tiered pricing structure
+    if (tieredPricing && Array.isArray(tieredPricing)) {
+      for (const tier of tieredPricing) {
+        if (!tier.minQuantity || !tier.pricePerUnit) {
+          return res.status(400).json({
+            success: false,
+            message: "هر سطح قیمت باید حداقل مقدار و قیمت داشته باشد"
+          });
+        }
+      }
+    }
+
+    // Update the inventory lot
+    const updateData = {};
+    if (tieredPricing !== undefined) updateData.tieredPricing = tieredPricing;
+    if (minimumOrderQuantity !== undefined) updateData.minimumOrderQuantity = minimumOrderQuantity;
+
+    await InventoryLot.update(updateData, { where: { id: inventoryLotId } });
+
+    const updatedLot = await InventoryLot.findByPk(inventoryLotId, {
+      include: [
+        { model: User, as: "farmer", attributes: ["id","firstName","lastName","username","mobile"] }
+      ]
+    });
+
+    res.json({ 
+      success: true, 
+      data: updatedLot 
+    });
+  } catch (error) {
+    console.error("Error setting tiered pricing:", error);
+    res.status(500).json({ 
+      success: false, 
+      message: "Internal server error" 
+    });
+  }
+};
+
+module.exports = { list, getById, create, update, remove, reserve, release, calculatePrice, setTieredPricing };
 

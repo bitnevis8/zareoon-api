@@ -9,6 +9,28 @@
       "unit": "kg",
       "totalQuantity": 15000,
       "reservedQuantity": 2000,
+      "price": 15,
+      "minimumOrderQuantity": 1000,
+      "tieredPricing": [
+        {
+          "minQuantity": 1000,
+          "maxQuantity": 4999,
+          "pricePerUnit": 15,
+          "description": "زیر 5 تن"
+        },
+        {
+          "minQuantity": 5000,
+          "maxQuantity": 19999,
+          "pricePerUnit": 13,
+          "description": "بین 5 تا 20 تن"
+        },
+        {
+          "minQuantity": 20000,
+          "maxQuantity": null,
+          "pricePerUnit": 11,
+          "description": "بالای 20 تن"
+        }
+      ],
       "areaHectare": 5.5,
       "yieldEstimatePerHectare": 2727
     },
@@ -21,6 +43,28 @@
       "unit": "kg",
       "totalQuantity": 12000,
       "reservedQuantity": 1000,
+      "price": 12,
+      "minimumOrderQuantity": 500,
+      "tieredPricing": [
+        {
+          "minQuantity": 500,
+          "maxQuantity": 2999,
+          "pricePerUnit": 12,
+          "description": "زیر 3 تن"
+        },
+        {
+          "minQuantity": 3000,
+          "maxQuantity": 9999,
+          "pricePerUnit": 10,
+          "description": "بین 3 تا 10 تن"
+        },
+        {
+          "minQuantity": 10000,
+          "maxQuantity": null,
+          "pricePerUnit": 8,
+          "description": "بالای 10 تن"
+        }
+      ],
       "areaHectare": 4.2,
       "yieldEstimatePerHectare": 2857
     },
@@ -33,6 +77,8 @@
       "unit": "kg",
       "totalQuantity": 8000,
       "reservedQuantity": 500,
+      "price": 10,
+      "minimumOrderQuantity": 200,
       "areaHectare": 3.0,
       "yieldEstimatePerHectare": 2667
     },
@@ -45,6 +91,8 @@
       "unit": "kg",
       "totalQuantity": 4000,
       "reservedQuantity": 0,
+      "price": 8,
+      "minimumOrderQuantity": 100,
       "areaHectare": 2.0,
       "yieldEstimatePerHectare": 2500
     },
@@ -57,6 +105,8 @@
       "unit": "kg",
       "totalQuantity": 1000,
       "reservedQuantity": 200,
+      "price": 14,
+      "minimumOrderQuantity": 100,
       "areaHectare": 6.0,
       "yieldEstimatePerHectare": 3000
     },
@@ -69,6 +119,8 @@
       "unit": "kg",
       "totalQuantity": 550,
       "reservedQuantity": 20,
+      "price": 12,
+      "minimumOrderQuantity": 50,
       "areaHectare": 4.5,
       "yieldEstimatePerHectare": 3111
     },
@@ -81,6 +133,28 @@
       "unit": "kg",
       "totalQuantity": 22000,
       "reservedQuantity": 4000,
+      "price": 16,
+      "minimumOrderQuantity": 2000,
+      "tieredPricing": [
+        {
+          "minQuantity": 2000,
+          "maxQuantity": 9999,
+          "pricePerUnit": 16,
+          "description": "زیر 10 تن"
+        },
+        {
+          "minQuantity": 10000,
+          "maxQuantity": 19999,
+          "pricePerUnit": 14,
+          "description": "بین 10 تا 20 تن"
+        },
+        {
+          "minQuantity": 20000,
+          "maxQuantity": null,
+          "pricePerUnit": 12,
+          "description": "بالای 20 تن"
+        }
+      ],
       "areaHectare": 7.5,
       "yieldEstimatePerHectare": 2933
     },
@@ -93,6 +167,28 @@
       "unit": "kg",
       "totalQuantity": 16000,
       "reservedQuantity": 2000,
+      "price": 14,
+      "minimumOrderQuantity": 1500,
+      "tieredPricing": [
+        {
+          "minQuantity": 1500,
+          "maxQuantity": 7999,
+          "pricePerUnit": 14,
+          "description": "زیر 8 تن"
+        },
+        {
+          "minQuantity": 8000,
+          "maxQuantity": 14999,
+          "pricePerUnit": 12,
+          "description": "بین 8 تا 15 تن"
+        },
+        {
+          "minQuantity": 15000,
+          "maxQuantity": null,
+          "pricePerUnit": 10,
+          "description": "بالای 15 تن"
+        }
+      ],
       "areaHectare": 5.0,
       "yieldEstimatePerHectare": 3200
     },
@@ -105,6 +201,8 @@
       "unit": "kg",
       "totalQuantity": 10000,
       "reservedQuantity": 1000,
+      "price": 18,
+      "minimumOrderQuantity": 500,
       "areaHectare": 3.5,
       "yieldEstimatePerHectare": 2857
     },
@@ -117,6 +215,8 @@
       "unit": "kg",
       "totalQuantity": 8000,
       "reservedQuantity": 500,
+      "price": 16,
+      "minimumOrderQuantity": 400,
       "areaHectare": 2.8,
       "yieldEstimatePerHectare": 2857
     },
@@ -129,6 +229,28 @@
       "unit": "kg",
       "totalQuantity": 13000,
       "reservedQuantity": 2000,
+      "price": 20,
+      "minimumOrderQuantity": 1000,
+      "tieredPricing": [
+        {
+          "minQuantity": 1000,
+          "maxQuantity": 4999,
+          "pricePerUnit": 20,
+          "description": "زیر 5 تن"
+        },
+        {
+          "minQuantity": 5000,
+          "maxQuantity": 9999,
+          "pricePerUnit": 18,
+          "description": "بین 5 تا 10 تن"
+        },
+        {
+          "minQuantity": 10000,
+          "maxQuantity": null,
+          "pricePerUnit": 16,
+          "description": "بالای 10 تن"
+        }
+      ],
       "areaHectare": 4.5,
       "yieldEstimatePerHectare": 2889
     },
@@ -141,6 +263,8 @@
       "unit": "kg",
       "totalQuantity": 9000,
       "reservedQuantity": 1000,
+      "price": 18,
+      "minimumOrderQuantity": 800,
       "areaHectare": 3.0,
       "yieldEstimatePerHectare": 3000
     },
@@ -153,6 +277,28 @@
       "unit": "kg",
       "totalQuantity": 15000,
       "reservedQuantity": 2500,
+      "price": 22,
+      "minimumOrderQuantity": 2000,
+      "tieredPricing": [
+        {
+          "minQuantity": 2000,
+          "maxQuantity": 9999,
+          "pricePerUnit": 22,
+          "description": "زیر 10 تن"
+        },
+        {
+          "minQuantity": 10000,
+          "maxQuantity": 14999,
+          "pricePerUnit": 20,
+          "description": "بین 10 تا 15 تن"
+        },
+        {
+          "minQuantity": 15000,
+          "maxQuantity": null,
+          "pricePerUnit": 18,
+          "description": "بالای 15 تن"
+        }
+      ],
       "areaHectare": 5.0,
       "yieldEstimatePerHectare": 3000
     },
@@ -165,6 +311,8 @@
       "unit": "kg",
       "totalQuantity": 11000,
       "reservedQuantity": 1500,
+      "price": 20,
+      "minimumOrderQuantity": 1500,
       "areaHectare": 3.5,
       "yieldEstimatePerHectare": 3143
     },
@@ -177,6 +325,22 @@
       "unit": "kg",
       "totalQuantity": 20000,
       "reservedQuantity": 3000,
+      "price": 25,
+      "minimumOrderQuantity": 5000,
+      "tieredPricing": [
+        {
+          "minQuantity": 5000,
+          "maxQuantity": 19999,
+          "pricePerUnit": 25,
+          "description": "زیر 20 تن"
+        },
+        {
+          "minQuantity": 20000,
+          "maxQuantity": null,
+          "pricePerUnit": 22,
+          "description": "بالای 20 تن"
+        }
+      ],
       "areaHectare": 8.0,
       "yieldEstimatePerHectare": 2500
     },
@@ -189,6 +353,8 @@
       "unit": "kg",
       "totalQuantity": 18000,
       "reservedQuantity": 2500,
+      "price": 17,
+      "minimumOrderQuantity": 2000,
       "areaHectare": 6.5,
       "yieldEstimatePerHectare": 2769
     },
@@ -201,8 +367,132 @@
       "unit": "kg",
       "totalQuantity": 25000,
       "reservedQuantity": 4000,
+      "price": 18,
+      "minimumOrderQuantity": 2000,
+      "tieredPricing": [
+        {
+          "minQuantity": 2000,
+          "maxQuantity": 9999,
+          "pricePerUnit": 18,
+          "description": "زیر 10 تن"
+        },
+        {
+          "minQuantity": 10000,
+          "maxQuantity": 49999,
+          "pricePerUnit": 16,
+          "description": "بین 10 تا 50 تن"
+        },
+        {
+          "minQuantity": 50000,
+          "maxQuantity": null,
+          "pricePerUnit": 14,
+          "description": "بالای 50 تن"
+        }
+      ],
       "areaHectare": 10.0,
       "yieldEstimatePerHectare": 2500
+    },
+    {
+      "id": 18,
+      "farmerId": 12,
+      "productId": 120086,
+      "qualityGrade": "درجه 1",
+      "status": "harvested",
+      "unit": "kg",
+      "totalQuantity": 5000,
+      "reservedQuantity": 500,
+      "price": 120,
+      "minimumOrderQuantity": 50,
+      "tieredPricing": [
+        {
+          "minQuantity": 50,
+          "maxQuantity": 499,
+          "pricePerUnit": 120,
+          "description": "زیر 500 کیلو"
+        },
+        {
+          "minQuantity": 500,
+          "maxQuantity": 4999,
+          "pricePerUnit": 100,
+          "description": "بین 500 تا 5000 کیلو"
+        },
+        {
+          "minQuantity": 5000,
+          "maxQuantity": null,
+          "pricePerUnit": 85,
+          "description": "بالای 5000 کیلو"
+        }
+      ],
+      "areaHectare": 2.0,
+      "yieldEstimatePerHectare": 2500
+    },
+    {
+      "id": 19,
+      "farmerId": 12,
+      "productId": 120087,
+      "qualityGrade": "درجه 1",
+      "status": "harvested",
+      "unit": "kg",
+      "totalQuantity": 3000,
+      "reservedQuantity": 200,
+      "price": 100,
+      "minimumOrderQuantity": 100,
+      "tieredPricing": [
+        {
+          "minQuantity": 100,
+          "maxQuantity": 999,
+          "pricePerUnit": 100,
+          "description": "زیر 1000 کیلو"
+        },
+        {
+          "minQuantity": 1000,
+          "maxQuantity": 9999,
+          "pricePerUnit": 80,
+          "description": "بین 1000 تا 10000 کیلو"
+        },
+        {
+          "minQuantity": 10000,
+          "maxQuantity": null,
+          "pricePerUnit": 60,
+          "description": "بالای 10000 کیلو"
+        }
+      ],
+      "areaHectare": 1.5,
+      "yieldEstimatePerHectare": 2000
+    },
+    {
+      "id": 20,
+      "farmerId": 14,
+      "productId": 120088,
+      "qualityGrade": "صادراتی",
+      "status": "harvested",
+      "unit": "kg",
+      "totalQuantity": 2000,
+      "reservedQuantity": 100,
+      "price": 200,
+      "minimumOrderQuantity": 25,
+      "tieredPricing": [
+        {
+          "minQuantity": 25,
+          "maxQuantity": 249,
+          "pricePerUnit": 200,
+          "description": "زیر 250 کیلو"
+        },
+        {
+          "minQuantity": 250,
+          "maxQuantity": 999,
+          "pricePerUnit": 180,
+          "description": "بین 250 تا 1000 کیلو"
+        },
+        {
+          "minQuantity": 1000,
+          "maxQuantity": null,
+          "pricePerUnit": 150,
+          "description": "بالای 1000 کیلو"
+        }
+      ],
+      "areaHectare": 1.0,
+      "yieldEstimatePerHectare": 2000
     }
   ]
 }

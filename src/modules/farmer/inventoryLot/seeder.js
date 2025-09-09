@@ -14,6 +14,9 @@ const seedInventoryLots = async () => {
       unit: l.unit,
       totalQuantity: l.totalQuantity,
       reservedQuantity: l.reservedQuantity || 0,
+      price: l.price || null,
+      minimumOrderQuantity: l.minimumOrderQuantity || null,
+      tieredPricing: l.tieredPricing || null,
       areaHectare: l.areaHectare || null,
       yieldEstimatePerHectare: l.yieldEstimatePerHectare || null
     };

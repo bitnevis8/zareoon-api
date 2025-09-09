@@ -16,6 +16,10 @@ InventoryLot.init(
     totalQuantity: { type: DataTypes.DECIMAL(18, 3), allowNull: false },
     reservedQuantity: { type: DataTypes.DECIMAL(18, 3), allowNull: false, defaultValue: 0 },
     price: { type: DataTypes.DECIMAL(18, 2), allowNull: true },
+    // Tiered pricing for different order quantities
+    tieredPricing: { type: DataTypes.JSON, allowNull: true },
+    // Minimum order quantity for this lot
+    minimumOrderQuantity: { type: DataTypes.DECIMAL(18, 3), allowNull: true },
     areaHectare: { type: DataTypes.DECIMAL(10, 3), allowNull: true },
     yieldEstimatePerHectare: { type: DataTypes.DECIMAL(10, 3), allowNull: true },
     createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },

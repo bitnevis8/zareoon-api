@@ -12,5 +12,9 @@ router.delete("/:id", controller.remove);
 router.post("/:id/reserve", controller.reserve);
 router.post("/:id/release", controller.release);
 
+// Pricing endpoints
+router.get("/:id/calculate-price", controller.calculatePrice);
+router.put("/:id/set-tiered-pricing", controller.setTieredPricing);
+
 module.exports = router;
 

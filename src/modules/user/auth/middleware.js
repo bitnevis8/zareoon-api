@@ -14,10 +14,19 @@ const authenticateUser = async (req, res, next) => {
     console.log('Authorization Header:', req.headers.authorization);
     console.log('=========================');
     
-    // گرفتن توکن از کوکی‌های درخواست
-    const token = req.cookies?.token;
+    // گرفتن توکن از کوکی‌ها یا Authorization header
+    let token = req.cookies?.token;
+    
+    // اگر توکن در کوکی نبود، از Authorization header بگیر
     if (!token) {
-      console.log('No token found in cookies');
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        token = authHeader.substring(7);
+      }
+    }
+    
+    if (!token) {
+      console.log('No token found in cookies or Authorization header');
       return res
         .status(401)
         .json({ success: false, message: "احراز هویت انجام نشده است" });
@@ -67,7 +76,7 @@ const authorizeRole = (requiredRole) => (req, res, next) => {
 
     // بررسی نقش کاربر (مدیر یا نه)
     // با توجه به رابطه چند به چند، req.user.roles اکنون یک آرایه از نقش‌ها است.
-    const hasRequiredRole = req.user.roles.some(role => role.nameEn === requiredRole);
+    const hasRequiredRole = req.user.roles && Array.isArray(req.user.roles) && req.user.roles.some(role => role.nameEn === requiredRole);
 
     if (!hasRequiredRole) {
       return res.status(403).json({
