@@ -9,6 +9,7 @@ const fileUploadRouter = require('../modules/fileUpload/route');
 const locationRouter = require('../modules/location/route');
 const farmerRouter = require('../modules/farmer/route');
 const lcRequestRouter = require('../modules/lcRequest/route');
+const serviceRequestRouter = require('../modules/serviceRequest/route');
 
 // Use routers
 baseRouter.use('/user', userRouter);
@@ -18,5 +19,6 @@ baseRouter.use('/file-upload', fileUploadRouter);
 baseRouter.use('/location', locationRouter);
 baseRouter.use('/farmer', farmerRouter);
 baseRouter.use('/lc-request', lcRequestRouter);
+baseRouter.use('/service-request', serviceRequestRouter);
 
 module.exports = baseRouter;

@@ -23,6 +23,7 @@ const OrderItem = require('./farmer/orderItem/model');
 const TransactionHistory = require('./farmer/transactionHistory/model');
 const OrderRequestItem = require('./farmer/orderRequestItem/model');
 const LcRequest = require('./lcRequest/model');
+const ServiceRequest = require('./serviceRequest/model');
 
 // تعریف ارتباطات بین مدل‌ها
 const defineAssociations = () => {
@@ -242,6 +243,9 @@ const defineAssociations = () => {
     // LC requests
     User.hasMany(LcRequest, { foreignKey: 'userId', as: 'lcRequests', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
     LcRequest.belongsTo(User, { foreignKey: 'userId', as: 'user', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
+
+    User.hasMany(ServiceRequest, { foreignKey: 'userId', as: 'serviceRequests', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
+    ServiceRequest.belongsTo(User, { foreignKey: 'userId', as: 'user', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
 };
 
 module.exports = defineAssociations; 

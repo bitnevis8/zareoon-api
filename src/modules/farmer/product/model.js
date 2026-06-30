@@ -23,6 +23,7 @@ Product.init(
     // Optional catalog flags and metadata
     isActive: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: true },
     sortOrder: { type: DataTypes.INTEGER, allowNull: true },
+    homepageSortOrder: { type: DataTypes.INTEGER, allowNull: true },
     isFeatured: { type: DataTypes.BOOLEAN, allowNull: true, defaultValue: false },
     icon: { type: DataTypes.STRING(500), allowNull: true },
     metaTitle: { type: DataTypes.STRING(255), allowNull: true },

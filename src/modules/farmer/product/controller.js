@@ -86,7 +86,7 @@ const list = async (req, res) => {
     ];
   }
 
-  const options = { where, order: [["id", "ASC"]] };
+  const options = { where, order: [["homepageSortOrder", "ASC"], ["sortOrder", "ASC"], ["id", "ASC"]] };
   if (q && req.query.limit !== undefined) {
     const limit = parseInt(req.query.limit, 10);
     if (Number.isFinite(limit) && limit > 0) options.limit = limit;

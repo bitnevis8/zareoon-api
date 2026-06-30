@@ -196,6 +196,58 @@
 
       "minimumOrderQuantity": 500
 
+    },
+
+    {
+
+      "id": 8,
+
+      "farmerId": 1,
+
+      "productId": 13002,
+
+      "englishName": "Industrial Aluminum Powder",
+
+      "russianName": "Порошок алюминия",
+
+      "qualityGrade": "صنعتی",
+
+      "status": "harvested",
+
+      "unit": "kg",
+
+      "totalQuantity": 500,
+
+      "reservedQuantity": 0,
+
+      "minimumOrderQuantity": 50
+
+    },
+
+    {
+
+      "id": 9,
+
+      "farmerId": 1,
+
+      "productId": 12105,
+
+      "englishName": "Urea Fertilizer",
+
+      "russianName": "Мочевина",
+
+      "qualityGrade": "کشاورزی",
+
+      "status": "harvested",
+
+      "unit": "ton",
+
+      "totalQuantity": 10,
+
+      "reservedQuantity": 0,
+
+      "minimumOrderQuantity": 1
+
     }
 
   ]

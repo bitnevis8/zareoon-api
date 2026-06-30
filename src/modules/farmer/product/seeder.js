@@ -3,6 +3,11 @@ const path = require("path");
 const Product = require("./model");
 const treeDataFull = require("./seederData.json");
 
+const MAIN_ROOT_IDS = new Set([
+  900001, 900002, 900003, 900004, 900005, 900006,
+  900007, 900008, 900009, 900010, 900011, 900012,
+]);
+
 function extractTranslationObjects(content) {
   const results = [];
   const chunks = content.split(/\n  \},?\n/);
@@ -75,6 +80,7 @@ const seedProducts = async () => {
 
   for (const n of nodes) {
     const isLeaf = !parentIds.has(n.id);
+    const isOrderable = MAIN_ROOT_IDS.has(n.id) ? false : Boolean(isLeaf);
     const tr = resolveTranslations(n, overlays);
     const data = {
       id: n.id,
@@ -88,12 +94,13 @@ const seedProducts = async () => {
       imageUrl: n.imageUrl || null,
       isActive: typeof n.isActive === "boolean" ? n.isActive : true,
       sortOrder: Number.isFinite(n.sortOrder) ? n.sortOrder : null,
+      homepageSortOrder: Number.isFinite(n.homepageSortOrder) ? n.homepageSortOrder : null,
       isFeatured: typeof n.isFeatured === "boolean" ? n.isFeatured : false,
       icon: n.icon || null,
       metaTitle: n.metaTitle || null,
       metaDescription: n.metaDescription || null,
       validUnits: n.validUnits || null,
-      isOrderable: Boolean(isLeaf),
+      isOrderable,
       unit: n.unit || (Array.isArray(n.validUnits) && n.validUnits.includes("Kilogram") ? "kg" : null),
       supplyCountry: n.supplyCountry || "IR",
       supplyCity: n.supplyCity || null,
