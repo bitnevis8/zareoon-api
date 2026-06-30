@@ -34,7 +34,6 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
-    "deploy": "npm install --omit=dev && npm start",
     "seed": "node src/core/database/seeder.js",
     "init-folders": "node scripts/initialize-folders.js",
     "sync-product-images": "node scripts/sync-product-images.js"
