@@ -8,6 +8,7 @@ const roleRouter = require('../modules/user/role/route');
 const fileUploadRouter = require('../modules/fileUpload/route');
 const locationRouter = require('../modules/location/route');
 const farmerRouter = require('../modules/farmer/route');
+const lcRequestRouter = require('../modules/lcRequest/route');
 
 // Use routers
 baseRouter.use('/user', userRouter);
@@ -16,5 +17,6 @@ baseRouter.use('/user/role', roleRouter);
 baseRouter.use('/file-upload', fileUploadRouter);
 baseRouter.use('/location', locationRouter);
 baseRouter.use('/farmer', farmerRouter);
+baseRouter.use('/lc-request', lcRequestRouter);
 
 module.exports = baseRouter;

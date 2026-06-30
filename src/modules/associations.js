@@ -22,6 +22,7 @@ const Order = require('./farmer/order/model');
 const OrderItem = require('./farmer/orderItem/model');
 const TransactionHistory = require('./farmer/transactionHistory/model');
 const OrderRequestItem = require('./farmer/orderRequestItem/model');
+const LcRequest = require('./lcRequest/model');
 
 // تعریف ارتباطات بین مدل‌ها
 const defineAssociations = () => {
@@ -237,6 +238,10 @@ const defineAssociations = () => {
     // TransactionHistory
     InventoryLot.hasMany(TransactionHistory, { foreignKey: 'inventoryLotId', as: 'transactions', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
     TransactionHistory.belongsTo(InventoryLot, { foreignKey: 'inventoryLotId', as: 'inventoryLot', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+
+    // LC requests
+    User.hasMany(LcRequest, { foreignKey: 'userId', as: 'lcRequests', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
+    LcRequest.belongsTo(User, { foreignKey: 'userId', as: 'user', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
 };
 
 module.exports = defineAssociations; 

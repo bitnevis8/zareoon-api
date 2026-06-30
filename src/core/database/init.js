@@ -25,6 +25,7 @@ require("../../modules/farmer/order/model");
 require("../../modules/farmer/orderItem/model");
   require("../../modules/farmer/orderRequestItem/model");
 require("../../modules/farmer/transactionHistory/model");
+require("../../modules/lcRequest/model");
 
 // Import and define all associations
 const defineAssociations = require("../../modules/associations");
