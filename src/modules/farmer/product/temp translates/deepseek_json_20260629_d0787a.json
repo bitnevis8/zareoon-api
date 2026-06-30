@@ -1,0 +1,1037 @@
+[
+  {
+    "id": 1103,
+    "name": "گندم سخت",
+    "slug": "hard-wheat",
+    "englishName": "Hard Wheat",
+    "arabicName": "قمح صلب",
+    "russianName": "Твёрдая пшеница",
+    ...
+  },
+  {
+    "id": 1104,
+    "name": "گندم نرم",
+    "slug": "soft-wheat",
+    "englishName": "Soft Wheat",
+    "arabicName": "قمح طري",
+    "russianName": "Мягкая пшеница",
+    ...
+  },
+  {
+    "id": 1105,
+    "name": "گندم قرمز",
+    "slug": "red-wheat",
+    "englishName": "Red Wheat",
+    "arabicName": "قمح أحمر",
+    "russianName": "Красная пшеница",
+    ...
+  },
+  {
+    "id": 1106,
+    "name": "گندم سفید",
+    "slug": "white-wheat",
+    "englishName": "White Wheat",
+    "arabicName": "قمح أبيض",
+    "russianName": "Белая пшеница",
+    ...
+  },
+  {
+    "id": 1201,
+    "name": "جو نان",
+    "slug": "bread-barley",
+    "englishName": "Bread Barley",
+    "arabicName": "شعير الخبز",
+    "russianName": "Хлебный ячмень",
+    ...
+  },
+  {
+    "id": 1202,
+    "name": "جو علوفه‌ای",
+    "slug": "fodder-barley",
+    "englishName": "Fodder Barley",
+    "arabicName": "شعير علفي",
+    "russianName": "Кормовой ячмень",
+    ...
+  },
+  {
+    "id": 1203,
+    "name": "جو مالت",
+    "slug": "malt-barley",
+    "englishName": "Malt Barley",
+    "arabicName": "شعير المالت",
+    "russianName": "Солодовый ячмень",
+    ...
+  },
+  {
+    "id": 1301,
+    "name": "برنج سفید",
+    "slug": "white-rice",
+    "englishName": "White Rice",
+    "arabicName": "أرز أبيض",
+    "russianName": "Белый рис",
+    ...
+  },
+  {
+    "id": 1302,
+    "name": "برنج قهوه‌ای",
+    "slug": "brown-rice",
+    "englishName": "Brown Rice",
+    "arabicName": "أرز بني",
+    "russianName": "Коричневый рис",
+    ...
+  },
+  {
+    "id": 1303,
+    "name": "برنج باسماتی",
+    "slug": "basmati-rice",
+    "englishName": "Basmati Rice",
+    "arabicName": "أرز بسمتي",
+    "russianName": "Рис басмати",
+    ...
+  },
+  {
+    "id": 1304,
+    "name": "برنج جاسمین",
+    "slug": "jasmine-rice",
+    "englishName": "Jasmine Rice",
+    "arabicName": "أرز ياسمين",
+    "russianName": "Рис жасмин",
+    ...
+  },
+  {
+    "id": 1305,
+    "name": "برنج وحشی",
+    "slug": "wild-rice",
+    "englishName": "Wild Rice",
+    "arabicName": "أرز بري",
+    "russianName": "Дикий рис",
+    ...
+  },
+  {
+    "id": 1401,
+    "name": "ذرت خوراکی",
+    "slug": "sweet-corn",
+    "englishName": "Sweet Corn",
+    "arabicName": "ذرة حلوة",
+    "russianName": "Сахарная кукуруза",
+    ...
+  },
+  {
+    "id": 1402,
+    "name": "ذرت دامی",
+    "slug": "feed-corn",
+    "englishName": "Feed Corn",
+    "arabicName": "ذرة علفية",
+    "russianName": "Кормовая кукуруза",
+    ...
+  },
+  {
+    "id": 1403,
+    "name": "ذرت پاپ کورن",
+    "slug": "popcorn-corn",
+    "englishName": "Popcorn Corn",
+    "arabicName": "ذرة الفشار",
+    "russianName": "Кукуруза для попкорна",
+    ...
+  },
+  {
+    "id": 1404,
+    "name": "ذرت مومی",
+    "slug": "waxy-corn",
+    "englishName": "Waxy Corn",
+    "arabicName": "ذرة شمعية",
+    "russianName": "Восковая кукуруза",
+    ...
+  },
+  {
+    "id": 1501,
+    "name": "جو دوسر معمولی",
+    "slug": "common-oats",
+    "englishName": "Common Oats",
+    "arabicName": "شوفان عادي",
+    "russianName": "Обыкновенный овёс",
+    ...
+  },
+  {
+    "id": 1502,
+    "name": "جو دوسر پوست‌کنده",
+    "slug": "hulled-oats",
+    "englishName": "Hulled Oats",
+    "arabicName": "شوفان مقشر",
+    "russianName": "Овёс шелушёный",
+    ...
+  },
+  {
+    "id": 1503,
+    "name": "جو دوسر فوری",
+    "slug": "instant-oats",
+    "englishName": "Instant Oats",
+    "arabicName": "شوفان سريع التحضير",
+    "russianName": "Овёс быстрого приготовления",
+    ...
+  },
+  {
+    "id": 1601,
+    "name": "سورگوم معمولی",
+    "slug": "common-sorghum",
+    "englishName": "Common Sorghum",
+    "arabicName": "سورغم عادي",
+    "russianName": "Обыкновенное сорго",
+    ...
+  },
+  {
+    "id": 1602,
+    "name": "سورگوم شیرین",
+    "slug": "sweet-sorghum",
+    "englishName": "Sweet Sorghum",
+    "arabicName": "سورغم حلو",
+    "russianName": "Сладкое сорго",
+    ...
+  },
+  {
+    "id": 1603,
+    "name": "سورگوم علوفه‌ای",
+    "slug": "forage-sorghum",
+    "englishName": "Forage Sorghum",
+    "arabicName": "سورغم علفي",
+    "russianName": "Кормовое сорго",
+    ...
+  },
+  {
+    "id": 1701,
+    "name": "چاودار معمولی",
+    "slug": "common-rye",
+    "englishName": "Common Rye",
+    "arabicName": "شَيْلَم عادي",
+    "russianName": "Обыкновенная рожь",
+    ...
+  },
+  {
+    "id": 1702,
+    "name": "چاودار وحشی",
+    "slug": "wild-rye",
+    "englishName": "Wild Rye",
+    "arabicName": "شَيْلَم بري",
+    "russianName": "Дикая рожь",
+    ...
+  },
+  {
+    "id": 1703,
+    "name": "چاودار علوفه‌ای",
+    "slug": "forage-rye",
+    "englishName": "Forage Rye",
+    "arabicName": "شَيْلَم علفي",
+    "russianName": "Кормовая рожь",
+    ...
+  },
+  {
+    "id": 1801,
+    "name": "ارزن معمولی",
+    "slug": "common-millet",
+    "englishName": "Common Millet",
+    "arabicName": "دخن عادي",
+    "russianName": "Обыкновенное просо",
+    ...
+  },
+  {
+    "id": 1802,
+    "name": "ارزن مرواریدی",
+    "slug": "pearl-millet",
+    "englishName": "Pearl Millet",
+    "arabicName": "دخن لؤلؤي",
+    "russianName": "Жемчужное просо",
+    ...
+  },
+  {
+    "id": 1803,
+    "name": "ارزن انگشتی",
+    "slug": "finger-millet",
+    "englishName": "Finger Millet",
+    "arabicName": "دخن إصبعي",
+    "russianName": "Пальчатое просо",
+    ...
+  },
+  {
+    "id": 1804,
+    "name": "ارزن علوفه‌ای",
+    "slug": "forage-millet",
+    "englishName": "Forage Millet",
+    "arabicName": "دخن علفي",
+    "russianName": "Кормовое просо",
+    ...
+  },
+  {
+    "id": 16011,
+    "name": "سورگوم قرمز",
+    "slug": "red-sorghum",
+    "englishName": "Red Sorghum",
+    "arabicName": "سورغم أحمر",
+    "russianName": "Красное сорго",
+    ...
+  },
+  {
+    "id": 16012,
+    "name": "سورگوم سفید",
+    "slug": "white-sorghum",
+    "englishName": "White Sorghum",
+    "arabicName": "سورغم أبيض",
+    "russianName": "Белое сорго",
+    ...
+  },
+  {
+    "id": 16021,
+    "name": "سورگوم شربتی",
+    "slug": "syrup-sorghum",
+    "englishName": "Syrup Sorghum",
+    "arabicName": "سورغم شرابي",
+    "russianName": "Сорго для сиропа",
+    ...
+  },
+  {
+    "id": 16022,
+    "name": "سورگوم الکلی",
+    "slug": "alcohol-sorghum",
+    "englishName": "Alcohol Sorghum",
+    "arabicName": "سورغم كحولي",
+    "russianName": "Сорго для алкоголя",
+    ...
+  },
+  {
+    "id": 17011,
+    "name": "چاودار زمستانه",
+    "slug": "winter-rye",
+    "englishName": "Winter Rye",
+    "arabicName": "شَيْلَم شتوي",
+    "russianName": "Озимая рожь",
+    ...
+  },
+  {
+    "id": 17012,
+    "name": "چاودار بهاره",
+    "slug": "spring-rye",
+    "englishName": "Spring Rye",
+    "arabicName": "شَيْلَم ربيعي",
+    "russianName": "Яровая рожь",
+    ...
+  },
+  {
+    "id": 17021,
+    "name": "چاودار کوهی",
+    "slug": "mountain-rye",
+    "englishName": "Mountain Rye",
+    "arabicName": "شَيْلَم جبلي",
+    "russianName": "Горная рожь",
+    ...
+  },
+  {
+    "id": 18011,
+    "name": "ارزن پروسو",
+    "slug": "proso-millet",
+    "englishName": "Proso Millet",
+    "arabicName": "دخن بروسو",
+    "russianName": "Просо обыкновенное",
+    ...
+  },
+  {
+    "id": 18012,
+    "name": "ارزن فاکس تیل",
+    "slug": "foxtail-millet",
+    "englishName": "Foxtail Millet",
+    "arabicName": "دخن ذيل الثعلب",
+    "russianName": "Просо лисохвостое",
+    ...
+  },
+  {
+    "id": 18021,
+    "name": "ارزن مرواریدی سفید",
+    "slug": "white-pearl-millet",
+    "englishName": "White Pearl Millet",
+    "arabicName": "دخن لؤلؤي أبيض",
+    "russianName": "Белое жемчужное просо",
+    ...
+  },
+  {
+    "id": 18022,
+    "name": "ارزن مرواریدی زرد",
+    "slug": "yellow-pearl-millet",
+    "englishName": "Yellow Pearl Millet",
+    "arabicName": "دخن لؤلؤي أصفر",
+    "russianName": "Жёлтое жемчужное просо",
+    ...
+  },
+  {
+    "id": 18031,
+    "name": "ارزن انگشتی قرمز",
+    "slug": "red-finger-millet",
+    "englishName": "Red Finger Millet",
+    "arabicName": "دخن إصبعي أحمر",
+    "russianName": "Красное пальчатое просо",
+    ...
+  },
+  {
+    "id": 18032,
+    "name": "ارزن انگشتی قهوه‌ای",
+    "slug": "brown-finger-millet",
+    "englishName": "Brown Finger Millet",
+    "arabicName": "دخن إصبعي بني",
+    "russianName": "Коричневое пальчатое просо",
+    ...
+  },
+  {
+    "id": 60011,
+    "name": "پسته اکبری",
+    "slug": "akbari-pistachio",
+    "englishName": "Akbari Pistachio",
+    "arabicName": "فستق أكبري",
+    "russianName": "Фисташка Акбари",
+    ...
+  },
+  {
+    "id": 60012,
+    "name": "پسته احمدآقایی",
+    "slug": "ahmad-aghaei-pistachio",
+    "englishName": "Ahmad Aghaei Pistachio",
+    "arabicName": "فستق أحمد آقايي",
+    "russianName": "Фисташка Ахмад Агаи",
+    ...
+  },
+  {
+    "id": 60013,
+    "name": "پسته فندقی",
+    "slug": "fandoghi-pistachio",
+    "englishName": "Fandoghi Pistachio",
+    "arabicName": "فستق فندقي",
+    "russianName": "Фисташка Фандоги",
+    ...
+  },
+  {
+    "id": 60014,
+    "name": "پسته کله قوچی",
+    "slug": "kalleh-ghouchi-pistachio",
+    "englishName": "Kalleh Ghouchi Pistachio",
+    "arabicName": "فستق كله قوچي",
+    "russianName": "Фисташка Кале-Гучи",
+    ...
+  },
+  {
+    "id": 60021,
+    "name": "گردو ایرانی",
+    "slug": "persian-walnut",
+    "englishName": "Persian Walnut",
+    "arabicName": "جوز إيراني",
+    "russianName": "Персидский грецкий орех",
+    ...
+  },
+  {
+    "id": 60022,
+    "name": "گردو انگلیسی",
+    "slug": "english-walnut",
+    "englishName": "English Walnut",
+    "arabicName": "جوز إنجليزي",
+    "russianName": "Английский грецкий орех",
+    ...
+  },
+  {
+    "id": 60023,
+    "name": "گردو سیاه",
+    "slug": "black-walnut",
+    "englishName": "Black Walnut",
+    "arabicName": "جوز أسود",
+    "russianName": "Чёрный грецкий орех",
+    ...
+  },
+  {
+    "id": 60031,
+    "name": "بادام شیرین",
+    "slug": "sweet-almond",
+    "englishName": "Sweet Almond",
+    "arabicName": "لوز حلو",
+    "russianName": "Сладкий миндаль",
+    ...
+  },
+  {
+    "id": 60032,
+    "name": "بادام تلخ",
+    "slug": "bitter-almond",
+    "englishName": "Bitter Almond",
+    "arabicName": "لوز مر",
+    "russianName": "Горький миндаль",
+    ...
+  },
+  {
+    "id": 60033,
+    "name": "بادام پوست‌کنده",
+    "slug": "shelled-almond",
+    "englishName": "Shelled Almond",
+    "arabicName": "لوز مقشر",
+    "russianName": "Очищенный миндаль",
+    ...
+  },
+  {
+    "id": 60041,
+    "name": "فندق ترکیه‌ای",
+    "slug": "turkish-hazelnut",
+    "englishName": "Turkish Hazelnut",
+    "arabicName": "بندق تركي",
+    "russianName": "Турецкий фундук",
+    ...
+  },
+  {
+    "id": 60042,
+    "name": "فندق ایرانی",
+    "slug": "persian-hazelnut",
+    "englishName": "Persian Hazelnut",
+    "arabicName": "بندق إيراني",
+    "russianName": "Персидский фундук",
+    ...
+  },
+  {
+    "id": 60051,
+    "name": "بادام‌زمینی شور",
+    "slug": "salted-peanut",
+    "englishName": "Salted Peanut",
+    "arabicName": "فول سوداني مملح",
+    "russianName": "Солёный арахис",
+    ...
+  },
+  {
+    "id": 60052,
+    "name": "بادام‌زمینی شیرین",
+    "slug": "sweet-peanut",
+    "englishName": "Sweet Peanut",
+    "arabicName": "فول سوداني حلو",
+    "russianName": "Сладкий арахис",
+    ...
+  },
+  {
+    "id": 60053,
+    "name": "بادام‌زمینی خام",
+    "slug": "raw-peanut",
+    "englishName": "Raw Peanut",
+    "arabicName": "فول سوداني خام",
+    "russianName": "Сырой арахис",
+    ...
+  },
+  {
+    "id": 60061,
+    "name": "بادام هندی درشت",
+    "slug": "large-cashew",
+    "englishName": "Large Cashew",
+    "arabicName": "كاجو كبير",
+    "russianName": "Крупный кешью",
+    ...
+  },
+  {
+    "id": 60062,
+    "name": "بادام هندی ریز",
+    "slug": "small-cashew",
+    "englishName": "Small Cashew",
+    "arabicName": "كاجو صغير",
+    "russianName": "Мелкий кешью",
+    ...
+  },
+  {
+    "id": 60071,
+    "name": "انجیر خشک درشت",
+    "slug": "large-dried-fig",
+    "englishName": "Large Dried Fig",
+    "arabicName": "تين مجفف كبير",
+    "russianName": "Крупный сушёный инжир",
+    ...
+  },
+  {
+    "id": 60072,
+    "name": "انجیر خشک ریز",
+    "slug": "small-dried-fig",
+    "englishName": "Small Dried Fig",
+    "arabicName": "تين مجفف صغير",
+    "russianName": "Мелкий сушёный инжир",
+    ...
+  },
+  {
+    "id": 60081,
+    "name": "کشمش آفتابی",
+    "slug": "sun-dried-raisin",
+    "englishName": "Sun-dried Raisin",
+    "arabicName": "زبيب شمسي",
+    "russianName": "Изюм солнечной сушки",
+    ...
+  },
+  {
+    "id": 60082,
+    "name": "کشمش تیزابی",
+    "slug": "golden-raisin",
+    "englishName": "Golden Raisin",
+    "arabicName": "زبيب ذهبي",
+    "russianName": "Золотистый изюм",
+    ...
+  },
+  {
+    "id": 60083,
+    "name": "کشمش سبز",
+    "slug": "green-raisin",
+    "englishName": "Green Raisin",
+    "arabicName": "زبيب أخضر",
+    "russianName": "Зелёный изюм",
+    ...
+  },
+  {
+    "id": 100011,
+    "name": "گاو شیری",
+    "slug": "dairy-cattle",
+    "englishName": "Dairy Cattle",
+    "arabicName": "بقر حلوب",
+    "russianName": "Молочный скот",
+    ...
+  },
+  {
+    "id": 100012,
+    "name": "گاو گوشتی",
+    "slug": "beef-cattle",
+    "englishName": "Beef Cattle",
+    "arabicName": "بقر لاحم",
+    "russianName": "Мясной скот",
+    ...
+  },
+  {
+    "id": 100013,
+    "name": "گاو دو منظوره",
+    "slug": "dual-purpose-cattle",
+    "englishName": "Dual Purpose Cattle",
+    "arabicName": "بقر مزدوج الغرض",
+    "russianName": "Скот двойного назначения",
+    ...
+  },
+  {
+    "id": 100021,
+    "name": "گوسفند گوشتی",
+    "slug": "meat-sheep",
+    "englishName": "Meat Sheep",
+    "arabicName": "غنم لاحم",
+    "russianName": "Мясные овцы",
+    ...
+  },
+  {
+    "id": 100022,
+    "name": "گوسفند شیری",
+    "slug": "dairy-sheep",
+    "englishName": "Dairy Sheep",
+    "arabicName": "غنم حلوب",
+    "russianName": "Молочные овцы",
+    ...
+  },
+  {
+    "id": 100023,
+    "name": "گوسفند پشمی",
+    "slug": "wool-sheep",
+    "englishName": "Wool Sheep",
+    "arabicName": "غنم صوفي",
+    "russianName": "Шерстные овцы",
+    ...
+  },
+  {
+    "id": 100031,
+    "name": "بز گوشتی",
+    "slug": "meat-goat",
+    "englishName": "Meat Goat",
+    "arabicName": "ماعز لاحم",
+    "russianName": "Мясные козы",
+    ...
+  },
+  {
+    "id": 100032,
+    "name": "بز شیری",
+    "slug": "dairy-goat",
+    "englishName": "Dairy Goat",
+    "arabicName": "ماعز حلوب",
+    "russianName": "Молочные козы",
+    ...
+  },
+  {
+    "id": 100033,
+    "name": "بز موهیری",
+    "slug": "mohair-goat",
+    "englishName": "Mohair Goat",
+    "arabicName": "ماعز الموير",
+    "russianName": "Козы мохер",
+    ...
+  },
+  {
+    "id": 100041,
+    "name": "مرغ گوشتی نر",
+    "slug": "male-broiler",
+    "englishName": "Male Broiler",
+    "arabicName": "دجاج لاحم ذكر",
+    "russianName": "Бройлер-самец",
+    ...
+  },
+  {
+    "id": 100042,
+    "name": "مرغ گوشتی ماده",
+    "slug": "female-broiler",
+    "englishName": "Female Broiler",
+    "arabicName": "دجاج لاحم أنثى",
+    "russianName": "Бройлер-самка",
+    ...
+  },
+  {
+    "id": 100043,
+    "name": "جوجه گوشتی",
+    "slug": "broiler-chick",
+    "englishName": "Broiler Chick",
+    "arabicName": "كتكوت لاحم",
+    "russianName": "Бройлерный цыплёнок",
+    ...
+  },
+  {
+    "id": 100051,
+    "name": "تخم‌مرغ خوراکی",
+    "slug": "table-egg",
+    "englishName": "Table Egg",
+    "arabicName": "بيض مائدة",
+    "russianName": "Столовое яйцо",
+    ...
+  },
+  {
+    "id": 100052,
+    "name": "تخم‌مرغ جوجه‌کشی",
+    "slug": "hatching-egg",
+    "englishName": "Hatching Egg",
+    "arabicName": "بيض تفريخ",
+    "russianName": "Инкубационное яйцо",
+    ...
+  },
+  {
+    "id": 100061,
+    "name": "بوقلمون نر",
+    "slug": "male-turkey",
+    "englishName": "Male Turkey",
+    "arabicName": "ديك رومي ذكر",
+    "russianName": "Индюк-самец",
+    ...
+  },
+  {
+    "id": 100062,
+    "name": "بوقلمون ماده",
+    "slug": "female-turkey",
+    "englishName": "Female Turkey",
+    "arabicName": "ديك رومي أنثى",
+    "russianName": "Индюк-самка",
+    ...
+  },
+  {
+    "id": 100071,
+    "name": "قزل‌آلای رنگین‌کمان",
+    "slug": "rainbow-trout",
+    "englishName": "Rainbow Trout",
+    "arabicName": "سلمون مرقط قوس قزح",
+    "russianName": "Радужная форель",
+    ...
+  },
+  {
+    "id": 100072,
+    "name": "قزل‌آلای قهوه‌ای",
+    "slug": "brown-trout",
+    "englishName": "Brown Trout",
+    "arabicName": "سلمون مرقط بني",
+    "russianName": "Коричневая форель",
+    ...
+  },
+  {
+    "id": 100081,
+    "name": "کپور معمولی",
+    "slug": "common-carp",
+    "englishName": "Common Carp",
+    "arabicName": "شبوط عادي",
+    "russianName": "Обыкновенный карп",
+    ...
+  },
+  {
+    "id": 100082,
+    "name": "کپور نقره‌ای",
+    "slug": "silver-carp",
+    "englishName": "Silver Carp",
+    "arabicName": "شبوط فضي",
+    "russianName": "Серебряный карп",
+    ...
+  },
+  {
+    "id": 100091,
+    "name": "میگوی سفید",
+    "slug": "white-shrimp",
+    "englishName": "White Shrimp",
+    "arabicName": "جمبري أبيض",
+    "russianName": "Белая креветка",
+    ...
+  },
+  {
+    "id": 100092,
+    "name": "میگوی ببری",
+    "slug": "tiger-shrimp",
+    "englishName": "Tiger Shrimp",
+    "arabicName": "جمبري نمر",
+    "russianName": "Тигровая креветка",
+    ...
+  },
+  {
+    "id": 110011,
+    "name": "یونجه خشک درجه یک",
+    "slug": "premium-alfalfa-hay",
+    "englishName": "Premium Alfalfa Hay",
+    "arabicName": "قش البرسيم درجة أولى",
+    "russianName": "Сено люцерны премиум-класса",
+    ...
+  },
+  {
+    "id": 110012,
+    "name": "یونجه خشک درجه دو",
+    "slug": "standard-alfalfa-hay",
+    "englishName": "Standard Alfalfa Hay",
+    "arabicName": "قش البرسيم درجة ثانية",
+    "russianName": "Сено люцерны стандарт",
+    ...
+  },
+  {
+    "id": 110013,
+    "name": "یونجه خشک علوفه‌ای",
+    "slug": "forage-alfalfa-hay",
+    "englishName": "Forage Alfalfa Hay",
+    "arabicName": "قش البرسيم العلفي",
+    "russianName": "Кормовое сено люцерны",
+    ...
+  },
+  {
+    "id": 110021,
+    "name": "سیلوی ذرت تازه",
+    "slug": "fresh-corn-silage",
+    "englishName": "Fresh Corn Silage",
+    "arabicName": "سيلاج ذرة طازج",
+    "russianName": "Свежий силос из кукурузы",
+    ...
+  },
+  {
+    "id": 110022,
+    "name": "سیلوی ذرت تخمیر شده",
+    "slug": "fermented-corn-silage",
+    "englishName": "Fermented Corn Silage",
+    "arabicName": "سيلاج ذرة مخمر",
+    "russianName": "Ферментированный силос из кукурузы",
+    ...
+  },
+  {
+    "id": 110031,
+    "name": "جو دامی درجه یک",
+    "slug": "premium-barley-feed",
+    "englishName": "Premium Barley Feed",
+    "arabicName": "شعير علفي درجة أولى",
+    "russianName": "Кормовой ячмень премиум-класса",
+    ...
+  },
+  {
+    "id": 110032,
+    "name": "جو دامی درجه دو",
+    "slug": "standard-barley-feed",
+    "englishName": "Standard Barley Feed",
+    "arabicName": "شعير علفي درجة ثانية",
+    "russianName": "Кормовой ячмень стандарт",
+    ...
+  },
+  {
+    "id": 110041,
+    "name": "سبوس گندم نرم",
+    "slug": "fine-wheat-bran",
+    "englishName": "Fine Wheat Bran",
+    "arabicName": "نخالة قمح ناعمة",
+    "russianName": "Мелкие пшеничные отруби",
+    ...
+  },
+  {
+    "id": 110042,
+    "name": "سبوس گندم درشت",
+    "slug": "coarse-wheat-bran",
+    "englishName": "Coarse Wheat Bran",
+    "arabicName": "نخالة قمح خشنة",
+    "russianName": "Крупные пшеничные отруби",
+    ...
+  },
+  {
+    "id": 110051,
+    "name": "کنجاله سویا 44%",
+    "slug": "soybean-meal-44",
+    "englishName": "Soybean Meal 44%",
+    "arabicName": "كسبة فول الصويا 44%",
+    "russianName": "Соевый шрот 44%",
+    ...
+  },
+  {
+    "id": 110052,
+    "name": "کنجاله سویا 48%",
+    "slug": "soybean-meal-48",
+    "englishName": "Soybean Meal 48%",
+    "arabicName": "كسبة فول الصويا 48%",
+    "russianName": "Соевый шрот 48%",
+    ...
+  },
+  {
+    "id": 110061,
+    "name": "پودر ماهی درجه یک",
+    "slug": "premium-fish-meal",
+    "englishName": "Premium Fish Meal",
+    "arabicName": "مسحوق سمك درجة أولى",
+    "russianName": "Рыбная мука премиум-класса",
+    ...
+  },
+  {
+    "id": 110062,
+    "name": "پودر ماهی درجه دو",
+    "slug": "standard-fish-meal",
+    "englishName": "Standard Fish Meal",
+    "arabicName": "مسحوق سمك درجة ثانية",
+    "russianName": "Рыбная мука стандарт",
+    ...
+  },
+  {
+    "id": 110071,
+    "name": "کنجاله پنبه‌دانه 36%",
+    "slug": "cottonseed-meal-36",
+    "englishName": "Cottonseed Meal 36%",
+    "arabicName": "كسبة بذور القطن 36%",
+    "russianName": "Хлопковый шрот 36%",
+    ...
+  },
+  {
+    "id": 110072,
+    "name": "کنجاله پنبه‌دانه 40%",
+    "slug": "cottonseed-meal-40",
+    "englishName": "Cottonseed Meal 40%",
+    "arabicName": "كسبة بذور القطن 40%",
+    "russianName": "Хлопковый шрот 40%",
+    ...
+  },
+  {
+    "id": 120041,
+    "name": "آفت‌کش حشره‌کش",
+    "slug": "insecticide",
+    "englishName": "Insecticide",
+    "arabicName": "مبيد حشري",
+    "russianName": "Инсектицид",
+    ...
+  },
+  {
+    "id": 120042,
+    "name": "آفت‌کش قارچ‌کش",
+    "slug": "fungicide",
+    "englishName": "Fungicide",
+    "arabicName": "مبيد فطري",
+    "russianName": "Фунгицид",
+    ...
+  },
+  {
+    "id": 120043,
+    "name": "آفت‌کش کنه‌کش",
+    "slug": "acaricide",
+    "englishName": "Acaricide",
+    "arabicName": "مبيد قرادي",
+    "russianName": "Акарицид",
+    ...
+  },
+  {
+    "id": 120051,
+    "name": "علف‌کش انتخابی",
+    "slug": "selective-herbicide",
+    "englishName": "Selective Herbicide",
+    "arabicName": "مبيد أعشاب انتقائي",
+    "russianName": "Избирательный гербицид",
+    ...
+  },
+  {
+    "id": 120052,
+    "name": "علف‌کش عمومی",
+    "slug": "non-selective-herbicide",
+    "englishName": "Non-Selective Herbicide",
+    "arabicName": "مبيد أعشاب شامل",
+    "russianName": "Неизбирательный гербицид",
+    ...
+  },
+  {
+    "id": 120061,
+    "name": "پوشش گلخانه",
+    "slug": "greenhouse-covering",
+    "englishName": "Greenhouse Covering",
+    "arabicName": "غطاء صوبة",
+    "russianName": "Покрытие для теплицы",
+    ...
+  },
+  {
+    "id": 120062,
+    "name": "قاب‌های گلخانه",
+    "slug": "greenhouse-frames",
+    "englishName": "Greenhouse Frames",
+    "arabicName": "هياكل الصوبات",
+    "russianName": "Каркасы для теплиц",
+    ...
+  },
+  {
+    "id": 120063,
+    "name": "سیستم تهویه گلخانه",
+    "slug": "greenhouse-ventilation",
+    "englishName": "Greenhouse Ventilation",
+    "arabicName": "نظام تهوية الصوبة",
+    "russianName": "Вентиляционная система теплицы",
+    ...
+  },
+  {
+    "id": 120071,
+    "name": "لوله‌های آبیاری",
+    "slug": "irrigation-pipes",
+    "englishName": "Irrigation Pipes",
+    "arabicName": "أنابيب الري",
+    "russianName": "Трубы для полива",
+    ...
+  },
+  {
+    "id": 120072,
+    "name": "قطره‌چکان‌ها",
+    "slug": "drip-emitters",
+    "englishName": "Drip Emitters",
+    "arabicName": "نقاطات",
+    "russianName": "Капельницы",
+    ...
+  },
+  {
+    "id": 120073,
+    "name": "پمپ‌های آبیاری",
+    "slug": "irrigation-pumps",
+    "englishName": "Irrigation Pumps",
+    "arabicName": "مضخات الري",
+    "russianName": "Насосы для полива",
+    ...
+  },
+  {
+    "id": 120081,
+    "name": "پیت ماس",
+    "slug": "peat-moss",
+    "englishName": "Peat Moss",
+    "arabicName": "خث",
+    "russianName": "Торф",
+    ...
+  },
+  {
+    "id": 120082,
+    "name": "پرلیت",
+    "slug": "perlite",
+    "englishName": "Perlite",
+    "arabicName": "بيرلايت",
+    "russianName": "Перлит",
+    ...
+  },
+  {
+    "id": 120083,
+    "name": "ورمیکولیت",
+    "slug": "vermiculite",
+    "englishName": "Vermiculite",
+    "arabicName": "فيرميكوليت",
+    "russianName": "Вермикулит",
+    ...
+  }
+]

@@ -35,8 +35,9 @@ class FileController extends BaseController {
       }
 
       const module = req.body.module || 'users';
-      const fileType = req.body.fileType || 'images';
-      console.log('Upload module:', module, 'fileType:', fileType);
+      const fileType = req.body.fileType || (req.file.mimetype.startsWith('video/') ? 'videos' : 'images');
+      const entityId = req.body.entityId ? parseInt(req.body.entityId, 10) : null;
+      console.log('Upload module:', module, 'fileType:', fileType, 'entityId:', entityId);
       
       // آپلود به FTP و دریافت مسیرها
       const { relativePath } = await ftpService.uploadFile(
@@ -56,9 +57,19 @@ class FileController extends BaseController {
         mimeType: req.file.mimetype,
         size: req.file.size,
         module: module,
-        entityId: req.body.entityId || null,
+        fileType: fileType,
+        entityId: entityId,
         uploaderId: req.user.userId,
       });
+
+      // تصویر محصول → همیشه کاور را به‌روز کن
+      if (module === 'products' && fileType === 'images' && entityId) {
+        const Product = require('../farmer/product/model');
+        const product = await Product.findByPk(entityId);
+        if (product) {
+          await product.update({ imageUrl: file.downloadUrl });
+        }
+      }
 
       console.log("✅ File uploaded successfully:", file.fileName);
       return this.response(res, 201, true, "فایل با موفقیت آپلود شد", {
@@ -69,6 +80,8 @@ class FileController extends BaseController {
         mimeType: file.mimeType,
         size: file.size,
         module: file.module,
+        fileType: file.fileType,
+        entityId: file.entityId,
         uploadDate: file.createdAt
       });
 
@@ -159,14 +172,47 @@ class FileController extends BaseController {
 
   async getFilesByModule(req, res) {
     try {
+      const where = { module: req.params.module };
+      if (req.query.entityId) {
+        where.entityId = parseInt(req.query.entityId, 10);
+      }
+      if (req.query.fileType) {
+        where.fileType = req.query.fileType;
+      }
+
       const files = await File.findAll({
-        where: {
-          module: req.params.module,
-          entityId: req.query.entityId || null
-        }
+        where,
+        order: [['createdAt', 'DESC']],
       });
 
-      return this.response(res, 200, true, "لیست فایل‌ها دریافت شد", files);
+      let filtered = files;
+      if (req.query.fileType) {
+        const ft = req.query.fileType;
+        filtered = files.filter((f) => {
+          if (ft === 'images') {
+            return f.fileType === 'images' || (!f.fileType && String(f.mimeType || '').startsWith('image/'));
+          }
+          if (ft === 'videos') {
+            return f.fileType === 'videos' || (!f.fileType && String(f.mimeType || '').startsWith('video/'));
+          }
+          return f.fileType === ft;
+        });
+      }
+
+      const formatted = filtered.map(file => ({
+        id: file.id,
+        fileName: file.fileName,
+        originalName: file.originalName,
+        downloadUrl: file.downloadUrl,
+        mimeType: file.mimeType,
+        size: file.size,
+        module: file.module,
+        fileType: file.fileType,
+        entityId: file.entityId,
+        uploadDate: file.createdAt,
+      }));
+
+      return this.response(res, 200, true, "لیست فایل‌ها دریافت شد", formatted);
 
     } catch (error) {
       console.error("❌ Get files by module failed:", error.message);

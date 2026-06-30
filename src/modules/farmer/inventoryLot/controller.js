@@ -1,10 +1,37 @@
 const { Op } = require("sequelize");
 const InventoryLot = require("./model");
+const File = require("../../fileUpload/model");
 const User = require("../../user/user/model");
 const TransactionHistory = require("../transactionHistory/model");
 const CustomAttributeValue = require("../customAttributeValue/model");
 const CustomAttributeDefinition = require("../customAttributeDefinition/model");
 const { getInventoryPricing } = require("../../../utils/inventoryPricingUtils");
+
+async function attachLotCoverImages(lots) {
+  const arr = Array.isArray(lots) ? lots : [lots];
+  const plain = arr.map((l) => (l.toJSON ? l.toJSON() : { ...l }));
+  const ids = plain.map((l) => l.id).filter(Boolean);
+  if (!ids.length) return plain;
+
+  const files = await File.findAll({
+    where: {
+      module: "inventory",
+      entityId: ids,
+      mimeType: { [Op.like]: "image/%" },
+    },
+    order: [["createdAt", "DESC"]],
+  });
+
+  const coverMap = {};
+  for (const f of files) {
+    if (!coverMap[f.entityId]) coverMap[f.entityId] = f.downloadUrl;
+  }
+
+  return plain.map((l) => ({
+    ...l,
+    coverImageUrl: coverMap[l.id] || null,
+  }));
+}
 
 const list = async (req, res) => {
   const items = await InventoryLot.findAll({
@@ -18,7 +45,8 @@ const list = async (req, res) => {
     ],
     order: [["id", "ASC"]]
   });
-  res.json({ success: true, data: items });
+  const data = await attachLotCoverImages(items);
+  res.json({ success: true, data });
 };
 
 const getById = async (req, res) => {
@@ -33,7 +61,8 @@ const getById = async (req, res) => {
     ]
   });
   if (!item) return res.status(404).json({ success: false, message: "Not found" });
-  res.json({ success: true, data: item });
+  const [data] = await attachLotCoverImages([item]);
+  res.json({ success: true, data });
 };
 
 const create = async (req, res) => {

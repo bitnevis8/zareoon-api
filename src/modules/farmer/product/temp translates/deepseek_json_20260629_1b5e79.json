@@ -1,0 +1,893 @@
+[
+  {
+    "id": 1,
+    "name": "غلات",
+    "slug": "cereals",
+    "englishName": "Cereals",
+    "arabicName": "حبوبات",
+    "russianName": "Зерновые",
+    ...
+  },
+  {
+    "id": 2,
+    "name": "حبوبات",
+    "slug": "pulses",
+    "englishName": "Pulses",
+    "arabicName": "بقوليات",
+    "russianName": "Бобовые",
+    ...
+  },
+  {
+    "id": 3,
+    "name": "میوه‌های درختی",
+    "slug": "tree-fruits",
+    "englishName": "Tree Fruits",
+    "arabicName": "فواكه الأشجار",
+    "russianName": "Фрукты с деревьев",
+    ...
+  },
+  {
+    "id": 4,
+    "name": "میوه‌های گرمسیری و نیمه‌گرمسیری",
+    "slug": "tropical-subtropical-fruits",
+    "englishName": "Tropical & Subtropical Fruits",
+    "arabicName": "فواكه استوائية وشبه استوائية",
+    "russianName": "Тропические и субтропические фрукты",
+    ...
+  },
+  {
+    "id": 5,
+    "name": "میوه‌های بوته‌ای و توت‌سانان",
+    "slug": "bush-berry-fruits",
+    "englishName": "Bush & Berry Fruits",
+    "arabicName": "فواكه الشجيرات والتوت",
+    "russianName": "Ягодные и кустарниковые фрукты",
+    ...
+  },
+  {
+    "id": 6,
+    "name": "خشکبار و آجیل",
+    "slug": "nuts-dried-fruits",
+    "englishName": "Nuts & Dried Fruits",
+    "arabicName": "المكسرات والفواكه المجففة",
+    "russianName": "Орехи и сухофрукты",
+    ...
+  },
+  {
+    "id": 7,
+    "name": "سبزیجات و صیفی‌جات",
+    "slug": "vegetables",
+    "englishName": "Vegetables & Fruiting Vegetables",
+    "arabicName": "الخضروات والثماريات",
+    "russianName": "Овощи и плодовые овощи",
+    ...
+  },
+  {
+    "id": 9,
+    "name": "گیاهان دارویی و صنعتی",
+    "slug": "medicinal-industrial-plants",
+    "englishName": "Medicinal & Industrial Plants",
+    "arabicName": "النباتات الطبية والصناعية",
+    "russianName": "Лекарственные и промышленные растения",
+    ...
+  },
+  {
+    "id": 10,
+    "name": "دام، طیور و آبزیان",
+    "slug": "livestock-poultry-fisheries",
+    "englishName": "Livestock, Poultry & Fisheries",
+    "arabicName": "الثروة الحيوانية والدواجن والثروة السمكية",
+    "russianName": "Скот, птица и рыболовство",
+    ...
+  },
+  {
+    "id": 11,
+    "name": "خوراک دام و طیور",
+    "slug": "animal-feed",
+    "englishName": "Animal Feed",
+    "arabicName": "أعلاف الحيوانات والدواجن",
+    "russianName": "Корм для скота и птицы",
+    ...
+  },
+  {
+    "id": 12,
+    "name": "نهاده‌های کشاورزی",
+    "slug": "agricultural-inputs",
+    "englishName": "Agricultural Inputs",
+    "arabicName": "المدخلات الزراعية",
+    "russianName": "Сельскохозяйственные ресурсы",
+    ...
+  },
+  {
+    "id": 1001,
+    "name": "گندم",
+    "slug": "wheat",
+    "englishName": "Wheat",
+    "arabicName": "قمح",
+    "russianName": "Пшеница",
+    ...
+  },
+  {
+    "id": 1002,
+    "name": "جو",
+    "slug": "barley",
+    "englishName": "Barley",
+    "arabicName": "شعير",
+    "russianName": "Ячмень",
+    ...
+  },
+  {
+    "id": 1003,
+    "name": "برنج",
+    "slug": "rice",
+    "englishName": "Rice",
+    "arabicName": "أرز",
+    "russianName": "Рис",
+    ...
+  },
+  {
+    "id": 1004,
+    "name": "ذرت",
+    "slug": "maize",
+    "englishName": "Maize (Corn)",
+    "arabicName": "ذرة",
+    "russianName": "Кукуруза",
+    ...
+  },
+  {
+    "id": 1005,
+    "name": "جو دوسر",
+    "slug": "oats",
+    "englishName": "Oats",
+    "arabicName": "شوفان",
+    "russianName": "Овёс",
+    ...
+  },
+  {
+    "id": 1006,
+    "name": "سورگوم",
+    "slug": "sorghum",
+    "englishName": "Sorghum",
+    "arabicName": "سورغم",
+    "russianName": "Сорго",
+    ...
+  },
+  {
+    "id": 1007,
+    "name": "چاودار",
+    "slug": "rye",
+    "englishName": "Rye",
+    "arabicName": "شَيْلَم",
+    "russianName": "Рожь",
+    ...
+  },
+  {
+    "id": 1008,
+    "name": "ارزن",
+    "slug": "millet",
+    "englishName": "Millet",
+    "arabicName": "دخن",
+    "russianName": "Просо",
+    ...
+  },
+  {
+    "id": 1101,
+    "name": "گندم نان",
+    "slug": "bread-wheat",
+    "englishName": "Bread Wheat",
+    "arabicName": "قمح الخبز",
+    "russianName": "Пшеница для выпечки",
+    ...
+  },
+  {
+    "id": 1102,
+    "name": "گندم دوروم",
+    "slug": "durum-wheat",
+    "englishName": "Durum Wheat",
+    "arabicName": "قمح صلب",
+    "russianName": "Твёрдая пшеница",
+    ...
+  },
+  {
+    "id": 1103,
+    "name": "جو مالت",
+    "slug": "malting-barley",
+    "englishName": "Malting Barley",
+    "arabicName": "شعير المالت",
+    "russianName": "Солодовый ячмень",
+    ...
+  },
+  {
+    "id": 1104,
+    "name": "جو دامی",
+    "slug": "feed-barley",
+    "englishName": "Feed Barley",
+    "arabicName": "شعير علفي",
+    "russianName": "Кормовой ячмень",
+    ...
+  },
+  {
+    "id": 1105,
+    "name": "برنج دانه‌بلند",
+    "slug": "long-grain-rice",
+    "englishName": "Long-grain Rice",
+    "arabicName": "أرز طويل الحبة",
+    "russianName": "Длиннозерный рис",
+    ...
+  },
+  {
+    "id": 1106,
+    "name": "برنج باسماتی/طارم",
+    "slug": "basmati-rice",
+    "englishName": "Basmati/Tarom",
+    "arabicName": "أرز بسمتي/طارم",
+    "russianName": "Басмати/Таремский рис",
+    ...
+  },
+  {
+    "id": 1107,
+    "name": "ذرت دامی",
+    "slug": "yellow-dent-corn",
+    "englishName": "Yellow Dent Corn",
+    "arabicName": "ذرة صفراء مسننة",
+    "russianName": "Жёлтая зубовидная кукуруза",
+    ...
+  },
+  {
+    "id": 1108,
+    "name": "ذرت شیرین",
+    "slug": "sweet-corn",
+    "englishName": "Sweet Corn",
+    "arabicName": "ذرة حلوة",
+    "russianName": "Сахарная кукуруза",
+    ...
+  },
+  {
+    "id": 2001,
+    "name": "عدس",
+    "slug": "lentil",
+    "englishName": "Lentil",
+    "arabicName": "عدس",
+    "russianName": "Чечевица",
+    ...
+  },
+  {
+    "id": 2002,
+    "name": "نخود",
+    "slug": "chickpea",
+    "englishName": "Chickpea",
+    "arabicName": "حمص",
+    "russianName": "Нут",
+    ...
+  },
+  {
+    "id": 2003,
+    "name": "لوبیا",
+    "slug": "beans",
+    "englishName": "Beans",
+    "arabicName": "فول",
+    "russianName": "Фасоль",
+    ...
+  },
+  {
+    "id": 2004,
+    "name": "نخودفرنگی خشک",
+    "slug": "dry-pea",
+    "englishName": "Dry Pea",
+    "arabicName": "بازلاء جافة",
+    "russianName": "Сухой горох",
+    ...
+  },
+  {
+    "id": 2005,
+    "name": "باقلا",
+    "slug": "fava-bean",
+    "englishName": "Fava Bean",
+    "arabicName": "فول مدمس",
+    "russianName": "Конские бобы",
+    ...
+  },
+  {
+    "id": 2006,
+    "name": "ماش",
+    "slug": "mung-bean",
+    "englishName": "Mung Bean",
+    "arabicName": "ماش",
+    "russianName": "Маш",
+    ...
+  },
+  {
+    "id": 2007,
+    "name": "لوبیا سبز",
+    "slug": "green-beans",
+    "englishName": "Green Beans",
+    "arabicName": "فاصوليا خضراء",
+    "russianName": "Стручковая фасоль",
+    ...
+  },
+  {
+    "id": 2008,
+    "name": "لوبیا چشم‌بلبلی",
+    "slug": "black-eyed-peas",
+    "englishName": "Black-eyed Peas",
+    "arabicName": "لوبيا ذات العين السوداء",
+    "russianName": "Горох с чёрным глазком",
+    ...
+  },
+  {
+    "id": 2009,
+    "name": "لوبیا لیما",
+    "slug": "lima-beans",
+    "englishName": "Lima Beans",
+    "arabicName": "فاصوليا ليما",
+    "russianName": "Лима фасоль",
+    ...
+  },
+  {
+    "id": 2010,
+    "name": "لوبیا سویا",
+    "slug": "soybeans",
+    "englishName": "Soybeans",
+    "arabicName": "فول الصويا",
+    "russianName": "Соевые бобы",
+    ...
+  },
+  {
+    "id": 2011,
+    "name": "لوبیا قرمز کوچک",
+    "slug": "adzuki-beans",
+    "englishName": "Adzuki Beans",
+    "arabicName": "فاصوليا أدزوكي",
+    "russianName": "Фасоль адзуки",
+    ...
+  },
+  {
+    "id": 2012,
+    "name": "لوبیا سیاه",
+    "slug": "black-beans",
+    "englishName": "Black Beans",
+    "arabicName": "فاصوليا سوداء",
+    "russianName": "Чёрная фасоль",
+    ...
+  },
+  {
+    "id": 2013,
+    "name": "لوبیا قهوه‌ای",
+    "slug": "brown-beans",
+    "englishName": "Brown Beans",
+    "arabicName": "فاصوليا بنية",
+    "russianName": "Коричневая фасоль",
+    ...
+  },
+  {
+    "id": 2014,
+    "name": "لوبیا سبز خشک",
+    "slug": "dried-green-beans",
+    "englishName": "Dried Green Beans",
+    "arabicName": "فاصوليا خضراء جافة",
+    "russianName": "Сушёная стручковая фасоль",
+    ...
+  },
+  {
+    "id": 2015,
+    "name": "لوبیا قرمز خشک",
+    "slug": "dried-red-beans",
+    "englishName": "Dried Red Beans",
+    "arabicName": "فاصوليا حمراء جافة",
+    "russianName": "Сушёная красная фасоль",
+    ...
+  },
+  {
+    "id": 2016,
+    "name": "لوبیا سفید خشک",
+    "slug": "dried-white-beans",
+    "englishName": "Dried White Beans",
+    "arabicName": "فاصوليا بيضاء جافة",
+    "russianName": "Сушёная белая фасоль",
+    ...
+  },
+  {
+    "id": 2017,
+    "name": "لوبیا چیتی خشک",
+    "slug": "dried-pinto-beans",
+    "englishName": "Dried Pinto Beans",
+    "arabicName": "فاصوليا بينتو جافة",
+    "russianName": "Сушёная пёстрая фасоль",
+    ...
+  },
+  {
+    "id": 2018,
+    "name": "لوبیا سیاه خشک",
+    "slug": "dried-black-beans",
+    "englishName": "Dried Black Beans",
+    "arabicName": "فاصوليا سوداء جافة",
+    "russianName": "Сушёная чёрная фасоль",
+    ...
+  },
+  {
+    "id": 2019,
+    "name": "لوبیا قهوه‌ای خشک",
+    "slug": "dried-brown-beans",
+    "englishName": "Dried Brown Beans",
+    "arabicName": "فاصوليا بنية جافة",
+    "russianName": "Сушёная коричневая фасоль",
+    ...
+  },
+  {
+    "id": 2020,
+    "name": "لوبیا لیما خشک",
+    "slug": "dried-lima-beans",
+    "englishName": "Dried Lima Beans",
+    "arabicName": "فاصوليا ليما جافة",
+    "russianName": "Сушёная лима фасоль",
+    ...
+  },
+  {
+    "id": 2101,
+    "name": "عدس قرمز",
+    "slug": "red-lentil",
+    "englishName": "Red Lentil",
+    "arabicName": "عدس أحمر",
+    "russianName": "Красная чечевица",
+    ...
+  },
+  {
+    "id": 2102,
+    "name": "عدس سبز",
+    "slug": "green-lentil",
+    "englishName": "Green Lentil",
+    "arabicName": "عدس أخضر",
+    "russianName": "Зелёная чечевица",
+    ...
+  },
+  {
+    "id": 2103,
+    "name": "نخود کابلی",
+    "slug": "kabuli-chickpea",
+    "englishName": "Kabuli Chickpea",
+    "arabicName": "حمص كابولي",
+    "russianName": "Нут кабули",
+    ...
+  },
+  {
+    "id": 2104,
+    "name": "نخود دسی",
+    "slug": "desi-chickpea",
+    "englishName": "Desi Chickpea",
+    "arabicName": "حمص ديسي",
+    "russianName": "Нут деси",
+    ...
+  },
+  {
+    "id": 2105,
+    "name": "لوبیا قرمز",
+    "slug": "kidney-bean",
+    "englishName": "Kidney Bean",
+    "arabicName": "فاصوليا حمراء",
+    "russianName": "Красная фасоль",
+    ...
+  },
+  {
+    "id": 2106,
+    "name": "لوبیا سفید",
+    "slug": "white-bean",
+    "englishName": "White Bean",
+    "arabicName": "فاصوليا بيضاء",
+    "russianName": "Белая фасоль",
+    ...
+  },
+  {
+    "id": 2107,
+    "name": "لوبیا چیتی",
+    "slug": "pinto-bean",
+    "englishName": "Pinto Bean",
+    "arabicName": "فاصوليا بينتو",
+    "russianName": "Пёстрая фасоль",
+    ...
+  },
+  {
+    "id": 2108,
+    "name": "لوبیا سبز",
+    "slug": "green-bean",
+    "englishName": "Green Bean",
+    "arabicName": "فاصوليا خضراء",
+    "russianName": "Стручковая фасоль",
+    ...
+  },
+  {
+    "id": 2109,
+    "name": "لوبیا چشم‌بلبلی",
+    "slug": "black-eyed-pea",
+    "englishName": "Black-eyed Pea",
+    "arabicName": "لوبيا ذات العين السوداء",
+    "russianName": "Горох с чёрным глазком",
+    ...
+  },
+  {
+    "id": 2110,
+    "name": "لوبیا لیما",
+    "slug": "lima-bean",
+    "englishName": "Lima Bean",
+    "arabicName": "فاصوليا ليما",
+    "russianName": "Лима фасоль",
+    ...
+  },
+  {
+    "id": 2111,
+    "name": "لوبیا سویا",
+    "slug": "soybean",
+    "englishName": "Soybean",
+    "arabicName": "فول الصويا",
+    "russianName": "Соевый боб",
+    ...
+  },
+  {
+    "id": 2112,
+    "name": "لوبیا قرمز کوچک",
+    "slug": "adzuki-bean",
+    "englishName": "Adzuki Bean",
+    "arabicName": "فاصوليا أدزوكي",
+    "russianName": "Фасоль адзуки",
+    ...
+  },
+  {
+    "id": 2113,
+    "name": "لوبیا سیاه",
+    "slug": "black-bean",
+    "englishName": "Black Bean",
+    "arabicName": "فاصوليا سوداء",
+    "russianName": "Чёрная фасоль",
+    ...
+  },
+  {
+    "id": 2114,
+    "name": "لوبیا قهوه‌ای",
+    "slug": "brown-bean",
+    "englishName": "Brown Bean",
+    "arabicName": "فاصوليا بنية",
+    "russianName": "Коричневая фасоль",
+    ...
+  },
+  {
+    "id": 2201,
+    "name": "عدس زرد",
+    "slug": "yellow-lentil",
+    "englishName": "Yellow Lentil",
+    "arabicName": "عدس أصفر",
+    "russianName": "Жёлтая чечевица",
+    ...
+  },
+  {
+    "id": 2202,
+    "name": "عدس قهوه‌ای",
+    "slug": "brown-lentil",
+    "englishName": "Brown Lentil",
+    "arabicName": "عدس بني",
+    "russianName": "Коричневая чечевица",
+    ...
+  },
+  {
+    "id": 2203,
+    "name": "عدس سیاه",
+    "slug": "black-lentil",
+    "englishName": "Black Lentil",
+    "arabicName": "عدس أسود",
+    "russianName": "Чёрная чечевица",
+    ...
+  },
+  {
+    "id": 2204,
+    "name": "عدس قرمز کوچک",
+    "slug": "red-split-lentil",
+    "englishName": "Red Split Lentil",
+    "arabicName": "عدس أحمر مكسور",
+    "russianName": "Красная колотая чечевица",
+    ...
+  },
+  {
+    "id": 2205,
+    "name": "عدس سبز کوچک",
+    "slug": "green-split-lentil",
+    "englishName": "Green Split Lentil",
+    "arabicName": "عدس أخضر مكسور",
+    "russianName": "Зелёная колотая чечевица",
+    ...
+  },
+  {
+    "id": 2206,
+    "name": "عدس زرد کوچک",
+    "slug": "yellow-split-lentil",
+    "englishName": "Yellow Split Lentil",
+    "arabicName": "عدس أصفر مكسور",
+    "russianName": "Жёлтая колотая чечевица",
+    ...
+  },
+  {
+    "id": 2207,
+    "name": "عدس قهوه‌ای کوچک",
+    "slug": "brown-split-lentil",
+    "englishName": "Brown Split Lentil",
+    "arabicName": "عدس بني مكسور",
+    "russianName": "Коричневая колотая чечевица",
+    ...
+  },
+  {
+    "id": 2208,
+    "name": "عدس سیاه کوچک",
+    "slug": "black-split-lentil",
+    "englishName": "Black Split Lentil",
+    "arabicName": "عدس أسود مكسور",
+    "russianName": "Чёрная колотая чечевица",
+    ...
+  },
+  {
+    "id": 2209,
+    "name": "عدس قرمز بزرگ",
+    "slug": "red-whole-lentil",
+    "englishName": "Red Whole Lentil",
+    "arabicName": "عدس أحمر كامل",
+    "russianName": "Красная цельная чечевица",
+    ...
+  },
+  {
+    "id": 2210,
+    "name": "عدس سبز بزرگ",
+    "slug": "green-whole-lentil",
+    "englishName": "Green Whole Lentil",
+    "arabicName": "عدس أخضر كامل",
+    "russianName": "Зелёная цельная чечевица",
+    ...
+  },
+  {
+    "id": 2211,
+    "name": "عدس زرد بزرگ",
+    "slug": "yellow-whole-lentil",
+    "englishName": "Yellow Whole Lentil",
+    "arabicName": "عدس أصفر كامل",
+    "russianName": "Жёлтая цельная чечевица",
+    ...
+  },
+  {
+    "id": 2212,
+    "name": "عدس قهوه‌ای بزرگ",
+    "slug": "brown-whole-lentil",
+    "englishName": "Brown Whole Lentil",
+    "arabicName": "عدس بني كامل",
+    "russianName": "Коричневая цельная чечевица",
+    ...
+  },
+  {
+    "id": 2213,
+    "name": "عدس سیاه بزرگ",
+    "slug": "black-whole-lentil",
+    "englishName": "Black Whole Lentil",
+    "arabicName": "عدس أسود كامل",
+    "russianName": "Чёрная цельная чечевица",
+    ...
+  },
+  {
+    "id": 2214,
+    "name": "عدس قرمز متوسط",
+    "slug": "red-medium-lentil",
+    "englishName": "Red Medium Lentil",
+    "arabicName": "عدس أحمر متوسط",
+    "russianName": "Красная чечевица среднего размера",
+    ...
+  },
+  {
+    "id": 2215,
+    "name": "عدس سبز متوسط",
+    "slug": "green-medium-lentil",
+    "englishName": "Green Medium Lentil",
+    "arabicName": "عدس أخضر متوسط",
+    "russianName": "Зелёная чечевица среднего размера",
+    ...
+  },
+  {
+    "id": 2216,
+    "name": "عدس زرد متوسط",
+    "slug": "yellow-medium-lentil",
+    "englishName": "Yellow Medium Lentil",
+    "arabicName": "عدس أصفر متوسط",
+    "russianName": "Жёлтая чечевица среднего размера",
+    ...
+  },
+  {
+    "id": 2217,
+    "name": "عدس قهوه‌ای متوسط",
+    "slug": "brown-medium-lentil",
+    "englishName": "Brown Medium Lentil",
+    "arabicName": "عدس بني متوسط",
+    "russianName": "Коричневая чечевица среднего размера",
+    ...
+  },
+  {
+    "id": 2218,
+    "name": "عدس سیاه متوسط",
+    "slug": "black-medium-lentil",
+    "englishName": "Black Medium Lentil",
+    "arabicName": "عدس أسود متوسط",
+    "russianName": "Чёрная чечевица среднего размера",
+    ...
+  },
+  {
+    "id": 3001,
+    "name": "سیب",
+    "slug": "apple",
+    "englishName": "Apple",
+    "arabicName": "تفاح",
+    "russianName": "Яблоко",
+    ...
+  },
+  {
+    "id": 3002,
+    "name": "گلابی",
+    "slug": "pear",
+    "englishName": "Pear",
+    "arabicName": "إجاص",
+    "russianName": "Груша",
+    ...
+  },
+  {
+    "id": 3003,
+    "name": "هلو",
+    "slug": "peach",
+    "englishName": "Peach",
+    "arabicName": "خوخ",
+    "russianName": "Персик",
+    ...
+  },
+  {
+    "id": 3004,
+    "name": "آلو",
+    "slug": "plum",
+    "englishName": "Plum",
+    "arabicName": "برقوق",
+    "russianName": "Слива",
+    ...
+  },
+  {
+    "id": 3005,
+    "name": "زردآلو",
+    "slug": "apricot",
+    "englishName": "Apricot",
+    "arabicName": "مشمش",
+    "russianName": "Абрикос",
+    ...
+  },
+  {
+    "id": 3006,
+    "name": "انار",
+    "slug": "pomegranate",
+    "englishName": "Pomegranate",
+    "arabicName": "رمان",
+    "russianName": "Гранат",
+    ...
+  },
+  {
+    "id": 3007,
+    "name": "زیتون",
+    "slug": "olive",
+    "englishName": "Olive",
+    "arabicName": "زيتون",
+    "russianName": "Оливки",
+    ...
+  },
+  {
+    "id": 3008,
+    "name": "خرما",
+    "slug": "date",
+    "englishName": "Date",
+    "arabicName": "تمر",
+    "russianName": "Финики",
+    ...
+  },
+  {
+    "id": 3009,
+    "name": "پرتقال",
+    "slug": "orange",
+    "englishName": "Orange",
+    "arabicName": "برتقال",
+    "russianName": "Апельсин",
+    ...
+  },
+  {
+    "id": 3010,
+    "name": "نارنگی",
+    "slug": "tangerine",
+    "englishName": "Tangerine",
+    "arabicName": "يوسفي",
+    "russianName": "Мандарин",
+    ...
+  },
+  {
+    "id": 3011,
+    "name": "لیمو",
+    "slug": "lemon",
+    "englishName": "Lemon",
+    "arabicName": "ليمون",
+    "russianName": "Лимон",
+    ...
+  },
+  {
+    "id": 3012,
+    "name": "لیموشیرین",
+    "slug": "sweet-lemon",
+    "englishName": "Sweet Lemon",
+    "arabicName": "ليمون حلو",
+    "russianName": "Сладкий лимон",
+    ...
+  },
+  {
+    "id": 3013,
+    "name": "گریپ‌فروت",
+    "slug": "grapefruit",
+    "englishName": "Grapefruit",
+    "arabicName": "جريب فروت",
+    "russianName": "Грейпфрут",
+    ...
+  },
+  {
+    "id": 3014,
+    "name": "انجیر",
+    "slug": "fig",
+    "englishName": "Fig",
+    "arabicName": "تين",
+    "russianName": "Инжир",
+    ...
+  },
+  {
+    "id": 3015,
+    "name": "گیلاس",
+    "slug": "cherry",
+    "englishName": "Cherry",
+    "arabicName": "كرز",
+    "russianName": "Вишня",
+    ...
+  },
+  {
+    "id": 3016,
+    "name": "آلبالو",
+    "slug": "sour-cherry",
+    "englishName": "Sour Cherry",
+    "arabicName": "كرز حامض",
+    "russianName": "Кислая вишня",
+    ...
+  },
+  {
+    "id": 3017,
+    "name": "خرمالو",
+    "slug": "persimmon",
+    "englishName": "Persimmon",
+    "arabicName": "كاكا",
+    "russianName": "Хурма",
+    ...
+  },
+  {
+    "id": 3018,
+    "name": "انگور",
+    "slug": "grape",
+    "englishName": "Grape",
+    "arabicName": "عنب",
+    "russianName": "Виноград",
+    ...
+  },
+  {
+    "id": 3019,
+    "name": "کیوی",
+    "slug": "kiwi",
+    "englishName": "Kiwi",
+    "arabicName": "كيوي",
+    "russianName": "Киви",
+    ...
+  },
+  {
+    "id": 3020,
+    "name": "آووکادو",
+    "slug": "avocado",
+    "englishName": "Avocado",
+    "arabicName": "أفوكادو",
+    "russianName": "Авокадо",
+    ...
+  }
+]

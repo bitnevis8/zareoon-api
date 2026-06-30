@@ -1,13 +1,31 @@
 const InventoryLot = require("./model");
+const User = require("../../user/user/model");
 const seederData = require("./seederData.json");
 
 const seedInventoryLots = async () => {
   console.log("🌱 Seeding Inventory Lots...");
   const lots = seederData.data || seederData;
   for (const l of lots) {
+    let farmerId = l.farmerId;
+
+    if (!farmerId && l.farmerEmail) {
+      const farmerByEmail = await User.findOne({ where: { email: l.farmerEmail } });
+      if (!farmerByEmail) {
+        console.warn(`⚠️ Skip inventory lot ${l.id}: farmer email ${l.farmerEmail} not found`);
+        continue;
+      }
+      farmerId = farmerByEmail.id;
+    }
+
+    const farmer = await User.findByPk(farmerId);
+    if (!farmer) {
+      console.warn(`⚠️ Skip inventory lot ${l.id}: farmer ${farmerId} not found`);
+      continue;
+    }
+
     const data = {
       id: l.id,
-      farmerId: l.farmerId,
+      farmerId,
       productId: l.productId,
       qualityGrade: l.qualityGrade,
       status: l.status || "harvested",

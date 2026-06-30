@@ -21,10 +21,11 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  // اعتبارسنجی نوع فایل
   const allowedMimes = config.get("UPLOAD.ALLOWED_MIMES");
+  const isImage = file.mimetype.startsWith('image/');
+  const isVideo = file.mimetype.startsWith('video/');
 
-  if (allowedMimes.includes(file.mimetype)) {
+  if (allowedMimes.includes(file.mimetype) || isImage || isVideo) {
     cb(null, true);
   } else {
     cb(new Error('فرمت فایل مجاز نیست'), false);

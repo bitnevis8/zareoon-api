@@ -1,0 +1,263 @@
+[
+  {
+    "id": 120084,
+    "name": "قهوه",
+    "slug": "coffee",
+    "englishName": "Coffee",
+    "arabicName": "قهوة",
+    "russianName": "Кофе",
+    ...
+  },
+  {
+    "id": 120085,
+    "name": "دانه قهوه سبز",
+    "slug": "green-coffee-beans",
+    "englishName": "Green Coffee Beans",
+    "arabicName": "حبوب القهوة الخضراء",
+    "russianName": "Зелёные кофейные зёрна",
+    ...
+  },
+  {
+    "id": 120086,
+    "name": "عربیکا",
+    "slug": "arabica",
+    "englishName": "Arabica",
+    "arabicName": "أرابيكا",
+    "russianName": "Арабика",
+    ...
+  },
+  {
+    "id": 120087,
+    "name": "روبوستا",
+    "slug": "robusta",
+    "englishName": "Robusta",
+    "arabicName": "روبوستا",
+    "russianName": "Робуста",
+    ...
+  },
+  {
+    "id": 120088,
+    "name": "اسپشیالتی",
+    "slug": "specialty-coffee",
+    "englishName": "Specialty Coffee",
+    "arabicName": "قهوة خاصة",
+    "russianName": "Спешелти кофе",
+    ...
+  },
+  {
+    "id": 120089,
+    "name": "قهوه ترک سبز",
+    "slug": "turkish-type-green",
+    "englishName": "Turkish Type Green",
+    "arabicName": "قهوة تركية خضراء",
+    "russianName": "Зелёный кофе по-турецки",
+    ...
+  },
+  {
+    "id": 120090,
+    "name": "دانه قهوه برشته",
+    "slug": "roasted-coffee-beans",
+    "englishName": "Roasted Coffee Beans",
+    "arabicName": "حبوب القهوة المحمصة",
+    "russianName": "Жареные кофейные зёрна",
+    ...
+  },
+  {
+    "id": 120091,
+    "name": "لایت روست",
+    "slug": "light-roast",
+    "englishName": "Light Roast",
+    "arabicName": "تحميص خفيف",
+    "russianName": "Лёгкая обжарка",
+    ...
+  },
+  {
+    "id": 120092,
+    "name": "مدیوم روست",
+    "slug": "medium-roast",
+    "englishName": "Medium Roast",
+    "arabicName": "تحميص متوسط",
+    "russianName": "Средняя обжарка",
+    ...
+  },
+  {
+    "id": 120093,
+    "name": "دارک روست",
+    "slug": "dark-roast",
+    "englishName": "Dark Roast",
+    "arabicName": "تحميص داكن",
+    "russianName": "Тёмная обжарка",
+    ...
+  },
+  {
+    "id": 120094,
+    "name": "اسپرسو بلند",
+    "slug": "espresso-blend",
+    "englishName": "Espresso Blend",
+    "arabicName": "خلطة إسبرسو",
+    "russianName": "Эспрессо-бленд",
+    ...
+  },
+  {
+    "id": 120095,
+    "name": "پودر قهوه",
+    "slug": "ground-coffee",
+    "englishName": "Ground Coffee",
+    "arabicName": "قهوة مطحونة",
+    "russianName": "Молотый кофе",
+    ...
+  },
+  {
+    "id": 120096,
+    "name": "قهوه ترک آسیاب‌شده",
+    "slug": "turkish-ground-coffee",
+    "englishName": "Turkish Ground Coffee",
+    "arabicName": "قهوة تركية مطحونة",
+    "russianName": "Молотый кофе по-турецки",
+    ...
+  },
+  {
+    "id": 120097,
+    "name": "قهوه فرانسه آسیاب‌شده",
+    "slug": "french-ground-coffee",
+    "englishName": "French Ground Coffee",
+    "arabicName": "قهوة فرنسية مطحونة",
+    "russianName": "Молотый кофе по-французски",
+    ...
+  },
+  {
+    "id": 120098,
+    "name": "قهوه اسپرسو آسیاب‌شده",
+    "slug": "espresso-ground-coffee",
+    "englishName": "Espresso Ground Coffee",
+    "arabicName": "قهوة إسبرسو مطحونة",
+    "russianName": "Молотый кофе для эспрессо",
+    ...
+  },
+  {
+    "id": 120099,
+    "name": "قهوه فوری",
+    "slug": "instant-coffee",
+    "englishName": "Instant Coffee",
+    "arabicName": "قهوة سريعة التحضير",
+    "russianName": "Растворимый кофе",
+    ...
+  },
+  {
+    "id": 120100,
+    "name": "قهوه فوری کلاسیک",
+    "slug": "classic-instant-coffee",
+    "englishName": "Classic Instant Coffee",
+    "arabicName": "قهوة سريعة كلاسيكية",
+    "russianName": "Классический растворимый кофе",
+    ...
+  },
+  {
+    "id": 120101,
+    "name": "قهوه فوری گلد",
+    "slug": "gold-instant-coffee",
+    "englishName": "Gold Instant Coffee",
+    "arabicName": "قهوة سريعة ذهبية",
+    "russianName": "Золотой растворимый кофе",
+    ...
+  },
+  {
+    "id": 120102,
+    "name": "قهوه فوری فریز دراید",
+    "slug": "freeze-dried-instant-coffee",
+    "englishName": "Freeze Dried Instant Coffee",
+    "arabicName": "قهوة سريعة مجففة بالتجميد",
+    "russianName": "Сублимированный растворимый кофе",
+    ...
+  },
+  {
+    "id": 120103,
+    "name": "اسپرسو فوری",
+    "slug": "instant-espresso",
+    "englishName": "Instant Espresso",
+    "arabicName": "إسبرسو سريع",
+    "russianName": "Растворимый эспрессо",
+    ...
+  },
+  {
+    "id": 120104,
+    "name": "محصولات جانبی قهوه",
+    "slug": "coffee-accessories",
+    "englishName": "Coffee Accessories",
+    "arabicName": "ملحقات القهوة",
+    "russianName": "Кофейные аксессуары",
+    ...
+  },
+  {
+    "id": 120105,
+    "name": "پودر قهوه سبز",
+    "slug": "green-coffee-powder",
+    "englishName": "Green Coffee Powder",
+    "arabicName": "مسحوق القهوة الخضراء",
+    "russianName": "Порошок зелёного кофе",
+    ...
+  },
+  {
+    "id": 120106,
+    "name": "قهوه کپسولی",
+    "slug": "coffee-capsules",
+    "englishName": "Coffee Capsules",
+    "arabicName": "كبسولات القهوة",
+    "russianName": "Кофейные капсулы",
+    ...
+  },
+  {
+    "id": 120107,
+    "name": "کافی میکس",
+    "slug": "coffee-mix",
+    "englishName": "Coffee Mix",
+    "arabicName": "خليط القهوة",
+    "russianName": "Кофейная смесь",
+    ...
+  },
+  {
+    "id": 3101,
+    "name": "کلوته خرما",
+    "slug": "date-klooteh",
+    "englishName": "Klooteh Date",
+    "arabicName": "تمر كلوته",
+    "russianName": "Финик Клуте",
+    ...
+  },
+  {
+    "id": 3102,
+    "name": "استعمران",
+    "slug": "date-estamaran",
+    "englishName": "Estamaran Date",
+    "arabicName": "تمر استعمران",
+    "russianName": "Финик Эстамаран",
+    ...
+  },
+  {
+    "id": 3103,
+    "name": "زهدی عراق",
+    "slug": "date-zahidi-iraq",
+    "englishName": "Zahidi Iraq Date",
+    "arabicName": "تمر زهدي عراقي",
+    "russianName": "Финик Захиди Иракский",
+    ...
+  },
+  {
+    "id": 3104,
+    "name": "پیارم",
+    "slug": "date-piarom",
+    "englishName": "Piarom Date",
+    "arabicName": "تمر بيارم",
+    "russianName": "Финик Пиаром",
+    ...
+  },
+  {
+    "id": 3105,
+    "name": "ربی ایرانشهر",
+    "slug": "date-rabbi-iranshahr",
+    "englishName": "Rabbi Iranshahr Date",
+    "arabicName": "تمر ربي إيرانشهر",
+    "russianName": "Финик Рабби Ираншахр",
+    ...
+  }
+]

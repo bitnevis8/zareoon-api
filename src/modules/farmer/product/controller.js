@@ -1,10 +1,62 @@
 const { Op } = require("sequelize");
 const Product = require("./model");
+const File = require("../../fileUpload/model");
 const OrderItem = require("../orderItem/model");
 const InventoryLot = require("../inventoryLot/model");
 const Order = require("../order/model");
 const User = require("../../user/user/model");
 const { Cart, CartItem } = require("../cart/model");
+
+async function attachUploadedImages(products) {
+  const arr = Array.isArray(products) ? products : [products];
+  const plain = arr.map((p) => (p.toJSON ? p.toJSON() : { ...p }));
+  const ids = plain.map((p) => p.id).filter(Boolean);
+  if (!ids.length) return plain;
+
+  const productFiles = await File.findAll({
+    where: {
+      module: "products",
+      entityId: ids,
+      mimeType: { [Op.like]: "image/%" },
+    },
+    order: [["createdAt", "DESC"]],
+  });
+
+  const productCover = {};
+  for (const f of productFiles) {
+    if (!productCover[f.entityId]) productCover[f.entityId] = f.downloadUrl;
+  }
+
+  // تصاویر آپلودشده روی موجودی (inventory lot) → کاور محصول
+  const lots = await InventoryLot.findAll({
+    where: { productId: ids },
+    attributes: ["id", "productId"],
+  });
+  const lotToProduct = Object.fromEntries(lots.map((l) => [l.id, l.productId]));
+  const inventoryCover = {};
+
+  if (lots.length) {
+    const invFiles = await File.findAll({
+      where: {
+        module: "inventory",
+        entityId: lots.map((l) => l.id),
+        mimeType: { [Op.like]: "image/%" },
+      },
+      order: [["createdAt", "DESC"]],
+    });
+    for (const f of invFiles) {
+      const productId = lotToProduct[f.entityId];
+      if (productId && !inventoryCover[productId]) {
+        inventoryCover[productId] = f.downloadUrl;
+      }
+    }
+  }
+
+  return plain.map((p) => ({
+    ...p,
+    imageUrl: productCover[p.id] || inventoryCover[p.id] || p.imageUrl || null,
+  }));
+}
 
 const list = async (req, res) => {
   const where = {};
@@ -26,13 +78,15 @@ const list = async (req, res) => {
     if (Number.isFinite(limit) && limit > 0) options.limit = limit;
   }
   const items = await Product.findAll(options);
-  res.json({ success: true, data: items });
+  const data = await attachUploadedImages(items);
+  res.json({ success: true, data });
 };
 
 const getById = async (req, res) => {
   const item = await Product.findByPk(req.params.id);
   if (!item) return res.status(404).json({ success: false, message: "Not found" });
-  res.json({ success: true, data: item });
+  const [data] = await attachUploadedImages([item]);
+  res.json({ success: true, data });
 };
 
 const create = async (req, res) => {

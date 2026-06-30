@@ -1,0 +1,1145 @@
+[
+  {
+    "id": 3101,
+    "name": "سیب قرمز",
+    "slug": "red-delicious",
+    "englishName": "Red Delicious Apple",
+    "arabicName": "تفاح أحمر لذيذ",
+    "russianName": "Красное вкусное яблоко",
+    ...
+  },
+  {
+    "id": 3102,
+    "name": "سیب زرد",
+    "slug": "golden-delicious",
+    "englishName": "Golden Delicious Apple",
+    "arabicName": "تفاح ذهبي لذيذ",
+    "russianName": "Золотое вкусное яблоко",
+    ...
+  },
+  {
+    "id": 4001,
+    "name": "موز",
+    "slug": "banana",
+    "englishName": "Banana",
+    "arabicName": "موز",
+    "russianName": "Банан",
+    ...
+  },
+  {
+    "id": 4002,
+    "name": "انبه",
+    "slug": "mango",
+    "englishName": "Mango",
+    "arabicName": "مانجو",
+    "russianName": "Манго",
+    ...
+  },
+  {
+    "id": 4003,
+    "name": "آناناس",
+    "slug": "pineapple",
+    "englishName": "Pineapple",
+    "arabicName": "أناناس",
+    "russianName": "Ананас",
+    ...
+  },
+  {
+    "id": 4004,
+    "name": "پاپایا",
+    "slug": "papaya",
+    "englishName": "Papaya",
+    "arabicName": "باباي",
+    "russianName": "Папайя",
+    ...
+  },
+  {
+    "id": 4005,
+    "name": "گواوا",
+    "slug": "guava",
+    "englishName": "Guava",
+    "arabicName": "جوافة",
+    "russianName": "Гуава",
+    ...
+  },
+  {
+    "id": 4006,
+    "name": "نارگیل",
+    "slug": "coconut",
+    "englishName": "Coconut",
+    "arabicName": "جوز الهند",
+    "russianName": "Кокос",
+    ...
+  },
+  {
+    "id": 4007,
+    "name": "لیچی",
+    "slug": "lychee",
+    "englishName": "Lychee",
+    "arabicName": "ليتشي",
+    "russianName": "Личи",
+    ...
+  },
+  {
+    "id": 4008,
+    "name": "رامبوتان",
+    "slug": "rambutan",
+    "englishName": "Rambutan",
+    "arabicName": "رامبوتان",
+    "russianName": "Рамбутан",
+    ...
+  },
+  {
+    "id": 4009,
+    "name": "دراگون فروت",
+    "slug": "dragon-fruit",
+    "englishName": "Dragon Fruit",
+    "arabicName": "فاكهة التنين",
+    "russianName": "Драконий фрукт",
+    ...
+  },
+  {
+    "id": 4010,
+    "name": "ستاره‌ای",
+    "slug": "star-fruit",
+    "englishName": "Star Fruit",
+    "arabicName": "فاكهة النجمة",
+    "russianName": "Карамбола",
+    ...
+  },
+  {
+    "id": 4011,
+    "name": "جک فروت",
+    "slug": "jackfruit",
+    "englishName": "Jackfruit",
+    "arabicName": "جاك فروت",
+    "russianName": "Джекфрут",
+    ...
+  },
+  {
+    "id": 4012,
+    "name": "پشن فروت",
+    "slug": "passion-fruit",
+    "englishName": "Passion Fruit",
+    "arabicName": "فاكهة الآلام",
+    "russianName": "Маракуйя",
+    ...
+  },
+  {
+    "id": 5001,
+    "name": "توت‌فرنگی",
+    "slug": "strawberry",
+    "englishName": "Strawberry",
+    "arabicName": "فراولة",
+    "russianName": "Клубника",
+    ...
+  },
+  {
+    "id": 5002,
+    "name": "تمشک",
+    "slug": "raspberry",
+    "englishName": "Raspberry",
+    "arabicName": "توت شوكي",
+    "russianName": "Малина",
+    ...
+  },
+  {
+    "id": 5003,
+    "name": "شاه‌توت",
+    "slug": "blackberry",
+    "englishName": "Blackberry",
+    "arabicName": "توت أسود",
+    "russianName": "Ежевика",
+    ...
+  },
+  {
+    "id": 5004,
+    "name": "بلوبری",
+    "slug": "blueberry",
+    "englishName": "Blueberry",
+    "arabicName": "توت أزرق",
+    "russianName": "Голубика",
+    ...
+  },
+  {
+    "id": 5005,
+    "name": "توت",
+    "slug": "mulberry",
+    "englishName": "Mulberry",
+    "arabicName": "توت",
+    "russianName": "Шелковица",
+    ...
+  },
+  {
+    "id": 5006,
+    "name": "گیشنیز سیاه (کشمشک)",
+    "slug": "currant",
+    "englishName": "Currant",
+    "arabicName": "كشمش",
+    "russianName": "Смородина",
+    ...
+  },
+  {
+    "id": 5101,
+    "name": "توت سفید",
+    "slug": "white-mulberry",
+    "englishName": "White Mulberry",
+    "arabicName": "توت أبيض",
+    "russianName": "Белая шелковица",
+    ...
+  },
+  {
+    "id": 5102,
+    "name": "توت سیاه",
+    "slug": "black-mulberry",
+    "englishName": "Black Mulberry",
+    "arabicName": "توت أسود",
+    "russianName": "Чёрная шелковица",
+    ...
+  },
+  {
+    "id": 6001,
+    "name": "پسته",
+    "slug": "pistachio",
+    "englishName": "Pistachio",
+    "arabicName": "فستق",
+    "russianName": "Фисташки",
+    ...
+  },
+  {
+    "id": 6002,
+    "name": "گردو",
+    "slug": "walnut",
+    "englishName": "Walnut",
+    "arabicName": "جوز",
+    "russianName": "Грецкий орех",
+    ...
+  },
+  {
+    "id": 6003,
+    "name": "بادام",
+    "slug": "almond",
+    "englishName": "Almond",
+    "arabicName": "لوز",
+    "russianName": "Миндаль",
+    ...
+  },
+  {
+    "id": 6004,
+    "name": "فندق",
+    "slug": "hazelnut",
+    "englishName": "Hazelnut",
+    "arabicName": "بندق",
+    "russianName": "Фундук",
+    ...
+  },
+  {
+    "id": 6005,
+    "name": "بادام‌زمینی",
+    "slug": "peanut",
+    "englishName": "Peanut",
+    "arabicName": "فول سوداني",
+    "russianName": "Арахис",
+    ...
+  },
+  {
+    "id": 6006,
+    "name": "بادام هندی",
+    "slug": "cashew",
+    "englishName": "Cashew",
+    "arabicName": "كاجو",
+    "russianName": "Кешью",
+    ...
+  },
+  {
+    "id": 6007,
+    "name": "انجیر خشک",
+    "slug": "dried-fig",
+    "englishName": "Dried Fig",
+    "arabicName": "تين مجفف",
+    "russianName": "Сушёный инжир",
+    ...
+  },
+  {
+    "id": 6008,
+    "name": "کشمش",
+    "slug": "raisin",
+    "englishName": "Raisin",
+    "arabicName": "زبيب",
+    "russianName": "Изюм",
+    ...
+  },
+  {
+    "id": 6009,
+    "name": "تخمه آفتابگردان",
+    "slug": "sunflower-seeds",
+    "englishName": "Sunflower Seeds",
+    "arabicName": "بذور دوار الشمس",
+    "russianName": "Семена подсолнечника",
+    ...
+  },
+  {
+    "id": 6010,
+    "name": "تخمه کدو",
+    "slug": "pumpkin-seeds",
+    "englishName": "Pumpkin Seeds",
+    "arabicName": "بذور اليقطين",
+    "russianName": "Тыквенные семечки",
+    ...
+  },
+  {
+    "id": 6011,
+    "name": "تخمه هندوانه",
+    "slug": "watermelon-seeds",
+    "englishName": "Watermelon Seeds",
+    "arabicName": "بذور البطيخ",
+    "russianName": "Семена арбуза",
+    ...
+  },
+  {
+    "id": 6012,
+    "name": "تخمه خربزه",
+    "slug": "melon-seeds",
+    "englishName": "Melon Seeds",
+    "arabicName": "بذور الشمام",
+    "russianName": "Семена дыни",
+    ...
+  },
+  {
+    "id": 6013,
+    "name": "تخمه کدو تنبل",
+    "slug": "squash-seeds",
+    "englishName": "Squash Seeds",
+    "arabicName": "بذور القرع",
+    "russianName": "Семена кабачка",
+    ...
+  },
+  {
+    "id": 6014,
+    "name": "تخمه کدو حلوایی",
+    "slug": "pumpkin-pie-seeds",
+    "englishName": "Pumpkin Pie Seeds",
+    "arabicName": "بذور قرع العسل",
+    "russianName": "Семена тыквы для пирога",
+    ...
+  },
+  {
+    "id": 6015,
+    "name": "تخمه کدو سبز",
+    "slug": "zucchini-seeds",
+    "englishName": "Zucchini Seeds",
+    "arabicName": "بذور الكوسا",
+    "russianName": "Семена цукини",
+    ...
+  },
+  {
+    "id": 6016,
+    "name": "تخمه کدو قلیانی",
+    "slug": "bottle-gourd-seeds",
+    "englishName": "Bottle Gourd Seeds",
+    "arabicName": "بذور القرع القاروري",
+    "russianName": "Семена бутылочной тыквы",
+    ...
+  },
+  {
+    "id": 6101,
+    "name": "کشمش سلطانا",
+    "slug": "sultana-raisin",
+    "englishName": "Sultana Raisin",
+    "arabicName": "زبيب سلطانا",
+    "russianName": "Изюм султана",
+    ...
+  },
+  {
+    "id": 6102,
+    "name": "کشمش طلایی",
+    "slug": "golden-raisin",
+    "englishName": "Golden Raisin",
+    "arabicName": "زبيب ذهبي",
+    "russianName": "Золотистый изюм",
+    ...
+  },
+  {
+    "id": 7001,
+    "name": "پیاز",
+    "slug": "onion",
+    "englishName": "Onion",
+    "arabicName": "بصل",
+    "russianName": "Лук",
+    ...
+  },
+  {
+    "id": 7002,
+    "name": "سیر",
+    "slug": "garlic",
+    "englishName": "Garlic",
+    "arabicName": "ثوم",
+    "russianName": "Чеснок",
+    ...
+  },
+  {
+    "id": 7003,
+    "name": "هویج",
+    "slug": "carrot",
+    "englishName": "Carrot",
+    "arabicName": "جزر",
+    "russianName": "Морковь",
+    ...
+  },
+  {
+    "id": 7004,
+    "name": "سیب‌زمینی",
+    "slug": "potato",
+    "englishName": "Potato",
+    "arabicName": "بطاطس",
+    "russianName": "Картофель",
+    ...
+  },
+  {
+    "id": 7005,
+    "name": "کلم سفید",
+    "slug": "cabbage",
+    "englishName": "Cabbage",
+    "arabicName": "ملفوف أبيض",
+    "russianName": "Белокочанная капуста",
+    ...
+  },
+  {
+    "id": 7006,
+    "name": "گل‌کلم",
+    "slug": "cauliflower",
+    "englishName": "Cauliflower",
+    "arabicName": "قرنبيط",
+    "russianName": "Цветная капуста",
+    ...
+  },
+  {
+    "id": 7007,
+    "name": "اسفناج",
+    "slug": "spinach",
+    "englishName": "Spinach",
+    "arabicName": "سبانخ",
+    "russianName": "Шпинат",
+    ...
+  },
+  {
+    "id": 7008,
+    "name": "کاهو",
+    "slug": "lettuce",
+    "englishName": "Lettuce",
+    "arabicName": "خس",
+    "russianName": "Салат-латук",
+    ...
+  },
+  {
+    "id": 7009,
+    "name": "جعفری",
+    "slug": "parsley",
+    "englishName": "Parsley",
+    "arabicName": "بقدونس",
+    "russianName": "Петрушка",
+    ...
+  },
+  {
+    "id": 7010,
+    "name": "چغندر",
+    "slug": "beetroot",
+    "englishName": "Beetroot",
+    "arabicName": "شمندر",
+    "russianName": "Свёкла",
+    ...
+  },
+  {
+    "id": 7011,
+    "name": "تربچه",
+    "slug": "radish",
+    "englishName": "Radish",
+    "arabicName": "فجل",
+    "russianName": "Редис",
+    ...
+  },
+  {
+    "id": 7012,
+    "name": "شلغم",
+    "slug": "turnip",
+    "englishName": "Turnip",
+    "arabicName": "لفت",
+    "russianName": "Репа",
+    ...
+  },
+  {
+    "id": 7013,
+    "name": "کلم بروکلی",
+    "slug": "broccoli",
+    "englishName": "Broccoli",
+    "arabicName": "بروكلي",
+    "russianName": "Брокколи",
+    ...
+  },
+  {
+    "id": 7014,
+    "name": "کلم بروکسل",
+    "slug": "brussels-sprouts",
+    "englishName": "Brussels Sprouts",
+    "arabicName": "كرنب بروكسل",
+    "russianName": "Брюссельская капуста",
+    ...
+  },
+  {
+    "id": 7015,
+    "name": "کرفس",
+    "slug": "celery",
+    "englishName": "Celery",
+    "arabicName": "كرفس",
+    "russianName": "Сельдерей",
+    ...
+  },
+  {
+    "id": 7016,
+    "name": "ریحان",
+    "slug": "basil",
+    "englishName": "Basil",
+    "arabicName": "ريحان",
+    "russianName": "Базилик",
+    ...
+  },
+  {
+    "id": 7017,
+    "name": "نعنا",
+    "slug": "mint",
+    "englishName": "Mint",
+    "arabicName": "نعناع",
+    "russianName": "Мята",
+    ...
+  },
+  {
+    "id": 7018,
+    "name": "تره",
+    "slug": "leek",
+    "englishName": "Leek",
+    "arabicName": "كراث",
+    "russianName": "Лук-порей",
+    ...
+  },
+  {
+    "id": 7019,
+    "name": "شوید",
+    "slug": "dill",
+    "englishName": "Dill",
+    "arabicName": "شبت",
+    "russianName": "Укроп",
+    ...
+  },
+  {
+    "id": 7020,
+    "name": "ترخون",
+    "slug": "tarragon",
+    "englishName": "Tarragon",
+    "arabicName": "طرخون",
+    "russianName": "Тархун",
+    ...
+  },
+  {
+    "id": 8001,
+    "name": "گوجه‌فرنگی",
+    "slug": "tomato",
+    "englishName": "Tomato",
+    "arabicName": "طماطم",
+    "russianName": "Помидор",
+    ...
+  },
+  {
+    "id": 8002,
+    "name": "خیار",
+    "slug": "cucumber",
+    "englishName": "Cucumber",
+    "arabicName": "خيار",
+    "russianName": "Огурец",
+    ...
+  },
+  {
+    "id": 8003,
+    "name": "فلفل شیرین",
+    "slug": "sweet-pepper",
+    "englishName": "Sweet Pepper",
+    "arabicName": "فلفل حلو",
+    "russianName": "Сладкий перец",
+    ...
+  },
+  {
+    "id": 8004,
+    "name": "فلفل تند",
+    "slug": "hot-pepper",
+    "englishName": "Hot Pepper",
+    "arabicName": "فلفل حار",
+    "russianName": "Острый перец",
+    ...
+  },
+  {
+    "id": 8005,
+    "name": "بادمجان",
+    "slug": "eggplant",
+    "englishName": "Eggplant",
+    "arabicName": "باذنجان",
+    "russianName": "Баклажан",
+    ...
+  },
+  {
+    "id": 8006,
+    "name": "کدو سبز",
+    "slug": "zucchini",
+    "englishName": "Zucchini",
+    "arabicName": "كوسا",
+    "russianName": "Цукини",
+    ...
+  },
+  {
+    "id": 8007,
+    "name": "هندوانه",
+    "slug": "watermelon",
+    "englishName": "Watermelon",
+    "arabicName": "بطيخ",
+    "russianName": "Арбуз",
+    ...
+  },
+  {
+    "id": 8008,
+    "name": "طالبی/خربزه",
+    "slug": "melon",
+    "englishName": "Melon (Cantaloupe)",
+    "arabicName": "شمام",
+    "russianName": "Дыня (Канталупа)",
+    ...
+  },
+  {
+    "id": 8101,
+    "name": "گوجه گیلاسی",
+    "slug": "cherry-tomato",
+    "englishName": "Cherry Tomato",
+    "arabicName": "طماطم كرزي",
+    "russianName": "Помидоры черри",
+    ...
+  },
+  {
+    "id": 8102,
+    "name": "گوجه گرد",
+    "slug": "round-tomato",
+    "englishName": "Round Tomato",
+    "arabicName": "طماطم مستديرة",
+    "russianName": "Круглый помидор",
+    ...
+  },
+  {
+    "id": 9001,
+    "name": "زعفران",
+    "slug": "saffron",
+    "englishName": "Saffron",
+    "arabicName": "زعفران",
+    "russianName": "Шафран",
+    ...
+  },
+  {
+    "id": 9002,
+    "name": "زیره سبز",
+    "slug": "cumin",
+    "englishName": "Cumin",
+    "arabicName": "كمون",
+    "russianName": "Тмин",
+    ...
+  },
+  {
+    "id": 9003,
+    "name": "گشنیز",
+    "slug": "coriander-seed",
+    "englishName": "Coriander Seed",
+    "arabicName": "بذور الكزبرة",
+    "russianName": "Семена кориандра",
+    ...
+  },
+  {
+    "id": 9004,
+    "name": "انیسون",
+    "slug": "anise",
+    "englishName": "Anise",
+    "arabicName": "يانسون",
+    "russianName": "Анис",
+    ...
+  },
+  {
+    "id": 9005,
+    "name": "بابونه",
+    "slug": "chamomile",
+    "englishName": "Chamomile",
+    "arabicName": "بابونج",
+    "russianName": "Ромашка",
+    ...
+  },
+  {
+    "id": 9006,
+    "name": "گل محمدی",
+    "slug": "rosa-damascena",
+    "englishName": "Rosa Damascena",
+    "arabicName": "ورد دمشقي",
+    "russianName": "Дамасская роза",
+    ...
+  },
+  {
+    "id": 9007,
+    "name": "حناء",
+    "slug": "henna",
+    "englishName": "Henna",
+    "arabicName": "حناء",
+    "russianName": "Хна",
+    ...
+  },
+  {
+    "id": 9008,
+    "name": "سیاهدانه",
+    "slug": "nigella",
+    "englishName": "Nigella",
+    "arabicName": "حبة البركة",
+    "russianName": "Чернушка",
+    ...
+  },
+  {
+    "id": 9009,
+    "name": "جوجوبا",
+    "slug": "jojoba",
+    "englishName": "Jojoba",
+    "arabicName": "جوجوبا",
+    "russianName": "Жожоба",
+    ...
+  },
+  {
+    "id": 9010,
+    "name": "زردچوبه",
+    "slug": "turmeric",
+    "englishName": "Turmeric",
+    "arabicName": "كركم",
+    "russianName": "Куркума",
+    ...
+  },
+  {
+    "id": 9011,
+    "name": "زنجبیل",
+    "slug": "ginger",
+    "englishName": "Ginger",
+    "arabicName": "زنجبيل",
+    "russianName": "Имбирь",
+    ...
+  },
+  {
+    "id": 9012,
+    "name": "دارچین",
+    "slug": "cinnamon",
+    "englishName": "Cinnamon",
+    "arabicName": "قرفة",
+    "russianName": "Корица",
+    ...
+  },
+  {
+    "id": 9013,
+    "name": "هل",
+    "slug": "cardamom",
+    "englishName": "Cardamom",
+    "arabicName": "هال",
+    "russianName": "Кардамон",
+    ...
+  },
+  {
+    "id": 9014,
+    "name": "فلفل سیاه",
+    "slug": "black-pepper",
+    "englishName": "Black Pepper",
+    "arabicName": "فلفل أسود",
+    "russianName": "Чёрный перец",
+    ...
+  },
+  {
+    "id": 9015,
+    "name": "فلفل قرمز",
+    "slug": "red-pepper",
+    "englishName": "Red Pepper",
+    "arabicName": "فلفل أحمر",
+    "russianName": "Красный перец",
+    ...
+  },
+  {
+    "id": 9016,
+    "name": "آویشن",
+    "slug": "thyme",
+    "englishName": "Thyme",
+    "arabicName": "زعتر",
+    "russianName": "Тимьян",
+    ...
+  },
+  {
+    "id": 9017,
+    "name": "رزماری",
+    "slug": "rosemary",
+    "englishName": "Rosemary",
+    "arabicName": "إكليل الجبل",
+    "russianName": "Розмарин",
+    ...
+  },
+  {
+    "id": 9018,
+    "name": "مریم‌گلی",
+    "slug": "sage",
+    "englishName": "Sage",
+    "arabicName": "مريمية",
+    "russianName": "Шалфей",
+    ...
+  },
+  {
+    "id": 9019,
+    "name": "گشنیز",
+    "slug": "coriander",
+    "englishName": "Coriander",
+    "arabicName": "كزبرة",
+    "russianName": "Кориандр",
+    ...
+  },
+  {
+    "id": 9020,
+    "name": "رازیانه",
+    "slug": "fennel",
+    "englishName": "Fennel",
+    "arabicName": "شمر",
+    "russianName": "Фенхель",
+    ...
+  },
+  {
+    "id": 9021,
+    "name": "شوید",
+    "slug": "dill-seed",
+    "englishName": "Dill Seed",
+    "arabicName": "بذور الشبت",
+    "russianName": "Семена укропа",
+    ...
+  },
+  {
+    "id": 9022,
+    "name": "خردل",
+    "slug": "mustard",
+    "englishName": "Mustard",
+    "arabicName": "خردل",
+    "russianName": "Горчица",
+    ...
+  },
+  {
+    "id": 9023,
+    "name": "کنجد",
+    "slug": "sesame",
+    "englishName": "Sesame",
+    "arabicName": "سمسم",
+    "russianName": "Кунжут",
+    ...
+  },
+  {
+    "id": 9024,
+    "name": "کاسنی",
+    "slug": "chicory",
+    "englishName": "Chicory",
+    "arabicName": "هندباء",
+    "russianName": "Цикорий",
+    ...
+  },
+  {
+    "id": 9025,
+    "name": "سنبل‌الطیب",
+    "slug": "valerian",
+    "englishName": "Valerian",
+    "arabicName": "ناردين",
+    "russianName": "Валериана",
+    ...
+  },
+  {
+    "id": 10001,
+    "name": "گاو",
+    "slug": "cattle",
+    "englishName": "Cattle",
+    "arabicName": "بقر",
+    "russianName": "Крупный рогатый скот",
+    ...
+  },
+  {
+    "id": 10002,
+    "name": "گوسفند",
+    "slug": "sheep",
+    "englishName": "Sheep",
+    "arabicName": "غنم",
+    "russianName": "Овцы",
+    ...
+  },
+  {
+    "id": 10003,
+    "name": "بز",
+    "slug": "goat",
+    "englishName": "Goat",
+    "arabicName": "ماعز",
+    "russianName": "Козы",
+    ...
+  },
+  {
+    "id": 10004,
+    "name": "مرغ گوشتی",
+    "slug": "broiler-chicken",
+    "englishName": "Broiler Chicken",
+    "arabicName": "دجاج لاحم",
+    "russianName": "Бройлерный цыпленок",
+    ...
+  },
+  {
+    "id": 10005,
+    "name": "تخم‌مرغ",
+    "slug": "egg",
+    "englishName": "Egg",
+    "arabicName": "بيض",
+    "russianName": "Яйцо",
+    ...
+  },
+  {
+    "id": 10006,
+    "name": "بوقلمون",
+    "slug": "turkey",
+    "englishName": "Turkey",
+    "arabicName": "ديك رومي",
+    "russianName": "Индюк",
+    ...
+  },
+  {
+    "id": 10007,
+    "name": "قزل‌آلا",
+    "slug": "trout",
+    "englishName": "Trout",
+    "arabicName": "سلمون مرقط",
+    "russianName": "Форель",
+    ...
+  },
+  {
+    "id": 10008,
+    "name": "کپور",
+    "slug": "carp",
+    "englishName": "Carp",
+    "arabicName": "شبوط",
+    "russianName": "Карп",
+    ...
+  },
+  {
+    "id": 10009,
+    "name": "میگو",
+    "slug": "shrimp",
+    "englishName": "Shrimp",
+    "arabicName": "جمبري",
+    "russianName": "Креветка",
+    ...
+  },
+  {
+    "id": 11001,
+    "name": "یونجه خشک",
+    "slug": "alfalfa-hay",
+    "englishName": "Alfalfa Hay",
+    "arabicName": "قش البرسيم",
+    "russianName": "Сено люцерны",
+    ...
+  },
+  {
+    "id": 11002,
+    "name": "سیلوی ذرت",
+    "slug": "corn-silage",
+    "englishName": "Corn Silage",
+    "arabicName": "سيلاج الذرة",
+    "russianName": "Силос из кукурузы",
+    ...
+  },
+  {
+    "id": 11003,
+    "name": "جو دامی",
+    "slug": "barley-feed",
+    "englishName": "Barley Feed",
+    "arabicName": "شعير علفي",
+    "russianName": "Кормовой ячмень",
+    ...
+  },
+  {
+    "id": 11004,
+    "name": "سبوس گندم",
+    "slug": "wheat-bran",
+    "englishName": "Wheat Bran",
+    "arabicName": "نخالة القمح",
+    "russianName": "Пшеничные отруби",
+    ...
+  },
+  {
+    "id": 11005,
+    "name": "کنجاله سویا",
+    "slug": "soybean-meal",
+    "englishName": "Soybean Meal",
+    "arabicName": "كسبة فول الصويا",
+    "russianName": "Соевый шрот",
+    ...
+  },
+  {
+    "id": 11006,
+    "name": "پودر ماهی",
+    "slug": "fish-meal",
+    "englishName": "Fish Meal",
+    "arabicName": "مسحوق السمك",
+    "russianName": "Рыбная мука",
+    ...
+  },
+  {
+    "id": 11007,
+    "name": "کنجاله پنبه‌دانه",
+    "slug": "cottonseed-meal",
+    "englishName": "Cottonseed Meal",
+    "arabicName": "كسبة بذور القطن",
+    "russianName": "Хлопковый шрот",
+    ...
+  },
+  {
+    "id": 12001,
+    "name": "بذرها",
+    "slug": "seeds",
+    "englishName": "Seeds",
+    "arabicName": "بذور",
+    "russianName": "Семена",
+    ...
+  },
+  {
+    "id": 12002,
+    "name": "نهال‌ها",
+    "slug": "seedlings",
+    "englishName": "Seedlings",
+    "arabicName": "شتلات",
+    "russianName": "Саженцы",
+    ...
+  },
+  {
+    "id": 12003,
+    "name": "کودها",
+    "slug": "fertilizers",
+    "englishName": "Fertilizers",
+    "arabicName": "أسمدة",
+    "russianName": "Удобрения",
+    ...
+  },
+  {
+    "id": 12004,
+    "name": "آفت‌کش‌ها",
+    "slug": "pesticides",
+    "englishName": "Pesticides",
+    "arabicName": "مبيدات الآفات",
+    "russianName": "Пестициды",
+    ...
+  },
+  {
+    "id": 12005,
+    "name": "علف‌کش‌ها",
+    "slug": "herbicides",
+    "englishName": "Herbicides",
+    "arabicName": "مبيدات الأعشاب",
+    "russianName": "Гербициды",
+    ...
+  },
+  {
+    "id": 12006,
+    "name": "تجهیزات گلخانه",
+    "slug": "greenhouse-supplies",
+    "englishName": "Greenhouse Supplies",
+    "arabicName": "معدات الصوبات الزراعية",
+    "russianName": "Оборудование для теплиц",
+    ...
+  },
+  {
+    "id": 12007,
+    "name": "تجهیزات آبیاری",
+    "slug": "irrigation-equipment",
+    "englishName": "Irrigation Equipment",
+    "arabicName": "معدات الري",
+    "russianName": "Оборудование для полива",
+    ...
+  },
+  {
+    "id": 12008,
+    "name": "بستر کشت",
+    "slug": "growing-media",
+    "englishName": "Growing Media",
+    "arabicName": "أوساط النمو",
+    "russianName": "Субстраты для выращивания",
+    ...
+  },
+  {
+    "id": 12101,
+    "name": "بذر غلات",
+    "slug": "cereal-seeds",
+    "englishName": "Cereal Seeds",
+    "arabicName": "بذور الحبوب",
+    "russianName": "Семена зерновых",
+    ...
+  },
+  {
+    "id": 12102,
+    "name": "بذر سبزیجات",
+    "slug": "vegetable-seeds",
+    "englishName": "Vegetable Seeds",
+    "arabicName": "بذور الخضروات",
+    "russianName": "Семена овощей",
+    ...
+  },
+  {
+    "id": 12103,
+    "name": "نهال درختان میوه",
+    "slug": "fruit-tree-seedlings",
+    "englishName": "Fruit Tree Seedlings",
+    "arabicName": "شتلات أشجار الفاكهة",
+    "russianName": "Саженцы фруктовых деревьев",
+    ...
+  },
+  {
+    "id": 12104,
+    "name": "نشا سبزی و صیفی",
+    "slug": "vegetable-seedlings",
+    "englishName": "Vegetable Seedlings",
+    "arabicName": "شتلات الخضروات",
+    "russianName": "Рассада овощей",
+    ...
+  },
+  {
+    "id": 12105,
+    "name": "کود اوره",
+    "slug": "urea-fertilizer",
+    "englishName": "Urea Fertilizer",
+    "arabicName": "سماد اليوريا",
+    "russianName": "Мочевинное удобрение",
+    ...
+  },
+  {
+    "id": 12106,
+    "name": "کود NPK",
+    "slug": "npk-fertilizer",
+    "englishName": "NPK Fertilizer",
+    "arabicName": "سماد NPK",
+    "russianName": "Удобрение NPK",
+    ...
+  },
+  {
+    "id": 12107,
+    "name": "کوکوپیت",
+    "slug": "cocopeat",
+    "englishName": "Cocopeat",
+    "arabicName": "كوكوبيت",
+    "russianName": "Кокосовый торф",
+    ...
+  },
+  {
+    "id": 12108,
+    "name": "پرلیت",
+    "slug": "perlite",
+    "englishName": "Perlite",
+    "arabicName": "بيرلايت",
+    "russianName": "Перлит",
+    ...
+  }
+]

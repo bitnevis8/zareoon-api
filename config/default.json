@@ -6,21 +6,26 @@
   },
   "UPLOAD": {
     "TEMP_PATH": "tmp/uploads",
-    "DOWNLOAD_HOST": "https://dl.zareoon.ir",
-    "MAX_FILE_SIZE": 5242880,
+    "DOWNLOAD_HOST": "http://dl.zareoon.ir",
+    "MAX_FILE_SIZE": 52428800,
     "ALLOWED_MIMES": [
       "image/jpeg",
       "image/png",
       "image/gif",
+      "image/webp",
+      "video/mp4",
+      "video/webm",
+      "video/quicktime",
+      "video/x-msvideo",
       "application/pdf",
       "application/msword",
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     ],
     "FTP": {
-      "host": "dl.zareoon.ir",
+      "host": "2193182645.cloudydl.com",
       "port": 21,
-      "user": "pz22008",
-      "password": "L3SvlSZC",
+      "user": "pz23110",
+      "password": "JLmYVlkN",
       "secure": false,
       "basePath": "/public_html"
     },
