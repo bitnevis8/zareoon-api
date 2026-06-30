@@ -32,7 +32,7 @@
     "winston": "^3.17.0"
   },
   "scripts": {
-    "install:deps": "node ../scripts/npm-install-fallback.js api",
+    "install:deps": "node ../scripts/npm-install-fallback.js .",
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "seed": "node src/core/database/seeder.js",
