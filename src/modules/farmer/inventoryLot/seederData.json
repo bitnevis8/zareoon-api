@@ -1,88 +1,204 @@
 {
+
   "data": [
+
     {
+
       "id": 1,
+
       "farmerEmail": "mahavi@zareoon.ir",
+
       "productId": 3801,
+
+      "englishName": "Klooteh",
+
+      "russianName": "Клуте",
+
       "qualityGrade": "کلوته",
+
       "status": "harvested",
+
       "unit": "kg",
+
       "totalQuantity": 8000,
+
       "reservedQuantity": 0,
+
       "price": 95000,
+
       "minimumOrderQuantity": 500
+
     },
+
     {
+
       "id": 2,
+
       "farmerEmail": "mahavi@zareoon.ir",
+
       "productId": 3802,
+
+      "englishName": "Grade 1 Mazafati-style Moist",
+
+      "russianName": "1 сорт влажный (тип Мазафати)",
+
       "qualityGrade": "درجه 1 رطب مضافتی",
+
       "status": "harvested",
+
       "unit": "kg",
+
       "totalQuantity": 12000,
+
       "reservedQuantity": 0,
+
       "price": 110000,
+
       "minimumOrderQuantity": 500
+
     },
+
     {
+
       "id": 3,
+
       "farmerEmail": "mahavi@zareoon.ir",
+
       "productId": 3802,
+
+      "englishName": "Juicy Vacuum-packed Custom Export",
+
+      "russianName": "Сочный, вакуумная упаковка, экспортный заказ",
+
       "qualityGrade": "شیره دار وکیم سفارشی صادرات",
+
       "status": "harvested",
+
       "unit": "kg",
+
       "totalQuantity": 6000,
+
       "reservedQuantity": 0,
+
       "price": 135000,
+
       "minimumOrderQuantity": 1000
+
     },
+
     {
+
       "id": 4,
+
       "farmerEmail": "mahavi@zareoon.ir",
+
       "productId": 3803,
+
+      "englishName": "Iraq",
+
+      "russianName": "Ирак",
+
       "qualityGrade": "عراق",
+
       "status": "harvested",
+
       "unit": "kg",
+
       "totalQuantity": 10000,
+
       "reservedQuantity": 0,
+
       "price": 85000,
+
       "minimumOrderQuantity": 500
+
     },
+
     {
+
       "id": 5,
+
       "farmerEmail": "mahavi@zareoon.ir",
+
       "productId": 3804,
+
+      "englishName": "Jumbo Grade",
+
+      "russianName": "Сорт Jumbo",
+
       "qualityGrade": "درجه جامبو",
+
       "status": "harvested",
+
       "unit": "kg",
+
       "totalQuantity": 7000,
+
       "reservedQuantity": 0,
+
       "price": 180000,
+
       "minimumOrderQuantity": 500
+
     },
+
     {
+
       "id": 6,
+
       "farmerEmail": "mahavi@zareoon.ir",
+
       "productId": 3804,
+
+      "englishName": "Grade 1",
+
+      "russianName": "1 сорт",
+
       "qualityGrade": "درجه 1",
+
       "status": "harvested",
+
       "unit": "kg",
+
       "totalQuantity": 15000,
+
       "reservedQuantity": 0,
+
       "price": 160000,
+
       "minimumOrderQuantity": 500
+
     },
+
     {
+
       "id": 7,
+
       "farmerEmail": "mahavi@zareoon.ir",
+
       "productId": 3805,
+
+      "englishName": "Iranshahr - Sistan and Baluchestan",
+
+      "russianName": "Ираншахр - Систан и Белуджистан",
+
       "qualityGrade": "ایرانشهر - سیستان و بلوچستان",
+
       "status": "harvested",
+
       "unit": "kg",
+
       "totalQuantity": 9000,
+
       "reservedQuantity": 0,
+
       "price": 90000,
+
       "minimumOrderQuantity": 500
+
     }
+
   ]
+
 }
+

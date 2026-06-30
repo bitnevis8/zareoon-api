@@ -58,6 +58,18 @@ async function attachUploadedImages(products) {
   }));
 }
 
+function normalizeSupplyFields(payload) {
+  if (payload.supplyCountry !== undefined) {
+    const code = String(payload.supplyCountry || "IR").trim().toUpperCase();
+    payload.supplyCountry = /^[A-Z]{2}$/.test(code) ? code : "IR";
+  }
+  if (payload.supplyCity !== undefined) {
+    const city = String(payload.supplyCity || "").trim();
+    payload.supplyCity = city || null;
+  }
+  return payload;
+}
+
 const list = async (req, res) => {
   const where = {};
   if (req.query.parentId !== undefined) where.parentId = req.query.parentId || null;
@@ -69,6 +81,8 @@ const list = async (req, res) => {
       { name: { [Op.like]: `%${q}%` } },
       { slug: { [Op.like]: `%${q}%` } },
       { englishName: { [Op.like]: `%${q}%` } },
+      { arabicName: { [Op.like]: `%${q}%` } },
+      { russianName: { [Op.like]: `%${q}%` } },
     ];
   }
 
@@ -99,6 +113,8 @@ const create = async (req, res) => {
   if (payload.isOrderable === undefined) {
     payload.isOrderable = Boolean(payload.unit);
   }
+  if (!payload.supplyCountry) payload.supplyCountry = "IR";
+  normalizeSupplyFields(payload);
   const created = await Product.create(payload);
   res.status(201).json({ success: true, data: created });
 };
@@ -109,6 +125,7 @@ const update = async (req, res) => {
   if (payload.parentId === undefined && payload.categoryId !== undefined) {
     payload.parentId = payload.categoryId;
   }
+  normalizeSupplyFields(payload);
   const [count] = await Product.update(payload, { where: { id } });
   if (!count) return res.status(404).json({ success: false, message: "Not found" });
   const updated = await Product.findByPk(id);
@@ -129,7 +146,7 @@ const exportEnglishCsv = async (req, res) => {
   if (req.query.isOrderable !== undefined) where.isOrderable = String(req.query.isOrderable) === 'true';
   const items = await Product.findAll({ where, order: [["id", "ASC"]] });
   const headers = [
-    "id","parentId","isOrderable","name","englishName","slug","unit","isActive","sortOrder","isFeatured"
+    "id","parentId","isOrderable","name","englishName","arabicName","russianName","slug","unit","isActive","sortOrder","isFeatured"
   ];
   const escapeCsv = (val) => {
     if (val === null || val === undefined) return "";
@@ -143,6 +160,8 @@ const exportEnglishCsv = async (req, res) => {
     p.isOrderable ? 1 : 0,
     p.name ?? "",
     p.englishName ?? "",
+    p.arabicName ?? "",
+    p.russianName ?? "",
     p.slug ?? "",
     p.unit ?? "",
     p.isActive === false ? 0 : 1,

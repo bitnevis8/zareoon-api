@@ -12,6 +12,8 @@ Product.init(
     parentId: { type: DataTypes.INTEGER, allowNull: true },
     name: { type: DataTypes.STRING(200), allowNull: false },
     englishName: { type: DataTypes.STRING(200), allowNull: true },
+    arabicName: { type: DataTypes.STRING(200), allowNull: true },
+    russianName: { type: DataTypes.STRING(200), allowNull: true },
     slug: { type: DataTypes.STRING(200), allowNull: true },
     description: { type: DataTypes.TEXT, allowNull: true },
     imageUrl: { type: DataTypes.STRING(500), allowNull: true },
@@ -26,7 +28,10 @@ Product.init(
     metaTitle: { type: DataTypes.STRING(255), allowNull: true },
     metaDescription: { type: DataTypes.TEXT, allowNull: true },
     // Valid units applicable to children or this item (mainly for non-orderable/category-like nodes)
-    validUnits: { type: DataTypes.JSON, allowNull: true }
+    validUnits: { type: DataTypes.JSON, allowNull: true },
+    // Supply source: country (ISO 3166-1 alpha-2) required, city optional
+    supplyCountry: { type: DataTypes.STRING(2), allowNull: false, defaultValue: "IR" },
+    supplyCity: { type: DataTypes.STRING(120), allowNull: true }
   },
   {
     sequelize,

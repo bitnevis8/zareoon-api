@@ -37,7 +37,7 @@ const startServer = async () => {
   try {
     // اتصال به دیتابیس‌ها
     await initializeDatabase({ 
-      force: true,  // تغییر از true به false
+      force: true,
       seed: true,
       useMongoDB: false
     });
