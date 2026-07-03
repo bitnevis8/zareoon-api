@@ -9,6 +9,7 @@ const axios = require("axios");
 const { main } = require("../../../utils/emailSender/nodemailerConfig");
 const moment = require("moment");
 const { Op } = require("sequelize");
+const { buildAccountNav } = require("../../account/navLabels");
 
 // تابع کمکی برای تنظیمات کوکی
 function getCookieConfig(isProduction, rememberMe = false) {
@@ -27,6 +28,33 @@ class AuthController extends BaseController {
   constructor() {
     super();
     this.User = User; // اضافه کردن User به instance کلاس
+  }
+
+  serializeUser(user) {
+    return {
+      id: user.id,
+      userId: user.id,
+      email: user.email,
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      fatherName: user.fatherName,
+      nationalId: user.nationalId,
+      address: user.address,
+      postalCode: user.postalCode,
+      mobile: user.mobile,
+      phone: user.phone,
+      avatar: user.avatar,
+      isEmailVerified: user.isEmailVerified,
+      isMobileVerified: user.isMobileVerified,
+      isActive: user.isActive,
+      roles: (user.userRoles || []).map((role) => ({
+        id: role.id,
+        name: role.name,
+        nameEn: role.nameEn,
+        nameFa: role.nameFa,
+      })),
+    };
   }
   // اضافه کردن متد logout در AuthController
   async logout(req, res) {
@@ -103,27 +131,106 @@ class AuthController extends BaseController {
         return this.response(res, 404, false, "کاربر یافت نشد.");
       }
 
+      const accountNav = await buildAccountNav(user);
+      const payload = { ...this.serializeUser(user), accountNav };
+
       // ✅ ارسال اطلاعات کاربر
-      return this.response(res, 200, true, "اطلاعات کاربر دریافت شد.", {
-        id: user.id,
-        userId: user.id,
-        email: user.email,
-        username: user.username,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        mobile: user.mobile,
-        isEmailVerified: user.isEmailVerified,
-        isMobileVerified: user.isMobileVerified,
-        isActive: user.isActive,
-        roles: user.userRoles.map(role => ({
-          id: role.id,
-          name: role.name,
-          nameEn: role.nameEn,
-          nameFa: role.nameFa,
-        })), // Return an array of roles
-      });
+      return this.response(res, 200, true, "اطلاعات کاربر دریافت شد.", payload);
     } catch (error) {
       return this.response(res, 401, false, "توکن نامعتبر است.");
+    }
+  }
+
+  async updateProfile(req, res) {
+    try {
+      const userId = req.user.userId || req.user.id;
+      if (!userId) {
+        return this.response(res, 400, false, "شناسه کاربر یافت نشد.");
+      }
+
+      const schema = Joi.object({
+        firstName: Joi.string().trim().min(1).max(100).required(),
+        lastName: Joi.string().trim().min(1).max(100).required(),
+        fatherName: Joi.string().trim().max(100).allow("", null),
+        nationalId: Joi.string().trim().max(20).allow("", null),
+        address: Joi.string().trim().max(1000).allow("", null),
+        postalCode: Joi.string().trim().max(20).allow("", null),
+        email: Joi.string().email().allow("", null),
+        phone: Joi.string().trim().max(20).allow("", null),
+        currentPassword: Joi.string().min(6).allow("", null),
+        newPassword: Joi.string().min(6).allow("", null),
+        confirmPassword: Joi.string().allow("", null),
+      });
+
+      const { error, value } = schema.validate(req.body);
+      if (error) {
+        return this.response(res, 400, false, error.details[0].message);
+      }
+
+      if (value.newPassword) {
+        if (!value.currentPassword) {
+          return this.response(res, 400, false, "برای تغییر رمز عبور، رمز فعلی را وارد کنید.");
+        }
+        if (value.newPassword !== value.confirmPassword) {
+          return this.response(res, 400, false, "رمز عبور جدید و تکرار آن یکسان نیست.");
+        }
+      }
+
+      const user = await this.User.findOne({
+        where: { id: userId },
+        include: [{
+          model: Role,
+          as: "userRoles",
+          attributes: ["id", "name", "nameEn", "nameFa"],
+          through: { attributes: [] },
+        }],
+      });
+
+      if (!user) {
+        return this.response(res, 404, false, "کاربر یافت نشد.");
+      }
+
+      if (value.newPassword) {
+        const passwordOk = await user.comparePassword(value.currentPassword);
+        if (!passwordOk) {
+          return this.response(res, 400, false, "رمز عبور فعلی نادرست است.");
+        }
+        user.password = value.newPassword;
+      }
+
+      if (value.email && value.email !== user.email) {
+        const emailExists = await this.User.findOne({
+          where: {
+            email: value.email,
+            id: { [Op.ne]: userId },
+          },
+        });
+        if (emailExists) {
+          return this.response(res, 400, false, "این ایمیل قبلاً ثبت شده است.");
+        }
+        user.email = value.email;
+        user.isEmailVerified = false;
+      } else if (value.email === "") {
+        user.email = null;
+        user.isEmailVerified = false;
+      } else if (value.email) {
+        user.email = value.email;
+      }
+
+      user.firstName = value.firstName;
+      user.lastName = value.lastName;
+      user.fatherName = value.fatherName || null;
+      user.nationalId = value.nationalId || null;
+      user.address = value.address || null;
+      user.postalCode = value.postalCode || null;
+      user.phone = value.phone || null;
+
+      await user.save();
+
+      return this.response(res, 200, true, "اطلاعات حساب کاربری بروزرسانی شد.", this.serializeUser(user));
+    } catch (error) {
+      console.error("❌ Profile update failed:", error.message);
+      return this.response(res, 500, false, "خطا در بروزرسانی حساب کاربری", null, error);
     }
   }
 

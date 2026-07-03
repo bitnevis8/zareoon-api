@@ -6,6 +6,10 @@ const list = async (req, res) => {
     const cid = Number(req.query.categoryId);
     if (Number.isFinite(cid)) where.categoryId = cid;
   }
+  if (req.query.productId !== undefined) {
+    const pid = Number(req.query.productId);
+    if (Number.isFinite(pid)) where.productId = pid;
+  }
   const items = await CustomAttributeDefinition.findAll({ where, order: [["id", "ASC"]] });
   res.json({ success: true, data: items });
 };

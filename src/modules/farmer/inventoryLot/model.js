@@ -25,6 +25,11 @@ InventoryLot.init(
     minimumOrderQuantity: { type: DataTypes.DECIMAL(18, 3), allowNull: true },
     areaHectare: { type: DataTypes.DECIMAL(10, 3), allowNull: true },
     yieldEstimatePerHectare: { type: DataTypes.DECIMAL(10, 3), allowNull: true },
+    description: { type: DataTypes.TEXT, allowNull: true },
+    hashtags: { type: DataTypes.JSON, allowNull: true },
+    locationLabel: { type: DataTypes.STRING(200), allowNull: true },
+    latitude: { type: DataTypes.DECIMAL(10, 7), allowNull: true },
+    longitude: { type: DataTypes.DECIMAL(10, 7), allowNull: true },
     createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW }
   },

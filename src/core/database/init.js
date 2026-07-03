@@ -27,6 +27,13 @@ require("../../modules/farmer/orderItem/model");
 require("../../modules/farmer/transactionHistory/model");
 require("../../modules/lcRequest/model");
 require("../../modules/serviceRequest/model");
+require("../../modules/messaging/conversation/model");
+require("../../modules/messaging/message/model");
+require("../../modules/supplierProfile/post/model");
+require("../../modules/supplierProfile/follow/model");
+require("../../modules/supplierProfile/review/model");
+require("../../modules/account/model");
+require("../../modules/account/profileField/model");
 
 // Import and define all associations
 const defineAssociations = require("../../modules/associations");

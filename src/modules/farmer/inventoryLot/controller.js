@@ -2,10 +2,19 @@ const { Op } = require("sequelize");
 const InventoryLot = require("./model");
 const File = require("../../fileUpload/model");
 const User = require("../../user/user/model");
+const Account = require("../../account/model");
 const TransactionHistory = require("../transactionHistory/model");
 const CustomAttributeValue = require("../customAttributeValue/model");
 const CustomAttributeDefinition = require("../customAttributeDefinition/model");
 const { getInventoryPricing } = require("../../../utils/inventoryPricingUtils");
+const { parseHashtagsInput, formatHashtags, countRawHashtags, MAX_HASHTAGS } = require("../../../utils/hashtags");
+
+const supplierInclude = {
+  model: User,
+  as: "supplier",
+  attributes: ["id", "firstName", "lastName", "username", "mobile"],
+  include: [{ model: Account, as: "account", attributes: ["profileSlug"], required: false }],
+};
 
 async function attachLotCoverImages(lots) {
   const arr = Array.isArray(lots) ? lots : [lots];
@@ -30,6 +39,7 @@ async function attachLotCoverImages(lots) {
   return plain.map((l) => ({
     ...l,
     coverImageUrl: coverMap[l.id] || null,
+    hashtags: formatHashtags(l.hashtags),
   }));
 }
 
@@ -41,7 +51,7 @@ const list = async (req, res) => {
         as: "attributes",
         include: [{ model: CustomAttributeDefinition, as: "definition", attributes: ["id", "name", "type", "options"] }]
       },
-      { model: User, as: "farmer", attributes: ["id","firstName","lastName","username","mobile"] }
+      supplierInclude
     ],
     order: [["id", "ASC"]]
   });
@@ -57,7 +67,7 @@ const getById = async (req, res) => {
         as: "attributes",
         include: [{ model: CustomAttributeDefinition, as: "definition", attributes: ["id", "name", "type", "options"] }]
       },
-      { model: User, as: "farmer", attributes: ["id","firstName","lastName","username","mobile"] }
+      supplierInclude
     ]
   });
   if (!item) return res.status(404).json({ success: false, message: "Not found" });
@@ -65,17 +75,52 @@ const getById = async (req, res) => {
   res.json({ success: true, data });
 };
 
+function formatLotRecord(lot) {
+  const plain = lot?.toJSON ? lot.toJSON() : { ...lot };
+  return { ...plain, hashtags: formatHashtags(plain.hashtags) };
+}
+
+function applyHashtagsToPayload(payload, body) {
+  if (body.hashtags === undefined) return payload;
+  if (countRawHashtags(body) > MAX_HASHTAGS) {
+    const err = new Error(`حداکثر ${MAX_HASHTAGS} هشتگ مجاز است`);
+    err.status = 400;
+    throw err;
+  }
+  const tags = parseHashtagsInput(body);
+  payload.hashtags = tags.length ? tags : null;
+  return payload;
+}
+
 const create = async (req, res) => {
-  const created = await InventoryLot.create(req.body);
-  res.status(201).json({ success: true, data: created });
+  try {
+    const payload = { ...req.body };
+    applyHashtagsToPayload(payload, req.body);
+    const created = await InventoryLot.create(payload);
+    res.status(201).json({ success: true, data: formatLotRecord(created) });
+  } catch (error) {
+    if (error.status === 400) {
+      return res.status(400).json({ success: false, message: error.message });
+    }
+    throw error;
+  }
 };
 
 const update = async (req, res) => {
   const id = req.params.id;
-  const [count] = await InventoryLot.update(req.body, { where: { id } });
-  if (!count) return res.status(404).json({ success: false, message: "Not found" });
-  const updated = await InventoryLot.findByPk(id);
-  res.json({ success: true, data: updated });
+  try {
+    const payload = { ...req.body };
+    applyHashtagsToPayload(payload, req.body);
+    const [count] = await InventoryLot.update(payload, { where: { id } });
+    if (!count) return res.status(404).json({ success: false, message: "Not found" });
+    const updated = await InventoryLot.findByPk(id);
+    res.json({ success: true, data: formatLotRecord(updated) });
+  } catch (error) {
+    if (error.status === 400) {
+      return res.status(400).json({ success: false, message: error.message });
+    }
+    throw error;
+  }
 };
 
 const remove = async (req, res) => {
@@ -152,7 +197,7 @@ const calculatePrice = async (req, res) => {
 
     const inventoryLot = await InventoryLot.findByPk(inventoryLotId, {
       include: [
-        { model: User, as: "farmer", attributes: ["id","firstName","lastName","username","mobile"] }
+        supplierInclude
       ]
     });
 
@@ -180,7 +225,7 @@ const calculatePrice = async (req, res) => {
         ...pricing,
         inventoryLot: {
           id: inventoryLot.id,
-          farmer: inventoryLot.farmer,
+          supplier: inventoryLot.supplier,
           productId: inventoryLot.productId,
           qualityGrade: inventoryLot.qualityGrade,
           unit: inventoryLot.unit,
@@ -239,7 +284,7 @@ const setTieredPricing = async (req, res) => {
 
     const updatedLot = await InventoryLot.findByPk(inventoryLotId, {
       include: [
-        { model: User, as: "farmer", attributes: ["id","firstName","lastName","username","mobile"] }
+        supplierInclude
       ]
     });
 

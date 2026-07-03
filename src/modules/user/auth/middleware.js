@@ -2,57 +2,30 @@
 
 const { jwtVerify } = require("jose");
 const config = require("config");
-const cookieParser = require("cookie-parser");
-// 📌 بررسی احراز هویت کاربر
+const { isAdmin, getRoleSlugs, normalizeRoleSlug } = require("../../../utils/roles");
+
 const authenticateUser = async (req, res, next) => {
   try {
-    console.log('=== Authentication Debug ===');
-    console.log('Request URL:', req.originalUrl);
-    console.log('Request Method:', req.method);
-    console.log('All Cookies:', req.cookies);
-    console.log('Cookie Header:', req.headers.cookie);
-    console.log('Authorization Header:', req.headers.authorization);
-    console.log('=========================');
-    
-    // گرفتن توکن از کوکی‌ها یا Authorization header
     let token = req.cookies?.token;
-    
-    // اگر توکن در کوکی نبود، از Authorization header بگیر
+
     if (!token) {
       const authHeader = req.headers.authorization;
-      if (authHeader && authHeader.startsWith('Bearer ')) {
+      if (authHeader && authHeader.startsWith("Bearer ")) {
         token = authHeader.substring(7);
       }
     }
-    
+
     if (!token) {
-      console.log('No token found in cookies or Authorization header');
-      return res
-        .status(401)
-        .json({ success: false, message: "احراز هویت انجام نشده است" });
+      return res.status(401).json({ success: false, message: "احراز هویت انجام نشده است" });
     }
 
-    console.log('Token found:', token);
+    const { payload } = await jwtVerify(token, new TextEncoder().encode(config.get("JWT_SECRET")));
 
-    // بررسی اعتبار توکن
-    const { payload } = await jwtVerify(
-      token,
-      new TextEncoder().encode(config.get("JWT_SECRET"))
-    );
-
-    console.log('Token payload:', payload);
-
-    // ذخیره اطلاعات کاربر در req برای استفاده در کنترلرها
     req.user = payload;
-    req.user.id = payload.userId; // اضافه کردن id برای سازگاری
-    
-    console.log("Middleware - Final req.user:", req.user);
-    console.log("Middleware - req.user.id:", req.user.id);
-    console.log("Middleware - req.user.userId:", req.user.userId);
-    console.log("Middleware - payload.userId:", payload.userId);
-    console.log("Middleware - payload.id:", payload.id);
+    req.user.userId = payload.userId || payload.id;
+    req.user.id = req.user.userId;
 
-    next(); // ادامه پردازش درخواست
+    next();
   } catch (error) {
     console.error("JWT verification failed:", error.message);
     return res.status(401).json({
@@ -62,40 +35,44 @@ const authenticateUser = async (req, res, next) => {
   }
 };
 
-// 📌 بررسی نقش مدیر (Admin)
+const ADMIN_ROLE_ALIASES = new Set(["administrator", "admin", "super_admin", "super admin", "superadmin"]);
+
 const authorizeRole = (requiredRole) => (req, res, next) => {
   try {
-    // بررسی وجود کاربر در درخواست (بعد از احراز هویت)
     if (!req.user) {
-      return res
-        .status(401)
-        .json({ success: false, message: "احراز هویت انجام نشده است." });
+      return res.status(401).json({ success: false, message: "احراز هویت انجام نشده است." });
     }
 
-    console.log(req.user); // برای دیباگ
+    const required = (requiredRole || "").toLowerCase().trim().replace(/\s+/g, "_");
 
-    // بررسی نقش کاربر (مدیر یا نه)
-    // با توجه به رابطه چند به چند، req.user.roles اکنون یک آرایه از نقش‌ها است.
-    const hasRequiredRole = req.user.roles && Array.isArray(req.user.roles) && req.user.roles.some(role => role.nameEn === requiredRole);
+    if (ADMIN_ROLE_ALIASES.has(required)) {
+      if (!isAdmin(req.user)) {
+        return res.status(403).json({
+          success: false,
+          message: "دسترسی غیرمجاز: این عملیات فقط برای مدیر مجاز است",
+        });
+      }
+      return next();
+    }
 
-    if (!hasRequiredRole) {
+    const slugs = getRoleSlugs(req.user);
+    const requiredSlug = normalizeRoleSlug({ name: requiredRole, nameEn: requiredRole });
+
+    if (!slugs.includes(requiredSlug)) {
       return res.status(403).json({
         success: false,
         message: `دسترسی غیرمجاز: این عملیات فقط برای نقش ${requiredRole} مجاز است`,
       });
     }
 
-    // ادامه پردازش اگر کاربر مدیر باشد
     next();
   } catch (error) {
-    console.error("admin verification failed:", error.message);
-    return res
-      .status(500)
-      .json({ success: false, message: "خطای داخلی سرور", error });
+    console.error("Role verification failed:", error.message);
+    return res.status(500).json({ success: false, message: "خطای داخلی سرور", error });
   }
 };
 
 module.exports = {
   authenticateUser,
-  authorizeRole
+  authorizeRole,
 };

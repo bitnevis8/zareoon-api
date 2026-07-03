@@ -13,6 +13,7 @@ router.post("/resend-code/mobile", authController.resendMobileVerificationCode);
 router.post("/verify/mobile", authController.verifyMobileCode); // تأیید کد احراز موبایل
 router.post("/login", authController.login); // لاگین کاربر
 router.get("/me", authenticateUser, authController.getUserData); // محافظت شده با middleware
+router.put("/profile", authenticateUser, authController.updateProfile);
 router.post("/logout", authController.logout); // مسیر خروج
 
 // مسیرهای جدید سیستم احراز هویت

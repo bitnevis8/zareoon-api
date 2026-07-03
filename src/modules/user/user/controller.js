@@ -1,6 +1,9 @@
 const BaseController = require("../../../core/baseController");
 const User = require("./model");
 const Role = require("../role/model");
+const Account = require("../../account/model");
+const { getOrCreateAccountForUser } = require("../../account/profileService");
+const { ENTITY_TYPE_LABELS } = require("../../account/entitySchemas");
 const bcrypt = require("bcryptjs");
 const config = require("config");
 const Joi = require("joi");
@@ -9,6 +12,23 @@ const { Op } = require("sequelize");
 class UserController extends BaseController {
   constructor() {
     super(User);
+  }
+
+  async attachAccountToUserData(userData) {
+    const account = await Account.findOne({ where: { userId: userData.id } });
+    userData.entityType = account?.entityType || "individual";
+    userData.entityTypeLabel = ENTITY_TYPE_LABELS[userData.entityType] || userData.entityType;
+    userData.profileSlug = account?.profileSlug || null;
+    return userData;
+  }
+
+  async syncAccountEntityType(user, entityType) {
+    const valid = Account.rawAttributes?.entityType?.values;
+    if (!entityType || !valid?.includes(entityType)) return;
+    const account = await getOrCreateAccountForUser(user, { entityType });
+    if (account.entityType !== entityType) {
+      await account.update({ entityType });
+    }
   }
 
   // ✅ دریافت تمام کاربران
@@ -101,6 +121,8 @@ class UserController extends BaseController {
       userData.roles = userData.userRoles || [];
       delete userData.userRoles;
 
+      await this.attachAccountToUserData(userData);
+
       console.log("✅ User retrieved successfully:", req.params.id);
       console.log("User roles:", userData.roles);
       return this.response(res, 200, true, "کاربر دریافت شد.", userData);
@@ -123,6 +145,7 @@ class UserController extends BaseController {
         password,
         roleIds,
         avatar,
+        entityType,
       } = req.body;
 
       // اعتبارسنجی ورودی‌ها
@@ -138,6 +161,9 @@ class UserController extends BaseController {
         password: Joi.string().min(6).required(),
         roleIds: Joi.array().items(Joi.number().integer()).optional(),
         avatar: Joi.string().optional(),
+        entityType: Joi.string()
+          .valid(...(Account.rawAttributes?.entityType?.values || []))
+          .optional(),
       });
 
       const { error, value } = schema.validate(req.body);
@@ -186,6 +212,10 @@ class UserController extends BaseController {
         await newUser.setUserRoles(roles);
       }
 
+      if (value.entityType) {
+        await this.syncAccountEntityType(newUser, value.entityType);
+      }
+
       console.log("✅ User created successfully:", newUser.id);
       return this.response(res, 201, true, "کاربر جدید ایجاد شد.", newUser);
     } catch (error) {
@@ -206,6 +236,10 @@ class UserController extends BaseController {
       const {
         firstName,
         lastName,
+        fatherName,
+        nationalId,
+        address,
+        postalCode,
         email,
         mobile,
         phone,
@@ -213,12 +247,17 @@ class UserController extends BaseController {
         password,
         roleIds,
         avatar,
+        entityType,
       } = req.body;
 
       // بروزرسانی اطلاعات کاربر
       const updates = {
         firstName: firstName ?? user.firstName,
         lastName: lastName ?? user.lastName,
+        fatherName: fatherName ?? user.fatherName,
+        nationalId: nationalId ?? user.nationalId,
+        address: address ?? user.address,
+        postalCode: postalCode ?? user.postalCode,
         email: email ?? user.email,
         mobile: mobile ?? user.mobile,
         phone: phone ?? user.phone,
@@ -244,6 +283,10 @@ class UserController extends BaseController {
       } else if (roleIds && roleIds.length === 0) {
         // If an empty array is provided, clear all roles
         await user.setUserRoles([]);
+      }
+
+      if (entityType) {
+        await this.syncAccountEntityType(user, entityType);
       }
       
       console.log("✅ User updated successfully:", user.id);

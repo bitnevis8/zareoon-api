@@ -24,6 +24,13 @@ const TransactionHistory = require('./farmer/transactionHistory/model');
 const OrderRequestItem = require('./farmer/orderRequestItem/model');
 const LcRequest = require('./lcRequest/model');
 const ServiceRequest = require('./serviceRequest/model');
+const Conversation = require('./messaging/conversation/model');
+const Message = require('./messaging/message/model');
+const SupplierPost = require('./supplierProfile/post/model');
+const SupplierFollow = require('./supplierProfile/follow/model');
+const SupplierReview = require('./supplierProfile/review/model');
+const Account = require('./account/model');
+const AccountProfileField = require('./account/profileField/model');
 
 // تعریف ارتباطات بین مدل‌ها
 const defineAssociations = () => {
@@ -190,7 +197,7 @@ const defineAssociations = () => {
 
     // InventoryLot relations
     User.hasMany(InventoryLot, { foreignKey: 'farmerId', as: 'inventoryLots', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
-    InventoryLot.belongsTo(User, { foreignKey: 'farmerId', as: 'farmer', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
+    InventoryLot.belongsTo(User, { foreignKey: 'farmerId', as: 'supplier', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
     Product.hasMany(InventoryLot, { foreignKey: 'productId', as: 'inventoryLots', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
     InventoryLot.belongsTo(Product, { foreignKey: 'productId', as: 'product', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
 
@@ -246,6 +253,38 @@ const defineAssociations = () => {
 
     User.hasMany(ServiceRequest, { foreignKey: 'userId', as: 'serviceRequests', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
     ServiceRequest.belongsTo(User, { foreignKey: 'userId', as: 'user', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
+
+    // Messaging
+    Conversation.belongsTo(User, { foreignKey: 'participantOneId', as: 'participantOne', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    Conversation.belongsTo(User, { foreignKey: 'participantTwoId', as: 'participantTwo', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    User.hasMany(Conversation, { foreignKey: 'participantOneId', as: 'conversationsAsOne', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    User.hasMany(Conversation, { foreignKey: 'participantTwoId', as: 'conversationsAsTwo', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+
+    Conversation.hasMany(Message, { foreignKey: 'conversationId', as: 'messages', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    Message.belongsTo(Conversation, { foreignKey: 'conversationId', as: 'conversation', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    Message.belongsTo(User, { foreignKey: 'senderId', as: 'sender', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    User.hasMany(Message, { foreignKey: 'senderId', as: 'sentMessages', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    Message.belongsTo(FileUpload, { foreignKey: 'fileId', as: 'attachment', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
+
+    // Supplier public profile
+    User.hasMany(SupplierPost, { foreignKey: 'userId', as: 'supplierPosts', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    SupplierPost.belongsTo(User, { foreignKey: 'userId', as: 'author', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+
+    SupplierFollow.belongsTo(User, { foreignKey: 'followerId', as: 'follower', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    SupplierFollow.belongsTo(User, { foreignKey: 'followingId', as: 'following', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    User.hasMany(SupplierFollow, { foreignKey: 'followerId', as: 'followingLinks', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    User.hasMany(SupplierFollow, { foreignKey: 'followingId', as: 'followerLinks', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+
+    User.hasMany(SupplierReview, { foreignKey: 'supplierId', as: 'receivedReviews', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    User.hasMany(SupplierReview, { foreignKey: 'reviewerId', as: 'givenReviews', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    SupplierReview.belongsTo(User, { foreignKey: 'supplierId', as: 'supplier', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    SupplierReview.belongsTo(User, { foreignKey: 'reviewerId', as: 'reviewer', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+
+    // Account (حساب + نوع هویت)
+    User.hasOne(Account, { foreignKey: 'userId', as: 'account', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    Account.belongsTo(User, { foreignKey: 'userId', as: 'user', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    Account.hasMany(AccountProfileField, { foreignKey: 'accountId', as: 'profileFields', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    AccountProfileField.belongsTo(Account, { foreignKey: 'accountId', as: 'account', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 };
 
 module.exports = defineAssociations; 

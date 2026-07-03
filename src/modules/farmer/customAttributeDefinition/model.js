@@ -6,7 +6,8 @@ class CustomAttributeDefinition extends Model {}
 CustomAttributeDefinition.init(
   {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    categoryId: { type: DataTypes.INTEGER, allowNull: false },
+    categoryId: { type: DataTypes.INTEGER, allowNull: true },
+    productId: { type: DataTypes.INTEGER, allowNull: true },
     name: { type: DataTypes.STRING(150), allowNull: false },
     type: { type: DataTypes.ENUM("text", "number", "boolean", "date", "select"), allowNull: false, defaultValue: "text" },
     options: { type: DataTypes.JSON, allowNull: true }
@@ -19,6 +20,7 @@ CustomAttributeDefinition.init(
     underscored: true,
     indexes: [
       { fields: ["category_id"] },
+      { fields: ["product_id"] },
       { unique: false, fields: ["name"] }
     ]
   }

@@ -2,6 +2,22 @@ const ftp = require("basic-ftp");
 const config = require("config");
 const path = require("path");
 
+function getRootFolder() {
+  try {
+    return config.get("UPLOAD.FTP.rootFolder") || "zareoon";
+  } catch {
+    return "zareoon";
+  }
+}
+
+function getBasePath() {
+  try {
+    return config.get("UPLOAD.FTP.basePath") || "/public_html";
+  } catch {
+    return "/public_html";
+  }
+}
+
 class FTPService {
   constructor() {
     this.client = new ftp.Client();
@@ -16,16 +32,26 @@ class FTPService {
         password: config.get("UPLOAD.FTP.password"),
         secure: config.get("UPLOAD.FTP.secure"),
         port: config.get("UPLOAD.FTP.port"),
-        // تنظیمات برای self-signed certificate
         secureOptions: {
-          rejectUnauthorized: false
-        }
+          rejectUnauthorized: false,
+        },
       });
       console.log("✅ FTP connection established successfully");
     } catch (err) {
       console.error("❌ FTP connection failed:", err.message);
       throw err;
     }
+  }
+
+  buildRemoteDir(module, fileType) {
+    const basePath = getBasePath();
+    const rootFolder = getRootFolder();
+    return `${basePath}/${rootFolder}/${module}/${fileType}`;
+  }
+
+  buildRelativePath(module, fileType, fileName) {
+    const rootFolder = getRootFolder();
+    return `${rootFolder}/${module}/${fileType}/${fileName}`;
   }
 
   async createDirectory(dirPath) {
@@ -40,7 +66,6 @@ class FTPService {
           console.log("✅ Created new directory:", currentPath);
         } catch (err) {
           console.warn("⚠️ Directory operation for", currentPath + ":", err.message);
-          // اگر دایرکتوری وجود داشته باشد، خطا را نادیده می‌گیریم
         }
       }
     } catch (err) {
@@ -53,19 +78,19 @@ class FTPService {
       await this.connect();
 
       const structure = {
-        'users': ['avatars', 'documents', 'temp'],
-        'products': ['images', 'videos', 'documents', 'icons'],
-        'inventory': ['images', 'videos', 'documents', 'certificates'],
-        'orders': ['invoices', 'receipts', 'contracts', 'shipping'],
-        'locations': ['images', 'maps', 'documents'],
-        'attributes': ['documents'],
-        'system': ['temp', 'backups', 'logs'],
-        'shared': ['templates', 'icons', 'banners', 'default']
+        users: ["avatars", "documents", "temp"],
+        products: ["images", "videos", "documents", "icons"],
+        inventory: ["images", "videos", "documents", "certificates"],
+        orders: ["invoices", "receipts", "contracts", "shipping"],
+        locations: ["images", "maps", "documents"],
+        attributes: ["documents"],
+        messages: ["images"],
+        "supplier-posts": ["images"],
+        system: ["temp", "backups", "logs"],
+        shared: ["templates", "icons", "banners", "default"],
       };
 
-      // ایجاد ساختار پوشه‌ها
       await this.createNestedStructure(structure);
-      
     } catch (err) {
       console.error("❌ Failed to initialize directory structure:", err.message);
       throw err;
@@ -75,31 +100,28 @@ class FTPService {
   }
 
   async createNestedStructure(structure) {
-    const basePath = config.get("UPLOAD.FTP.basePath") || "/public_html";
+    const rootFolder = getRootFolder();
     for (const [module, types] of Object.entries(structure)) {
       for (const type of types) {
-        // استفاده از / به جای path.join برای FTP
-        const fullPath = `${basePath}/media/${module}/${type}`;
+        const fullPath = this.buildRemoteDir(module, type);
         await this.createDirectory(fullPath);
         console.log("✅ Initialized directory structure for", module + ":", fullPath);
       }
     }
+    console.log(`✅ All upload directories initialized under /${rootFolder}`);
   }
 
-  async uploadFile(localPath, module, fileName, fileType = 'images') {
+  async uploadFile(localPath, module, fileName, fileType = "images") {
     try {
       await this.connect();
-      
-      // ایجاد مسیر کامل بر اساس ساختار جدید (شامل public_html)
-      const basePath = config.get("UPLOAD.FTP.basePath") || "/public_html";
-      const remotePath = `${basePath}/media/${module}/${fileType}/${fileName}`;
-      const remoteDir = `${basePath}/media/${module}/${fileType}`;
+
+      const remoteDir = this.buildRemoteDir(module, fileType);
+      const remotePath = `${remoteDir}/${fileName}`;
+      const relativePath = this.buildRelativePath(module, fileType, fileName);
+
       await this.createDirectory(remoteDir);
       await this.client.uploadFrom(localPath, remotePath);
-      
-      // مسیر نسبی برای ذخیره در دیتابیس (بدون public_html)
-      const relativePath = `media/${module}/${fileType}/${fileName}`;
-      
+
       console.log("✅ File uploaded successfully to FTP:", remotePath);
       return { remotePath, relativePath };
     } catch (err) {
@@ -113,7 +135,7 @@ class FTPService {
   async deleteFile(relativePath) {
     try {
       await this.connect();
-      const basePath = config.get("UPLOAD.FTP.basePath") || "/public_html";
+      const basePath = getBasePath();
       const fullPath = `${basePath}/${relativePath}`;
       await this.client.remove(fullPath);
       console.log("✅ File deleted successfully from FTP:", fullPath);
@@ -126,4 +148,4 @@ class FTPService {
   }
 }
 
-module.exports = new FTPService(); 
+module.exports = new FTPService();

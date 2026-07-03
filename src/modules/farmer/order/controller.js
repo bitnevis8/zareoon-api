@@ -7,6 +7,7 @@ const Product = require("../product/model");
 const TransactionHistory = require("../transactionHistory/model");
 const OrderRequestItem = require("../orderRequestItem/model");
 const User = require("../../user/user/model");
+const { isAdmin: checkIsAdmin } = require("../../../utils/roles");
 
 const list = async (req, res) => {
   const where = {};
@@ -19,7 +20,7 @@ const list = async (req, res) => {
       include: [
         { model: InventoryLot, as: "inventoryLot", include: [
           { model: Product, as: "product", attributes: ["id","name"] },
-          { model: User, as: "farmer", attributes: ["id","firstName","lastName","username","mobile"] }
+          { model: User, as: "supplier", attributes: ["id","firstName","lastName","username","mobile"] }
         ] }
       ]
     },
@@ -36,7 +37,7 @@ const getById = async (req, res) => {
       include: [
         { model: InventoryLot, as: "inventoryLot", include: [
           { model: Product, as: "product", attributes: ["id","name"] },
-          { model: User, as: "farmer", attributes: ["id","firstName","lastName","username","mobile"] }
+          { model: User, as: "supplier", attributes: ["id","firstName","lastName","username","mobile"] }
         ] }
       ]
     },
@@ -167,8 +168,7 @@ const updateItemStatus = async (req, res) => {
 
   // Authorization: supplier must own the lot OR user must be admin
   const actorId = req.user?.id;
-  const userRoles = Array.isArray(req.user?.roles) ? req.user.roles.map(r => r.nameEn) : [];
-  const isAdmin = userRoles.includes('Administrator');
+  const isAdmin = checkIsAdmin(req.user);
   
   if (!isAdmin && actorId && item.inventoryLot?.farmerId && item.inventoryLot.farmerId !== actorId) {
     return res.status(403).json({ success: false, message: "Unauthorized to update this item" });
@@ -260,7 +260,7 @@ const listForCustomer = async (req, res) => {
               as: 'inventoryLot', 
               include: [ 
                 { model: Product, as: 'product', attributes: ['id','name'] },
-                { model: User, as: 'farmer', attributes: ['id','firstName','lastName','username','mobile'] }
+                { model: User, as: 'supplier', attributes: ['id','firstName','lastName','username','mobile'] }
               ] 
             }
           ]
@@ -371,7 +371,7 @@ const listForAdmin = async (req, res) => {
               include: [
                 {
                   model: User,
-                  as: 'farmer',
+                  as: 'supplier',
                   attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'mobile']
                 }
               ]
@@ -393,7 +393,7 @@ const listForAdmin = async (req, res) => {
               include: [
                 {
                   model: User,
-                  as: 'farmer',
+                  as: 'supplier',
                   attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'mobile']
                 }
               ]
@@ -452,7 +452,7 @@ const approveOrder = async (req, res) => {
             include: [
               {
                 model: User,
-                as: 'farmer',
+                as: 'supplier',
                 attributes: ['id', 'firstName', 'lastName']
               }
             ]
@@ -460,9 +460,9 @@ const approveOrder = async (req, res) => {
         ]
       });
       
-      if (requestItems.length > 0 && requestItems[0].inventoryLot?.farmer) {
-        finalSupplierId = requestItems[0].inventoryLot.farmer.id;
-        console.log("Auto-detected supplier:", finalSupplierId, requestItems[0].inventoryLot.farmer.firstName, requestItems[0].inventoryLot.farmer.lastName);
+      if (requestItems.length > 0 && requestItems[0].inventoryLot?.supplier) {
+        finalSupplierId = requestItems[0].inventoryLot.supplier.id;
+        console.log("Auto-detected supplier:", finalSupplierId, requestItems[0].inventoryLot.supplier.firstName, requestItems[0].inventoryLot.supplier.lastName);
       } else {
         return res.status(400).json({
           success: false,
@@ -490,7 +490,7 @@ const approveOrder = async (req, res) => {
         include: [
           {
             model: User,
-            as: 'farmer',
+            as: 'supplier',
             attributes: ['id', 'firstName', 'lastName', 'email', 'phone']
           }
         ],
@@ -512,7 +512,7 @@ const approveOrder = async (req, res) => {
           status: 'assigned'
         });
         
-        console.log(`Created OrderItem for lot ${selectedLot.id}, farmer: ${selectedLot.farmer?.firstName} ${selectedLot.farmer?.lastName}`);
+        console.log(`Created OrderItem for lot ${selectedLot.id}, supplier: ${selectedLot.supplier?.firstName} ${selectedLot.supplier?.lastName}`);
       } else {
         console.log(`No available lots for product ${requestItem.productId}, grade ${requestItem.qualityGrade}`);
       }

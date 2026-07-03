@@ -27,49 +27,50 @@
       "user": "pz23110",
       "password": "JLmYVlkN",
       "secure": false,
-      "basePath": "/public_html"
+      "basePath": "/public_html",
+      "rootFolder": "zareoon"
     },
     "PATHS": {
       "users": {
-        "avatars": "media/users/avatars",
-        "documents": "media/users/documents",
-        "temp": "media/users/temp"
+        "avatars": "zareoon/users/avatars",
+        "documents": "zareoon/users/documents",
+        "temp": "zareoon/users/temp"
       },
       "products": {
-        "images": "media/products/images",
-        "videos": "media/products/videos",
-        "documents": "media/products/documents",
-        "icons": "media/products/icons"
+        "images": "zareoon/products/images",
+        "videos": "zareoon/products/videos",
+        "documents": "zareoon/products/documents",
+        "icons": "zareoon/products/icons"
       },
       "inventory": {
-        "images": "media/inventory/images",
-        "documents": "media/inventory/documents",
-        "certificates": "media/inventory/certificates"
+        "images": "zareoon/inventory/images",
+        "documents": "zareoon/inventory/documents",
+        "certificates": "zareoon/inventory/certificates"
       },
       "orders": {
-        "invoices": "media/orders/invoices",
-        "receipts": "media/orders/receipts",
-        "contracts": "media/orders/contracts",
-        "shipping": "media/orders/shipping"
+        "invoices": "zareoon/orders/invoices",
+        "receipts": "zareoon/orders/receipts",
+        "contracts": "zareoon/orders/contracts",
+        "shipping": "zareoon/orders/shipping"
       },
       "locations": {
-        "images": "media/locations/images",
-        "maps": "media/locations/maps",
-        "documents": "media/locations/documents"
+        "images": "zareoon/locations/images",
+        "maps": "zareoon/locations/maps",
+        "documents": "zareoon/locations/documents"
       },
       "attributes": {
-        "documents": "media/attributes/documents"
+        "documents": "zareoon/attributes/documents"
       },
       "system": {
-        "temp": "media/system/temp",
-        "backups": "media/system/backups",
-        "logs": "media/system/logs"
+        "temp": "zareoon/system/temp",
+        "backups": "zareoon/system/backups",
+        "logs": "zareoon/system/logs"
       },
       "shared": {
-        "templates": "media/shared/templates",
-        "icons": "media/shared/icons",
-        "banners": "media/shared/banners",
-        "default": "media/shared/default"
+        "templates": "zareoon/shared/templates",
+        "icons": "zareoon/shared/icons",
+        "banners": "zareoon/shared/banners",
+        "default": "zareoon/shared/default"
       }
     }
   },
