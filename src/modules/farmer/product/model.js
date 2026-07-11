@@ -14,6 +14,8 @@ Product.init(
     englishName: { type: DataTypes.STRING(200), allowNull: true },
     arabicName: { type: DataTypes.STRING(200), allowNull: true },
     russianName: { type: DataTypes.STRING(200), allowNull: true },
+    turkishName: { type: DataTypes.STRING(200), allowNull: true },
+    finnishName: { type: DataTypes.STRING(200), allowNull: true },
     slug: { type: DataTypes.STRING(200), allowNull: true },
     description: { type: DataTypes.TEXT, allowNull: true },
     imageUrl: { type: DataTypes.STRING(500), allowNull: true },

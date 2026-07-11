@@ -1,6 +1,27 @@
 const InventoryLot = require("./model");
 const User = require("../../user/user/model");
+const Product = require("../product/model");
 const seederData = require("./seederData.json");
+
+async function resolveProductId(lot) {
+  if (lot.productSlug) {
+    const bySlug = await Product.findOne({ where: { slug: lot.productSlug } });
+    if (bySlug) return bySlug.id;
+  }
+  if (lot.productName) {
+    const byName = await Product.findOne({ where: { name: lot.productName } });
+    if (byName) return byName.id;
+  }
+  if (lot.productEnglishName) {
+    const byEnglishName = await Product.findOne({ where: { englishName: lot.productEnglishName } });
+    if (byEnglishName) return byEnglishName.id;
+  }
+  if (lot.productId) {
+    const byId = await Product.findByPk(lot.productId);
+    if (byId) return byId.id;
+  }
+  return null;
+}
 
 const seedInventoryLots = async () => {
   console.log("🌱 Seeding Inventory Lots...");
@@ -23,10 +44,18 @@ const seedInventoryLots = async () => {
       continue;
     }
 
+    const productId = await resolveProductId(l);
+    if (!productId) {
+      console.warn(
+        `⚠️ Skip inventory lot ${l.id}: product not found (slug=${l.productSlug || "-"}, id=${l.productId || "-"})`
+      );
+      continue;
+    }
+
     const data = {
       id: l.id,
       farmerId,
-      productId: l.productId,
+      productId,
       englishName: l.englishName || null,
       arabicName: l.arabicName || null,
       russianName: l.russianName || null,

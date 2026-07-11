@@ -2,6 +2,16 @@ const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../../core/database/mysql/connection");
 
 const SERVICE_TYPES = [
+  "import-export",
+  "intl-logistics",
+  "customs-clearance",
+  "intl-finance",
+  "inspection-standards",
+  "insurance-risk",
+  "legal-trade",
+  "market-development",
+  "packaging-prep",
+  "specialized-trade",
   "trade",
   "logistics",
   "customs",
@@ -19,7 +29,7 @@ ServiceRequest.init(
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     userId: { type: DataTypes.INTEGER, allowNull: true },
     serviceType: {
-      type: DataTypes.ENUM(...SERVICE_TYPES),
+      type: DataTypes.STRING(64),
       allowNull: false,
     },
     fullName: { type: DataTypes.STRING, allowNull: false },

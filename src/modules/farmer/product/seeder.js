@@ -1,12 +1,13 @@
 const fs = require("fs");
 const path = require("path");
 const Product = require("./model");
-const treeDataFull = require("./seederData.json");
+const treeDataFull = require("./seederDataNew.json");
 
-const MAIN_ROOT_IDS = new Set([
-  900001, 900002, 900003, 900004, 900005, 900006,
-  900007, 900008, 900009, 900010, 900011, 900012,
-]);
+const MAIN_ROOT_IDS = new Set(
+  (Array.isArray(treeDataFull) ? treeDataFull : treeDataFull.data || [])
+    .filter((node) => node.parentId == null)
+    .map((node) => node.id)
+);
 
 function extractTranslationObjects(content) {
   const results = [];
@@ -17,6 +18,8 @@ function extractTranslationObjects(content) {
     const englishName = chunk.match(/"englishName"\s*:\s*"([^"]+)"/)?.[1];
     const arabicName = chunk.match(/"arabicName"\s*:\s*"([^"]+)"/)?.[1];
     const russianName = chunk.match(/"russianName"\s*:\s*"([^"]+)"/)?.[1];
+    const turkishName = chunk.match(/"turkishName"\s*:\s*"([^"]+)"/)?.[1];
+    const finnishName = chunk.match(/"finnishName"\s*:\s*"([^"]+)"/)?.[1];
     if (!id && !slug) continue;
     results.push({
       id: id ? Number(id) : null,
@@ -24,6 +27,8 @@ function extractTranslationObjects(content) {
       englishName: englishName || null,
       arabicName: arabicName || null,
       russianName: russianName || null,
+      turkishName: turkishName || null,
+      finnishName: finnishName || null,
     });
   }
   return results;
@@ -45,6 +50,8 @@ function loadTranslationOverlays() {
         englishName: item.englishName,
         arabicName: item.arabicName,
         russianName: item.russianName,
+        turkishName: item.turkishName,
+        finnishName: item.finnishName,
       });
       if (item.id != null) {
         byId.set(item.id, { ...(byId.get(item.id) || {}), ...overlay });
@@ -72,10 +79,31 @@ function resolveTranslations(node, overlays) {
   return { ...bySlug, ...byId };
 }
 
+function sortNodesForSeeding(nodes) {
+  const byId = new Map(nodes.map((node) => [node.id, node]));
+  const depthOf = (node) => {
+    let depth = 0;
+    let current = node;
+    const seen = new Set();
+    while (current?.parentId != null && !seen.has(current.id)) {
+      seen.add(current.id);
+      depth += 1;
+      current = byId.get(current.parentId);
+    }
+    return depth;
+  };
+
+  return [...nodes].sort(
+    (a, b) => depthOf(a) - depthOf(b) || (a.sortOrder || 0) - (b.sortOrder || 0) || a.id - b.id
+  );
+}
+
 const seedProducts = async () => {
   console.log("🌱 Seeding Products...");
   const overlays = loadTranslationOverlays();
-  const nodes = Array.isArray(treeDataFull) ? treeDataFull : treeDataFull.data || [];
+  const nodes = sortNodesForSeeding(
+    Array.isArray(treeDataFull) ? treeDataFull : treeDataFull.data || []
+  );
   const parentIds = new Set(nodes.map((n) => n.parentId).filter((v) => v !== null && v !== undefined));
 
   for (const n of nodes) {
@@ -89,6 +117,8 @@ const seedProducts = async () => {
       englishName: n.englishName || tr.englishName || null,
       arabicName: n.arabicName || tr.arabicName || null,
       russianName: n.russianName || tr.russianName || null,
+      turkishName: n.turkishName || tr.turkishName || null,
+      finnishName: n.finnishName || tr.finnishName || null,
       slug: n.slug || null,
       description: n.description || null,
       imageUrl: n.imageUrl || null,

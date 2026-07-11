@@ -24,6 +24,8 @@ const TransactionHistory = require('./farmer/transactionHistory/model');
 const OrderRequestItem = require('./farmer/orderRequestItem/model');
 const LcRequest = require('./lcRequest/model');
 const ServiceRequest = require('./serviceRequest/model');
+const { ApplicantRequest, ApplicantRequestNotification } = require('./applicantRequest/model');
+const TradeServiceProvider = require('./tradeServiceProvider/model');
 const Conversation = require('./messaging/conversation/model');
 const Message = require('./messaging/message/model');
 const SupplierPost = require('./supplierProfile/post/model');
@@ -253,6 +255,17 @@ const defineAssociations = () => {
 
     User.hasMany(ServiceRequest, { foreignKey: 'userId', as: 'serviceRequests', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
     ServiceRequest.belongsTo(User, { foreignKey: 'userId', as: 'user', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
+
+    User.hasMany(ApplicantRequest, { foreignKey: 'userId', as: 'applicantRequests', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    ApplicantRequest.belongsTo(User, { foreignKey: 'userId', as: 'applicant', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+
+    ApplicantRequest.hasMany(ApplicantRequestNotification, { foreignKey: 'requestId', as: 'notifications', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    ApplicantRequestNotification.belongsTo(ApplicantRequest, { foreignKey: 'requestId', as: 'request', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    User.hasMany(ApplicantRequestNotification, { foreignKey: 'recipientUserId', as: 'applicantRequestAlerts', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    ApplicantRequestNotification.belongsTo(User, { foreignKey: 'recipientUserId', as: 'recipient', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+
+    User.hasMany(TradeServiceProvider, { foreignKey: 'userId', as: 'tradeServiceProviders', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
+    TradeServiceProvider.belongsTo(User, { foreignKey: 'userId', as: 'user', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
 
     // Messaging
     Conversation.belongsTo(User, { foreignKey: 'participantOneId', as: 'participantOne', onDelete: 'CASCADE', onUpdate: 'CASCADE' });

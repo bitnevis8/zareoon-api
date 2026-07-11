@@ -1,0 +1,29 @@
+[
+  {
+    "slug": "arya-foulad-qarn",
+    "userEmail": "rahimi@zareoon.ir",
+    "entityType": "company",
+    "displayName": "آریا فولاد قرن",
+    "contactName": "مهدی رحیمی",
+    "phone": "06134468005",
+    "email": "info@afg-insp.ir",
+    "categoryId": "inspection-standards",
+    "subcategoryIds": [
+      "cargo-inspection",
+      "quality-control",
+      "testing",
+      "inspection-certificate",
+      "standards-certification",
+      "pre-shipment-inspection"
+    ],
+    "countriesRoutes": "ایران — خاورمیانه — اروپا — آسیای میانه",
+    "licenses": "ISO 17020 · ISO/IEC 17025 · مجوز بازرسی کالا و استاندارد",
+    "servicesOffered": "بازرسی کالا، کنترل کیفیت (QC)، PSI، صدور گواهی بازرسی",
+    "experienceYears": 20,
+    "status": "approved",
+    "rating": 4.9,
+    "reviewCount": 73,
+    "notes": "ارائه‌دهنده VIP بخش بازرسی و استاندارد",
+    "logoUrl": "/images/advertice/afg-insp.png"
+  }
+]

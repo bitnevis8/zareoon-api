@@ -10,8 +10,11 @@ const locationRouter = require('../modules/location/route');
 const supplierRouter = require('../modules/farmer/route');
 const lcRequestRouter = require('../modules/lcRequest/route');
 const serviceRequestRouter = require('../modules/serviceRequest/route');
+const tradeServiceProviderRouter = require('../modules/tradeServiceProvider/route');
+const siteSettingRouter = require('../modules/siteSetting/route');
 const messagingRouter = require('../modules/messaging/route');
 const supplierProfileRouter = require('../modules/supplierProfile/route');
+const applicantRequestRouter = require('../modules/applicantRequest/route');
 
 // Use routers
 baseRouter.use('/user', userRouter);
@@ -23,7 +26,10 @@ baseRouter.use('/supplier', supplierRouter);
 baseRouter.use('/farmer', supplierRouter); // alias قدیمی
 baseRouter.use('/lc-request', lcRequestRouter);
 baseRouter.use('/service-request', serviceRequestRouter);
+baseRouter.use('/trade-service-provider', tradeServiceProviderRouter);
+baseRouter.use('/site-setting', siteSettingRouter);
 baseRouter.use('/messaging', messagingRouter);
 baseRouter.use('/tamin', supplierProfileRouter);
+baseRouter.use('/applicant-request', applicantRequestRouter);
 
 module.exports = baseRouter;

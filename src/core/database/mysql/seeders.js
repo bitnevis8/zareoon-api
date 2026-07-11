@@ -18,6 +18,7 @@ const seedInventoryLots = require("../../../modules/farmer/inventoryLot/seeder")
 const seedOrders = require("../../../modules/farmer/order/seeder");
 const seedOrderItems = require("../../../modules/farmer/orderItem/seeder");
 const seedTransactionHistory = require("../../../modules/farmer/transactionHistory/seeder");
+const seedTradeServiceProviders = require("../../../modules/tradeServiceProvider/seeder");
 
 // Group seeders by module for better organization and control
 const userSeeders = [seedRoles, seedUsers, seedUserRoles];
@@ -51,6 +52,8 @@ async function runSeeders() {
 
     // 4. Run Farmer inventory and orders (optional empty)
     await runSeederGroup([seedInventoryLots, seedOrders, seedOrderItems, seedAttributeValues, seedTransactionHistory], "Farmer Operational Data");
+
+    await runSeederGroup([seedTradeServiceProviders], "Trade Service Providers");
 
     console.log("\n✅ All database seeding completed successfully!");
   } catch (error) {
