@@ -15,6 +15,7 @@ const siteSettingRouter = require('../modules/siteSetting/route');
 const messagingRouter = require('../modules/messaging/route');
 const supplierProfileRouter = require('../modules/supplierProfile/route');
 const applicantRequestRouter = require('../modules/applicantRequest/route');
+const escrowRouter = require('../modules/escrow/route');
 
 // Use routers
 baseRouter.use('/user', userRouter);
@@ -31,5 +32,6 @@ baseRouter.use('/site-setting', siteSettingRouter);
 baseRouter.use('/messaging', messagingRouter);
 baseRouter.use('/tamin', supplierProfileRouter);
 baseRouter.use('/applicant-request', applicantRequestRouter);
+baseRouter.use('/escrow', escrowRouter);
 
 module.exports = baseRouter;

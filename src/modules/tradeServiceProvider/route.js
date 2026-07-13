@@ -15,7 +15,8 @@ const optionalAuth = async (req, res, next) => {
     if (token) {
       const { payload } = await jwtVerify(token, new TextEncoder().encode(config.get("JWT_SECRET")));
       req.user = payload;
-      req.user.id = payload.userId;
+      req.user.userId = payload.userId || payload.id;
+      req.user.id = req.user.userId;
     }
   } catch {
     // guest allowed
@@ -24,11 +25,13 @@ const optionalAuth = async (req, res, next) => {
 };
 
 router.get("/public", controller.listPublic);
-router.get("/public/:id", controller.getOnePublic);
+router.get("/public/:id", optionalAuth, controller.getOnePublic);
 router.post("/", optionalAuth, controller.create);
 
 router.use(authenticateUser);
 router.get("/mine", controller.getMine);
+router.patch("/mine", controller.updateMine);
+router.get("/stats/pending-count", authorizeRole("Administrator"), controller.countPending);
 router.get("/", authorizeRole("Administrator"), controller.list);
 router.get("/:id", authorizeRole("Administrator"), controller.getOne);
 router.patch("/:id/status", authorizeRole("Administrator"), controller.updateStatus);

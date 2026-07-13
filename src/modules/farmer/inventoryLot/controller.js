@@ -8,6 +8,10 @@ const CustomAttributeValue = require("../customAttributeValue/model");
 const CustomAttributeDefinition = require("../customAttributeDefinition/model");
 const { getInventoryPricing } = require("../../../utils/inventoryPricingUtils");
 const { parseHashtagsInput, formatHashtags, countRawHashtags, MAX_HASHTAGS } = require("../../../utils/hashtags");
+const {
+  applyDisplayContentToPayload,
+  attachDisplayContentToLot,
+} = require("../../../utils/inventoryDisplayContent");
 
 const supplierInclude = {
   model: User,
@@ -37,9 +41,8 @@ async function attachLotCoverImages(lots) {
   }
 
   return plain.map((l) => ({
-    ...l,
+    ...attachDisplayContentToLot(l),
     coverImageUrl: coverMap[l.id] || null,
-    hashtags: formatHashtags(l.hashtags),
   }));
 }
 
@@ -76,8 +79,16 @@ const getById = async (req, res) => {
 };
 
 function formatLotRecord(lot) {
-  const plain = lot?.toJSON ? lot.toJSON() : { ...lot };
-  return { ...plain, hashtags: formatHashtags(plain.hashtags) };
+  return attachDisplayContentToLot(lot);
+}
+
+function prepareLotPayload(body) {
+  const payload = { ...body };
+  if (body.displayContent !== undefined) {
+    return applyDisplayContentToPayload(payload, body);
+  }
+  applyHashtagsToPayload(payload, body);
+  return payload;
 }
 
 function applyHashtagsToPayload(payload, body) {
@@ -94,8 +105,7 @@ function applyHashtagsToPayload(payload, body) {
 
 const create = async (req, res) => {
   try {
-    const payload = { ...req.body };
-    applyHashtagsToPayload(payload, req.body);
+    const payload = prepareLotPayload(req.body);
     const created = await InventoryLot.create(payload);
     res.status(201).json({ success: true, data: formatLotRecord(created) });
   } catch (error) {
@@ -109,8 +119,7 @@ const create = async (req, res) => {
 const update = async (req, res) => {
   const id = req.params.id;
   try {
-    const payload = { ...req.body };
-    applyHashtagsToPayload(payload, req.body);
+    const payload = prepareLotPayload(req.body);
     const [count] = await InventoryLot.update(payload, { where: { id } });
     if (!count) return res.status(404).json({ success: false, message: "Not found" });
     const updated = await InventoryLot.findByPk(id);

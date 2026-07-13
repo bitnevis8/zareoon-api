@@ -1,6 +1,7 @@
 const TradeServiceProvider = require("./model");
 const { L1_CATEGORY_IDS } = require("./model");
 const User = require("../user/user/model");
+const { Op } = require("sequelize");
 const { isTradeProvidersAutoApprove, validateRegistrationForServices, filterPublicProviders } = require("../siteSetting/service");
 
 const userAttrs = ["id", "firstName", "lastName", "username", "mobile", "email"];
@@ -20,6 +21,104 @@ function providerMatchesCategory(record, categoryId) {
   if (record.categoryId === categoryId) return true;
   const selected = record.selectedServices || [];
   return selected.some((s) => s.categoryId === categoryId);
+}
+
+function resolveAuthUserId(user) {
+  const id = user?.id || user?.userId;
+  return id != null && id !== "" ? Number(id) : null;
+}
+
+async function linkProviderToUser(record, userId) {
+  if (!record || !userId || record.userId) return record;
+  record.userId = userId;
+  await record.save();
+  return record;
+}
+
+async function findProvidersForUser(userId) {
+  const user = await User.findByPk(userId, {
+    attributes: ["id", "email", "mobile", "phone"],
+  });
+  if (!user) return [];
+
+  const orConditions = [{ userId }];
+  const email = user.email?.trim();
+  const phones = [user.mobile, user.phone].filter(Boolean).map((p) => String(p).trim());
+
+  if (email) {
+    orConditions.push({ userId: { [Op.is]: null }, email });
+  }
+  for (const phone of phones) {
+    orConditions.push({ userId: { [Op.is]: null }, phone });
+  }
+
+  const items = await TradeServiceProvider.findAll({
+    where: { [Op.or]: orConditions },
+    order: [["id", "DESC"]],
+    attributes: { exclude: ["adminNotes"] },
+  });
+
+  await Promise.all(items.map((item) => linkProviderToUser(item, userId)));
+  return items;
+}
+
+function applyChangesToProvider(record, changes) {
+  if (!changes || typeof changes !== "object") return record;
+
+  if (changes.displayName?.trim()) record.displayName = changes.displayName.trim();
+  if (changes.contactName?.trim()) record.contactName = changes.contactName.trim();
+  if (changes.phone?.trim()) record.phone = changes.phone.trim();
+  if (changes.email !== undefined) record.email = changes.email?.trim() || null;
+  if (changes.countriesRoutes !== undefined) record.countriesRoutes = changes.countriesRoutes?.trim() || null;
+  if (changes.servicesOffered !== undefined) record.servicesOffered = changes.servicesOffered?.trim() || null;
+  if (changes.licenses !== undefined) record.licenses = changes.licenses?.trim() || null;
+  if (changes.notes !== undefined) record.notes = changes.notes?.trim() || null;
+  if (changes.experienceYears !== undefined && changes.experienceYears !== "") {
+    record.experienceYears = Number(changes.experienceYears);
+  }
+  if (changes.entityType === "individual" || changes.entityType === "company") {
+    record.entityType = changes.entityType;
+  }
+
+  const normalizedServices = normalizeSelectedServices(changes.selectedServices);
+  if (normalizedServices.length) {
+    record.selectedServices = normalizedServices;
+    record.categoryId = normalizedServices[0].categoryId;
+    record.subcategoryIds = normalizedServices.map((s) => s.subcategoryId);
+  }
+
+  if (Array.isArray(changes.documentUrls)) {
+    record.documentUrls = changes.documentUrls;
+  }
+
+  return record;
+}
+
+function buildChangesPayload(body) {
+  const normalizedServices = normalizeSelectedServices(body.selectedServices);
+  let services = normalizedServices;
+  if (!services.length && body.categoryId && Array.isArray(body.subcategoryIds) && body.subcategoryIds.length) {
+    services = body.subcategoryIds.map((subId) => ({
+      categoryId: body.categoryId,
+      subcategoryId: String(subId),
+    }));
+  }
+
+  return {
+    entityType: body.entityType === "individual" ? "individual" : "company",
+    displayName: body.displayName?.trim() || "",
+    contactName: body.contactName?.trim() || "",
+    phone: body.phone?.trim() || "",
+    email: body.email?.trim() || null,
+    selectedServices: services,
+    countriesRoutes: body.countriesRoutes?.trim() || null,
+    servicesOffered: body.servicesOffered?.trim() || null,
+    licenses: body.licenses?.trim() || null,
+    experienceYears: body.experienceYears != null && body.experienceYears !== "" ? Number(body.experienceYears) : null,
+    notes: body.notes?.trim() || null,
+    documentUrls: Array.isArray(body.documentUrls) ? body.documentUrls : [],
+    submittedAt: new Date().toISOString(),
+  };
 }
 
 const create = async (req, res) => {
@@ -70,8 +169,10 @@ const create = async (req, res) => {
     const autoApprove = await isTradeProvidersAutoApprove();
     const initialStatus = autoApprove ? "approved" : "pending";
 
+    const authUserId = resolveAuthUserId(req.user);
+
     const record = await TradeServiceProvider.create({
-      userId: req.user?.id || req.user?.userId || null,
+      userId: authUserId,
       entityType: validEntity,
       displayName: displayName.trim(),
       contactName: contactName.trim(),
@@ -151,13 +252,23 @@ const list = async (req, res) => {
 
 const getOnePublic = async (req, res) => {
   try {
-    const item = await TradeServiceProvider.findOne({
-      where: { id: req.params.id, status: "approved" },
+    const item = await TradeServiceProvider.findByPk(req.params.id, {
       attributes: { exclude: ["adminNotes"] },
     });
     if (!item) return res.status(404).json({ success: false, message: "یافت نشد" });
 
-    res.json({ success: true, data: item });
+    const viewerId = req.user?.id || req.user?.userId;
+    const isOwner = viewerId && Number(item.userId) === Number(viewerId);
+
+    if (item.status !== "approved" && !isOwner) {
+      return res.status(404).json({ success: false, message: "یافت نشد" });
+    }
+
+    res.json({
+      success: true,
+      data: item,
+      meta: { isOwnerPreview: isOwner && item.status !== "approved" },
+    });
   } catch (error) {
     console.error("Trade service provider getOnePublic error:", error);
     res.status(500).json({ success: false, message: "خطا در دریافت پروفایل" });
@@ -166,16 +277,12 @@ const getOnePublic = async (req, res) => {
 
 const getMine = async (req, res) => {
   try {
-    const userId = req.user?.id || req.user?.userId;
+    const userId = resolveAuthUserId(req.user);
     if (!userId) {
       return res.status(401).json({ success: false, message: "احراز هویت لازم است" });
     }
 
-    const items = await TradeServiceProvider.findAll({
-      where: { userId },
-      order: [["id", "DESC"]],
-      attributes: { exclude: ["adminNotes"] },
-    });
+    const items = await findProvidersForUser(userId);
 
     res.json({ success: true, data: items, primary: items[0] || null });
   } catch (error) {
@@ -197,6 +304,86 @@ const getOne = async (req, res) => {
   }
 };
 
+const countPending = async (req, res) => {
+  try {
+    const statusPending = await TradeServiceProvider.count({ where: { status: "pending" } });
+    const updatePending = await TradeServiceProvider.count({
+      where: {
+        status: "approved",
+        pendingChanges: { [Op.ne]: null },
+      },
+    });
+    res.json({
+      success: true,
+      data: {
+        pending: statusPending + updatePending,
+        newRegistrations: statusPending,
+        profileUpdates: updatePending,
+      },
+    });
+  } catch (error) {
+    console.error("Trade service provider countPending error:", error);
+    res.status(500).json({ success: false, message: "خطا در شمارش درخواست‌ها" });
+  }
+};
+
+const updateMine = async (req, res) => {
+  try {
+    const userId = resolveAuthUserId(req.user);
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "احراز هویت لازم است" });
+    }
+
+    const items = await findProvidersForUser(userId);
+    const item = items[0];
+    if (!item) {
+      return res.status(404).json({ success: false, message: "پروفایل یافت نشد" });
+    }
+
+    const changes = buildChangesPayload(req.body);
+    if (!changes.displayName || !changes.contactName || !changes.phone) {
+      return res.status(400).json({ success: false, message: "نام، نام تماس و تلفن الزامی است" });
+    }
+    if (!changes.selectedServices.length) {
+      return res.status(400).json({ success: false, message: "حداقل یک خدمت انتخاب کنید" });
+    }
+
+    const vipCheck = await validateRegistrationForServices(
+      changes.selectedServices,
+      req.headers["accept-language"]?.slice(0, 2) || "fa"
+    );
+    if (!vipCheck.ok) {
+      return res.status(403).json({ success: false, message: vipCheck.message, code: "VIP_CATEGORY" });
+    }
+
+    if (item.status === "approved") {
+      item.pendingChanges = changes;
+      await item.save();
+      return res.json({
+        success: true,
+        data: item,
+        message: "تغییرات ثبت شد و پس از تأیید مدیر روی صفحه عمومی اعمال می‌شود",
+        pendingReview: true,
+      });
+    }
+
+    applyChangesToProvider(item, changes);
+    item.pendingChanges = null;
+    item.status = "pending";
+    await item.save();
+
+    res.json({
+      success: true,
+      data: item,
+      message: "تغییرات ثبت شد و پس از تأیید مدیر منتشر می‌شود",
+      pendingReview: true,
+    });
+  } catch (error) {
+    console.error("Trade service provider updateMine error:", error);
+    res.status(500).json({ success: false, message: "خطا در ذخیره تغییرات" });
+  }
+};
+
 const updateStatus = async (req, res) => {
   try {
     const item = await TradeServiceProvider.findByPk(req.params.id);
@@ -212,6 +399,25 @@ const updateStatus = async (req, res) => {
     if (status) item.status = status;
     if (adminNotes !== undefined) item.adminNotes = adminNotes?.trim() || null;
 
+    if (status === "approved" && item.pendingChanges) {
+      applyChangesToProvider(item, item.pendingChanges);
+      item.pendingChanges = null;
+    }
+
+    if (status === "rejected" && item.pendingChanges) {
+      item.pendingChanges = null;
+    }
+
+    if (!item.userId && (item.email || item.phone)) {
+      const linkWhere = [];
+      if (item.email?.trim()) linkWhere.push({ email: item.email.trim() });
+      if (item.phone?.trim()) linkWhere.push({ mobile: item.phone.trim() }, { phone: item.phone.trim() });
+      if (linkWhere.length) {
+        const matchedUser = await User.findOne({ where: { [Op.or]: linkWhere } });
+        if (matchedUser) item.userId = matchedUser.id;
+      }
+    }
+
     await item.save();
     res.json({ success: true, data: item, message: "به‌روزرسانی شد" });
   } catch (error) {
@@ -220,4 +426,4 @@ const updateStatus = async (req, res) => {
   }
 };
 
-module.exports = { create, listPublic, getOnePublic, list, getOne, getMine, updateStatus };
+module.exports = { create, listPublic, getOnePublic, list, getOne, getMine, countPending, updateMine, updateStatus };

@@ -37,6 +37,7 @@ require("../../modules/supplierProfile/follow/model");
 require("../../modules/supplierProfile/review/model");
 require("../../modules/account/model");
 require("../../modules/account/profileField/model");
+require("../../modules/escrow/model");
 
 // Import and define all associations
 const defineAssociations = require("../../modules/associations");
@@ -66,6 +67,13 @@ const initializeDatabase = async (options = { force: false, seed: false, useMong
       await mysqlConnection.query('SET FOREIGN_KEY_CHECKS = 1');
     } else {
       await mysqlConnection.sync();
+    }
+
+    try {
+      const seedEscrowRules = require("../../modules/escrow/seeder");
+      await seedEscrowRules();
+    } catch (e) {
+      console.warn("⚠️ Escrow rules seed skipped:", e.message);
     }
     
     console.log(`✅ MySQL Database ${options.force ? "recreated" : "synchronized"} successfully.`);

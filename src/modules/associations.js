@@ -33,6 +33,18 @@ const SupplierFollow = require('./supplierProfile/follow/model');
 const SupplierReview = require('./supplierProfile/review/model');
 const Account = require('./account/model');
 const AccountProfileField = require('./account/profileField/model');
+const {
+  EscrowRule,
+  EscrowAgreement,
+  EscrowMilestone,
+  EscrowPaymentIntent,
+  EscrowLedgerEntry,
+  EscrowReleaseRequest,
+  EscrowRefund,
+  EscrowDispute,
+  EscrowDisputeMessage,
+  EscrowEvent,
+} = require('./escrow/model');
 
 // تعریف ارتباطات بین مدل‌ها
 const defineAssociations = () => {
@@ -298,6 +310,23 @@ const defineAssociations = () => {
     Account.belongsTo(User, { foreignKey: 'userId', as: 'user', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
     Account.hasMany(AccountProfileField, { foreignKey: 'accountId', as: 'profileFields', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
     AccountProfileField.belongsTo(Account, { foreignKey: 'accountId', as: 'account', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+
+    // Escrow module
+    EscrowAgreement.belongsTo(User, { foreignKey: 'buyerId', as: 'buyer', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
+    EscrowAgreement.belongsTo(User, { foreignKey: 'sellerId', as: 'seller', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
+    EscrowAgreement.belongsTo(User, { foreignKey: 'createdByUserId', as: 'creator', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
+    EscrowAgreement.belongsTo(Order, { foreignKey: 'orderId', as: 'order', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
+    EscrowAgreement.belongsTo(EscrowRule, { foreignKey: 'ruleId', as: 'rule', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
+    EscrowAgreement.hasMany(EscrowMilestone, { foreignKey: 'agreementId', as: 'milestones', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    EscrowAgreement.hasMany(EscrowPaymentIntent, { foreignKey: 'agreementId', as: 'paymentIntents', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    EscrowAgreement.hasMany(EscrowLedgerEntry, { foreignKey: 'agreementId', as: 'ledgerEntries', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    EscrowAgreement.hasMany(EscrowReleaseRequest, { foreignKey: 'agreementId', as: 'releaseRequests', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    EscrowAgreement.hasMany(EscrowRefund, { foreignKey: 'agreementId', as: 'refunds', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    EscrowAgreement.hasMany(EscrowDispute, { foreignKey: 'agreementId', as: 'disputes', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    EscrowAgreement.hasMany(EscrowEvent, { foreignKey: 'agreementId', as: 'events', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    EscrowMilestone.belongsTo(EscrowAgreement, { foreignKey: 'agreementId', as: 'agreement', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    EscrowDispute.hasMany(EscrowDisputeMessage, { foreignKey: 'disputeId', as: 'messages', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    EscrowDisputeMessage.belongsTo(User, { foreignKey: 'userId', as: 'author', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 };
 
 module.exports = defineAssociations; 

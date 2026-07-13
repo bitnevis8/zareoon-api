@@ -44,6 +44,8 @@ TradeServiceProvider.init(
       defaultValue: "pending",
     },
     adminNotes: { type: DataTypes.TEXT, allowNull: true },
+    pendingChanges: { type: DataTypes.JSON, allowNull: true },
+    documentUrls: { type: DataTypes.JSON, allowNull: true },
     rating: { type: DataTypes.DECIMAL(3, 2), allowNull: true, defaultValue: null },
     reviewCount: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
   },

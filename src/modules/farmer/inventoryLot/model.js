@@ -13,12 +13,14 @@ InventoryLot.init(
     englishName: { type: DataTypes.STRING(200), allowNull: true },
     arabicName: { type: DataTypes.STRING(200), allowNull: true },
     russianName: { type: DataTypes.STRING(200), allowNull: true },
+    displayContent: { type: DataTypes.JSON, allowNull: true },
     qualityGrade: { type: DataTypes.STRING(50), allowNull: false },
     status: { type: DataTypes.ENUM("on_field", "harvested", "reserved", "sold"), allowNull: false, defaultValue: "harvested" },
     unit: { type: DataTypes.STRING(50), allowNull: false },
     totalQuantity: { type: DataTypes.DECIMAL(18, 3), allowNull: false },
     reservedQuantity: { type: DataTypes.DECIMAL(18, 3), allowNull: false, defaultValue: 0 },
     price: { type: DataTypes.DECIMAL(18, 2), allowNull: true },
+    priceCurrency: { type: DataTypes.STRING(10), allowNull: false, defaultValue: "TOMAN" },
     // Tiered pricing for different order quantities
     tieredPricing: { type: DataTypes.JSON, allowNull: true },
     // Minimum order quantity for this lot
