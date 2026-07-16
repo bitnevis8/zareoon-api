@@ -3,9 +3,24 @@ const User = require("../../user/user/model");
 const Product = require("../product/model");
 const seederData = require("./seederData.json");
 
+const SLUG_ALIASES = {
+  "date-klooteh": "dried-dates",
+  "date-estamaran": "dried-dates",
+  "date-zahidi-iraq": "dried-dates",
+  "date-piarom": "dried-dates",
+  "date-rabbi-iranshahr": "dried-dates",
+  "urea-fertilizer": "fertilizer",
+};
+
 async function resolveProductId(lot) {
+  const candidates = [];
   if (lot.productSlug) {
-    const bySlug = await Product.findOne({ where: { slug: lot.productSlug } });
+    candidates.push(lot.productSlug);
+    if (SLUG_ALIASES[lot.productSlug]) candidates.push(SLUG_ALIASES[lot.productSlug]);
+  }
+
+  for (const slug of candidates) {
+    const bySlug = await Product.findOne({ where: { slug } });
     if (bySlug) return bySlug.id;
   }
   if (lot.productName) {

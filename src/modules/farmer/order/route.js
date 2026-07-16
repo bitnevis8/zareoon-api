@@ -21,8 +21,11 @@ router.get("/test", (req, res) => {
     userUserId: req.user?.userId
   });
 });
-router.patch("/item/:itemId/status", authorizeRole("Administrator"), controller.updateItemStatus);
+router.patch("/item/:itemId/status", controller.updateItemStatus);
 router.get("/:id/items", controller.listItems);
+
+// Seller or admin can approve a pending request routed to that seller
+router.post("/:id/approve", controller.approveOrder);
 
 // Admin routes
 router.get("/admin", authorizeRole("Administrator"), controller.listForAdmin);
@@ -32,7 +35,6 @@ router.get("/:id", authorizeRole("Administrator"), controller.getById);
 router.post("/:id/cancel", authorizeRole("Administrator"), controller.cancel);
 router.post("/:id/complete", authorizeRole("Administrator"), controller.complete);
 router.put("/:id/allocate", authorizeRole("Administrator"), controller.allocate);
-router.post("/:id/approve", authorizeRole("Administrator"), controller.approveOrder);
 router.put("/:id/status", authorizeRole("Administrator"), controller.updateStatus);
 
 module.exports = router;

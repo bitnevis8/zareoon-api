@@ -86,13 +86,46 @@ const list = async (req, res) => {
     ];
   }
 
+  const lite = String(req.query.lite || "") === "1" || String(req.query.lite || "").toLowerCase() === "true";
   const options = { where, order: [["homepageSortOrder", "ASC"], ["sortOrder", "ASC"], ["id", "ASC"]] };
+  if (lite) {
+    options.attributes = [
+      "id",
+      "parentId",
+      "name",
+      "englishName",
+      "arabicName",
+      "russianName",
+      "turkishName",
+      "finnishName",
+      "urduName",
+      "slug",
+      "imageUrl",
+      "icon",
+      "unit",
+      "isOrderable",
+      "isActive",
+      "sortOrder",
+      "homepageSortOrder",
+      "level",
+      "isLeaf",
+      "translations",
+    ];
+  }
   if (q && req.query.limit !== undefined) {
     const limit = parseInt(req.query.limit, 10);
     if (Number.isFinite(limit) && limit > 0) options.limit = limit;
   }
   const items = await Product.findAll(options);
-  const data = await attachUploadedImages(items);
+  // Lite catalog responses skip File/InventoryLot image joins (imageUrl column is enough for tiles).
+  const data = lite ? items.map((p) => (p.toJSON ? p.toJSON() : p)) : await attachUploadedImages(items);
+
+  // Browser/CDN can reuse public catalog briefly; invalidation is soft via short TTL.
+  if (lite && !q) {
+    res.set("Cache-Control", "public, max-age=120, stale-while-revalidate=600");
+  } else {
+    res.set("Cache-Control", "no-store");
+  }
   res.json({ success: true, data });
 };
 

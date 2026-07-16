@@ -204,29 +204,79 @@ const updateItemStatus = async (req, res) => {
   return res.json({ success: true, data: item });
 };
 
-// List orders that have items assigned to the logged-in farmer (supplier)
+// List orders for the logged-in seller: pending requests routed to them + assigned items
 const listForFarmer = async (req, res) => {
   const actorId = req.user?.userId || req.user?.id;
-  if (!actorId) return res.status(401).json({ success: false, message: 'Unauthorized' });
+  if (!actorId) return res.status(401).json({ success: false, message: "Unauthorized" });
 
-  const rows = await Order.findAll({
+  const productInclude = { model: Product, as: "product", attributes: ["id", "name"] };
+  const lotInclude = {
+    model: InventoryLot,
+    as: "inventoryLot",
+    include: [productInclude],
+  };
+
+  const bySupplierId = await Order.findAll({
+    where: { supplierId: actorId },
     include: [
       {
         model: OrderItem,
-        as: 'items',
-        required: true,
-        where: {
-          status: {
-            [Op.ne]: 'pending' // Only show items that are NOT pending
-          }
-        },
+        as: "items",
+        required: false,
+        include: [lotInclude],
+      },
+      {
+        model: OrderRequestItem,
+        as: "requestItems",
+        required: false,
         include: [
-          { model: InventoryLot, as: 'inventoryLot', where: { farmerId: actorId }, include: [ { model: Product, as: 'product', attributes: ['id','name'] } ] }
-        ]
-      }
+          { model: Product, as: "product", attributes: ["id", "name"] },
+          {
+            model: InventoryLot,
+            as: "inventoryLot",
+            include: [productInclude],
+          },
+        ],
+      },
+      { model: User, as: "customer", attributes: ["id", "firstName", "lastName", "username", "mobile"] },
     ],
-    order: [["id","DESC"]]
+    order: [["id", "DESC"]],
   });
+
+  const byAssignedLots = await Order.findAll({
+    include: [
+      {
+        model: OrderItem,
+        as: "items",
+        required: true,
+        include: [
+          {
+            model: InventoryLot,
+            as: "inventoryLot",
+            where: { farmerId: actorId },
+            include: [productInclude],
+          },
+        ],
+      },
+      {
+        model: OrderRequestItem,
+        as: "requestItems",
+        required: false,
+        include: [
+          { model: Product, as: "product", attributes: ["id", "name"] },
+          { model: InventoryLot, as: "inventoryLot", include: [productInclude] },
+        ],
+      },
+      { model: User, as: "customer", attributes: ["id", "firstName", "lastName", "username", "mobile"] },
+    ],
+    order: [["id", "DESC"]],
+  });
+
+  const map = new Map();
+  for (const row of [...bySupplierId, ...byAssignedLots]) {
+    map.set(row.id, row);
+  }
+  const rows = Array.from(map.values()).sort((a, b) => b.id - a.id);
   return res.json({ success: true, data: rows });
 };
 
@@ -421,117 +471,145 @@ const listForAdmin = async (req, res) => {
   }
 };
 
-// Approve order and send to supplier
+// Approve order (seller of the order, or admin). Creates OrderItems from request lots and continues the flow.
 const approveOrder = async (req, res) => {
   try {
-    const orderId = req.params.id; // Route is /:id/approve, so use req.params.id
-    const { supplierId, notes } = req.body;
-    
-    console.log("=== Approve Order ===");
-    console.log("Order ID:", orderId);
-    console.log("Supplier ID:", supplierId);
-    console.log("Notes:", notes);
-    
+    const orderId = req.params.id;
+    const { supplierId, notes } = req.body || {};
+    const actorId = req.user?.userId || req.user?.id;
+    const actorIsAdmin = checkIsAdmin(req.user);
+
     const order = await Order.findByPk(orderId);
     if (!order) {
       return res.status(404).json({
         success: false,
-        message: "سفارش یافت نشد"
+        message: "سفارش یافت نشد",
       });
     }
-    
-    // Auto-detect supplier from OrderRequestItem's inventoryLot if supplierId is 'auto'
-    let finalSupplierId = supplierId;
-    if (supplierId === 'auto' || !supplierId) {
-      const requestItems = await OrderRequestItem.findAll({
-        where: { orderId: orderId },
-        include: [
-          {
-            model: InventoryLot,
-            as: 'inventoryLot',
-            include: [
-              {
-                model: User,
-                as: 'supplier',
-                attributes: ['id', 'firstName', 'lastName']
-              }
-            ]
-          }
-        ]
-      });
-      
-      if (requestItems.length > 0 && requestItems[0].inventoryLot?.supplier) {
-        finalSupplierId = requestItems[0].inventoryLot.supplier.id;
-        console.log("Auto-detected supplier:", finalSupplierId, requestItems[0].inventoryLot.supplier.firstName, requestItems[0].inventoryLot.supplier.lastName);
-      } else {
-        return res.status(400).json({
+
+    if (!actorIsAdmin) {
+      if (!actorId || Number(order.supplierId) !== Number(actorId)) {
+        return res.status(403).json({
           success: false,
-          message: "نمی‌توان تامین‌کننده را شناسایی کرد"
+          message: "فقط فروشنده این سفارش می‌تواند آن را تأیید کند",
         });
       }
     }
-    
-    // Get order request items
+
+    let finalSupplierId = supplierId;
+    if (finalSupplierId === "auto") finalSupplierId = null;
+    if (!finalSupplierId) finalSupplierId = order.supplierId;
+
     const requestItems = await OrderRequestItem.findAll({
-      where: { orderId: orderId }
-    });
-    
-    console.log("Request items found:", requestItems.length);
-    
-    // Convert OrderRequestItem to OrderItem for each request
-    for (const requestItem of requestItems) {
-      // Find available inventory lots for this product and quality grade
-      const availableLots = await InventoryLot.findAll({
-        where: {
-          productId: requestItem.productId,
-          qualityGrade: requestItem.qualityGrade,
-          status: 'harvested'
+      where: { orderId },
+      include: [
+        {
+          model: InventoryLot,
+          as: "inventoryLot",
+          include: [{ model: User, as: "supplier", attributes: ["id", "firstName", "lastName"] }],
         },
-        include: [
-          {
-            model: User,
-            as: 'supplier',
-            attributes: ['id', 'firstName', 'lastName', 'email', 'phone']
-          }
-        ],
-        order: [['totalQuantity', 'DESC']] // Order by highest quantity first
-      });
-      
-      console.log(`Available lots for product ${requestItem.productId}, grade ${requestItem.qualityGrade}:`, availableLots.length);
-      
-      if (availableLots.length > 0) {
-        // Use the first available lot (highest quantity)
-        const selectedLot = availableLots[0];
-        
-        // Create OrderItem
-        await OrderItem.create({
-          orderId: orderId,
-          inventoryLotId: selectedLot.id,
-          productId: requestItem.productId,
-          quantity: requestItem.quantity,
-          status: 'assigned'
-        });
-        
-        console.log(`Created OrderItem for lot ${selectedLot.id}, supplier: ${selectedLot.supplier?.firstName} ${selectedLot.supplier?.lastName}`);
-      } else {
-        console.log(`No available lots for product ${requestItem.productId}, grade ${requestItem.qualityGrade}`);
-      }
-    }
-    
-    // Update order status to approved
-    await order.update({
-      status: 'approved',
-      supplierId: finalSupplierId,
-      adminNotes: notes,
-      approvedAt: new Date(),
-      approvedBy: req.user.id
+      ],
     });
-    
-    console.log("Order approved successfully");
-    
+
+    if (!finalSupplierId && requestItems.length > 0 && requestItems[0].inventoryLot?.farmerId) {
+      finalSupplierId = requestItems[0].inventoryLot.farmerId;
+    }
+
+    if (!finalSupplierId && requestItems.length > 0 && requestItems[0].inventoryLot?.supplier) {
+      finalSupplierId = requestItems[0].inventoryLot.supplier.id;
+    }
+
+    if (!finalSupplierId) {
+      return res.status(400).json({
+        success: false,
+        message: "نمی‌توان فروشنده را شناسایی کرد",
+      });
+    }
+
+    if (!actorIsAdmin && Number(finalSupplierId) !== Number(actorId)) {
+      return res.status(403).json({
+        success: false,
+        message: "دسترسی غیرمجاز برای تأیید این سفارش",
+      });
+    }
+
+    const tx = await sequelize.transaction();
+    try {
+      for (const requestItem of requestItems) {
+        let selectedLot = null;
+        if (requestItem.inventoryLotId) {
+          selectedLot = await InventoryLot.findByPk(requestItem.inventoryLotId, {
+            transaction: tx,
+            lock: tx.LOCK.UPDATE,
+          });
+          if (selectedLot && Number(selectedLot.farmerId) !== Number(finalSupplierId)) {
+            selectedLot = null;
+          }
+        }
+
+        if (!selectedLot) {
+          selectedLot = await InventoryLot.findOne({
+            where: {
+              productId: requestItem.productId,
+              qualityGrade: requestItem.qualityGrade,
+              farmerId: finalSupplierId,
+              status: { [Op.in]: ["harvested", "reserved"] },
+            },
+            order: [["totalQuantity", "DESC"]],
+            transaction: tx,
+            lock: tx.LOCK.UPDATE,
+          });
+        }
+
+        if (!selectedLot) continue;
+
+        const qty = parseFloat(requestItem.quantity);
+        const available =
+          parseFloat(selectedLot.totalQuantity || 0) - parseFloat(selectedLot.reservedQuantity || 0);
+        if (available < qty) {
+          await tx.rollback();
+          return res.status(400).json({
+            success: false,
+            message: `موجودی کافی برای محصول ${requestItem.productId} نیست`,
+          });
+        }
+
+        selectedLot.reservedQuantity = parseFloat(selectedLot.reservedQuantity || 0) + qty;
+        if (selectedLot.status === "harvested") selectedLot.status = "reserved";
+        await selectedLot.save({ transaction: tx });
+
+        await OrderItem.create(
+          {
+            orderId,
+            inventoryLotId: selectedLot.id,
+            productId: requestItem.productId,
+            quantity: requestItem.quantity,
+            status: "assigned",
+          },
+          { transaction: tx }
+        );
+      }
+
+      await order.update(
+        {
+          status: "approved",
+          supplierId: finalSupplierId,
+          adminNotes: notes || order.adminNotes,
+          approvedAt: new Date(),
+          approvedBy: actorId,
+        },
+        { transaction: tx }
+      );
+
+      await tx.commit();
+    } catch (inner) {
+      await tx.rollback();
+      throw inner;
+    }
+
     res.json({
       success: true,
-      message: "سفارش تایید شد و به تامین‌کننده ارسال شد"
+      message: "سفارش تأیید شد و مراحل بعدی فعال شد",
     });
   } catch (error) {
     console.error("Approve order error:", error);

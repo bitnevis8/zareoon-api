@@ -2,25 +2,13 @@ const { Op } = require("sequelize");
 const { Cart, CartItem } = require("./model");
 const InventoryLot = require("../inventoryLot/model");
 const Order = require("../order/model");
-const OrderItem = require("../orderItem/model");
 const OrderRequestItem = require("../orderRequestItem/model");
-const TransactionHistory = require("../transactionHistory/model");
 const sequelize = require("../../../core/database/mysql/connection");
 
 const meId = (req) => {
   const q = req.query?.customerId;
   if (q && Number.isFinite(Number(q))) return Number(q);
-  
-  console.log("meId - req.user:", req.user);
-  console.log("meId - req.user.id:", req.user?.id);
-  console.log("meId - req.user.userId:", req.user?.userId);
-  console.log("meId - req.body.customerId:", req.body?.customerId);
-  
-  // اولویت: req.user.userId > req.user.id > req.body.customerId > 1
-  const customerId = req.user?.userId || req.user?.id || req.body?.customerId || 1;
-  console.log("meId - final customerId:", customerId);
-  console.log("meId - customerId type:", typeof customerId);
-  return customerId;
+  return req.user?.userId || req.user?.id || req.body?.customerId || 1;
 };
 
 const getMyCart = async (req, res) => {
@@ -28,13 +16,14 @@ const getMyCart = async (req, res) => {
   let cart = await Cart.findOne({ where: { customerId, status: "active" }, include: [{ model: CartItem, as: "items" }] });
   if (!cart) cart = await Cart.create({ customerId, status: "active" });
   const items = await CartItem.findAll({ where: { cartId: cart.id } });
-  const mappedItems = items.map(i => ({
+  const mappedItems = items.map((i) => ({
     id: i.id,
     cartId: i.cartId,
     productId: i.productId,
     qualityGrade: i.qualityGrade,
     unit: i.unit,
     quantity: i.quantity,
+    inventoryLotId: i.inventoryLotId,
     createdAt: i.createdAt,
     updatedAt: i.updatedAt,
   }));
@@ -66,33 +55,62 @@ const removeItem = async (req, res) => {
   res.json({ success: true });
 };
 
-// Checkout: create order with request items only (pending). Admin will allocate later.
+// Checkout: create pending order(s) routed to seller(s) from inventory lots. Seller approval continues the flow.
 const checkout = async (req, res) => {
   const customerId = meId(req);
-  console.log("Checkout - customerId:", customerId);
-  console.log("Checkout - req.user:", req.user);
-  
+
   const cart = await Cart.findOne({ where: { customerId, status: "active" } });
   if (!cart) return res.status(404).json({ success: false, message: "سبد خالی است" });
   const items = await CartItem.findAll({ where: { cartId: cart.id } });
   if (items.length === 0) return res.status(400).json({ success: false, message: "سبد خالی است" });
 
-  console.log("Checkout - cart items:", items.length);
-
   const tx = await sequelize.transaction();
   try {
-    const order = await Order.create({ customerId, status: "pending" }, { transaction: tx });
-    console.log("Checkout - created order:", order.id);
-    
+    const groups = new Map(); // supplierId|null -> items[]
+
     for (const it of items) {
-      await OrderRequestItem.create({ orderId: order.id, productId: it.productId, inventoryLotId: it.inventoryLotId, qualityGrade: it.qualityGrade, unit: it.unit || null, quantity: it.quantity }, { transaction: tx });
-      console.log("Checkout - created request item for product:", it.productId, "inventoryLot:", it.inventoryLotId);
+      let supplierId = null;
+      if (it.inventoryLotId) {
+        const lot = await InventoryLot.findByPk(it.inventoryLotId, { transaction: tx });
+        if (lot?.farmerId) supplierId = Number(lot.farmerId);
+      }
+      const key = supplierId == null ? "none" : String(supplierId);
+      if (!groups.has(key)) groups.set(key, { supplierId, items: [] });
+      groups.get(key).items.push(it);
+    }
+
+    const orderIds = [];
+    for (const { supplierId, items: groupItems } of groups.values()) {
+      const order = await Order.create(
+        { customerId, status: "pending", supplierId: supplierId || null },
+        { transaction: tx }
+      );
+      orderIds.push(order.id);
+
+      for (const it of groupItems) {
+        await OrderRequestItem.create(
+          {
+            orderId: order.id,
+            productId: it.productId,
+            inventoryLotId: it.inventoryLotId,
+            qualityGrade: it.qualityGrade,
+            unit: it.unit || null,
+            quantity: it.quantity,
+          },
+          { transaction: tx }
+        );
+      }
     }
 
     await Cart.update({ status: "checked_out" }, { where: { id: cart.id }, transaction: tx });
     await tx.commit();
-    console.log("Checkout - completed successfully for customer:", customerId);
-    res.json({ success: true, data: { orderId: order.id } });
+    res.json({
+      success: true,
+      data: {
+        orderId: orderIds[0],
+        orderIds,
+      },
+    });
   } catch (e) {
     await tx.rollback();
     console.error("Checkout - error:", e);
@@ -101,4 +119,3 @@ const checkout = async (req, res) => {
 };
 
 module.exports = { getMyCart, addItem, updateItem, removeItem, checkout };
-

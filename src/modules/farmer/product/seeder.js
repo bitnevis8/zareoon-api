@@ -1,87 +1,73 @@
-const fs = require("fs");
-const path = require("path");
 const Product = require("./model");
-const treeDataFull = require("./seederDataNew.json");
+const treeDataFull = require("./seederData5.json");
 
-const MAIN_ROOT_IDS = new Set(
-  (Array.isArray(treeDataFull) ? treeDataFull : treeDataFull.data || [])
-    .filter((node) => node.parentId == null)
-    .map((node) => node.id)
-);
-
-function extractTranslationObjects(content) {
-  const results = [];
-  const chunks = content.split(/\n  \},?\n/);
-  for (const chunk of chunks) {
-    const id = chunk.match(/"id"\s*:\s*(\d+)/)?.[1];
-    const slug = chunk.match(/"slug"\s*:\s*"([^"]+)"/)?.[1];
-    const englishName = chunk.match(/"englishName"\s*:\s*"([^"]+)"/)?.[1];
-    const arabicName = chunk.match(/"arabicName"\s*:\s*"([^"]+)"/)?.[1];
-    const russianName = chunk.match(/"russianName"\s*:\s*"([^"]+)"/)?.[1];
-    const turkishName = chunk.match(/"turkishName"\s*:\s*"([^"]+)"/)?.[1];
-    const finnishName = chunk.match(/"finnishName"\s*:\s*"([^"]+)"/)?.[1];
-    if (!id && !slug) continue;
-    results.push({
-      id: id ? Number(id) : null,
-      slug,
-      englishName: englishName || null,
-      arabicName: arabicName || null,
-      russianName: russianName || null,
-      turkishName: turkishName || null,
-      finnishName: finnishName || null,
-    });
-  }
-  return results;
+function tField(translations, lang, key) {
+  const block = translations?.[lang];
+  if (!block || typeof block !== "object") return null;
+  const value = block[key];
+  return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
-function loadTranslationOverlays() {
-  const byId = new Map();
-  const bySlug = new Map();
-  const dir = path.join(__dirname, "temp translates");
+function mapNodeToProduct(n) {
+  const tr = n.translations || {};
+  const faName = tField(tr, "fa", "name");
+  const enName = tField(tr, "en", "name");
+  const name = faName || enName || n.slug || `product-${n.id}`;
 
-  if (!fs.existsSync(dir)) return { byId, bySlug };
+  const isLeaf = Boolean(n.isLeaf);
+  const status = n.status || "active";
+  const allowedUnits = Array.isArray(n.allowedMeasurementUnits) ? n.allowedMeasurementUnits : null;
+  const defaultUnit = n.defaultMeasurementUnit || (allowedUnits && allowedUnits[0]) || null;
 
-  for (const file of fs.readdirSync(dir)) {
-    if (!file.endsWith(".json")) continue;
-    const content = fs.readFileSync(path.join(dir, file), "utf8");
-    const nodes = extractTranslationObjects(content);
-    for (const item of nodes) {
-      const overlay = pickDefined({
-        englishName: item.englishName,
-        arabicName: item.arabicName,
-        russianName: item.russianName,
-        turkishName: item.turkishName,
-        finnishName: item.finnishName,
-      });
-      if (item.id != null) {
-        byId.set(item.id, { ...(byId.get(item.id) || {}), ...overlay });
-      }
-      if (item.slug) {
-        bySlug.set(item.slug, { ...(bySlug.get(item.slug) || {}), ...overlay });
-      }
-    }
-  }
-
-  return { byId, bySlug };
-}
-
-function pickDefined(obj) {
-  const out = {};
-  for (const [key, value] of Object.entries(obj)) {
-    if (value != null && value !== "") out[key] = value;
-  }
-  return out;
-}
-
-function resolveTranslations(node, overlays) {
-  const byId = overlays.byId.get(node.id) || {};
-  const bySlug = node.slug ? overlays.bySlug.get(node.slug) || {} : {};
-  return { ...bySlug, ...byId };
+  return {
+    id: n.id,
+    parentId: n.parentId ?? null,
+    name,
+    englishName: enName,
+    arabicName: tField(tr, "ar", "name"),
+    russianName: tField(tr, "ru", "name"),
+    turkishName: tField(tr, "tr", "name"),
+    finnishName: tField(tr, "fi", "name"),
+    urduName: tField(tr, "ur", "name"),
+    slug: n.slug || null,
+    description: tField(tr, "fa", "metaDescription") || tField(tr, "en", "metaDescription"),
+    imageUrl: n.imageUrl || null,
+    imageStatus: n.imageStatus || null,
+    icon: n.icon || null,
+    unit: defaultUnit,
+    isOrderable: isLeaf,
+    isActive: status === "active",
+    sortOrder: Number.isFinite(n.sortOrder) ? n.sortOrder : null,
+    homepageSortOrder: Number.isFinite(n.homepageSortOrder) ? n.homepageSortOrder : null,
+    isFeatured: typeof n.isFeatured === "boolean" ? n.isFeatured : false,
+    metaTitle: tField(tr, "fa", "metaTitle") || tField(tr, "en", "metaTitle"),
+    metaDescription: tField(tr, "fa", "metaDescription") || tField(tr, "en", "metaDescription"),
+    validUnits: allowedUnits,
+    supplyCountry: n.supplyCountry || "IR",
+    supplyCity: n.supplyCity || null,
+    level: Number.isFinite(n.level) ? n.level : null,
+    isLeaf,
+    path: n.path || null,
+    status,
+    attributeSetId: n.attributeSetId || null,
+    filters: Array.isArray(n.filters) ? n.filters : null,
+    defaultMeasurementUnit: defaultUnit,
+    allowedMeasurementUnits: allowedUnits,
+    allowedPackagingTypes: Array.isArray(n.allowedPackagingTypes) ? n.allowedPackagingTypes : null,
+    listingPolicy: n.listingPolicy || null,
+    tradeCompliance: n.tradeCompliance || null,
+    seo: n.seo || null,
+    translations: tr,
+    translationStatus: n.translationStatus || null,
+    translationReview: n.translationReview || null,
+    unitSchemaVersion: Number.isFinite(n.unitSchemaVersion) ? n.unitSchemaVersion : null,
+  };
 }
 
 function sortNodesForSeeding(nodes) {
   const byId = new Map(nodes.map((node) => [node.id, node]));
   const depthOf = (node) => {
+    if (Number.isFinite(node.level)) return node.level;
     let depth = 0;
     let current = node;
     const seen = new Set();
@@ -99,47 +85,26 @@ function sortNodesForSeeding(nodes) {
 }
 
 const seedProducts = async () => {
-  console.log("🌱 Seeding Products...");
-  const overlays = loadTranslationOverlays();
-  const nodes = sortNodesForSeeding(
-    Array.isArray(treeDataFull) ? treeDataFull : treeDataFull.data || []
-  );
-  const parentIds = new Set(nodes.map((n) => n.parentId).filter((v) => v !== null && v !== undefined));
+  console.log("🌱 Seeding Products from seederData5.json...");
+  const raw = Array.isArray(treeDataFull) ? treeDataFull : treeDataFull.data || [];
+  const nodes = sortNodesForSeeding(raw);
+
+  let created = 0;
+  let updated = 0;
 
   for (const n of nodes) {
-    const isLeaf = !parentIds.has(n.id);
-    const isOrderable = MAIN_ROOT_IDS.has(n.id) ? false : Boolean(isLeaf);
-    const tr = resolveTranslations(n, overlays);
-    const data = {
-      id: n.id,
-      parentId: n.parentId || null,
-      name: n.name,
-      englishName: n.englishName || tr.englishName || null,
-      arabicName: n.arabicName || tr.arabicName || null,
-      russianName: n.russianName || tr.russianName || null,
-      turkishName: n.turkishName || tr.turkishName || null,
-      finnishName: n.finnishName || tr.finnishName || null,
-      slug: n.slug || null,
-      description: n.description || null,
-      imageUrl: n.imageUrl || null,
-      isActive: typeof n.isActive === "boolean" ? n.isActive : true,
-      sortOrder: Number.isFinite(n.sortOrder) ? n.sortOrder : null,
-      homepageSortOrder: Number.isFinite(n.homepageSortOrder) ? n.homepageSortOrder : null,
-      isFeatured: typeof n.isFeatured === "boolean" ? n.isFeatured : false,
-      icon: n.icon || null,
-      metaTitle: n.metaTitle || null,
-      metaDescription: n.metaDescription || null,
-      validUnits: n.validUnits || null,
-      isOrderable,
-      unit: n.unit || (Array.isArray(n.validUnits) && n.validUnits.includes("Kilogram") ? "kg" : null),
-      supplyCountry: n.supplyCountry || "IR",
-      supplyCity: n.supplyCity || null,
-    };
+    const data = mapNodeToProduct(n);
     const existed = await Product.findByPk(data.id);
-    if (!existed) await Product.create(data);
-    else await Product.update(data, { where: { id: data.id } });
+    if (!existed) {
+      await Product.create(data);
+      created += 1;
+    } else {
+      await Product.update(data, { where: { id: data.id } });
+      updated += 1;
+    }
   }
-  console.log("✅ Products seeding completed!");
+
+  console.log(`✅ Products seeding completed! created=${created}, updated=${updated}, total=${nodes.length}`);
 };
 
 module.exports = seedProducts;

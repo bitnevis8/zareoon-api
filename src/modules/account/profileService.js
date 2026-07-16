@@ -54,11 +54,19 @@ async function saveProfileFields(accountId, entityType, data) {
 async function getOrCreateAccountForUser(user, { entityType } = {}) {
   let account = await Account.findOne({ where: { userId: user.id } });
   if (!account) {
-    account = await Account.create({
-      userId: user.id,
-      entityType: entityType || "individual",
-      isPublic: true,
-    });
+    try {
+      account = await Account.create({
+        userId: user.id,
+        entityType: entityType || "individual",
+        isPublic: true,
+      });
+    } catch (error) {
+      // Race / leftover row: unique user_id — re-fetch instead of crashing
+      if (error?.name === "SequelizeUniqueConstraintError" || error?.parent?.code === "ER_DUP_ENTRY") {
+        account = await Account.findOne({ where: { userId: user.id } });
+      }
+      if (!account) throw error;
+    }
   }
   if (!account.profileSlug) {
     const slug = await generateProfileSlug(user);

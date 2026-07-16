@@ -3,7 +3,7 @@
     {
       "id": 1,
       "farmerEmail": "mahavi@zareoon.ir",
-      "productSlug": "date-klooteh",
+      "productSlug": "dried-dates",
       "englishName": "Klooteh",
       "russianName": "Клуте",
       "qualityGrade": "کلوته",
@@ -17,7 +17,7 @@
     {
       "id": 2,
       "farmerEmail": "mahavi@zareoon.ir",
-      "productSlug": "date-estamaran",
+      "productSlug": "dried-dates",
       "englishName": "Grade 1 Mazafati-style Moist",
       "russianName": "1 сорт влажный (тип Мазафати)",
       "qualityGrade": "درجه 1 رطب مضافتی",
@@ -31,7 +31,7 @@
     {
       "id": 3,
       "farmerEmail": "mahavi@zareoon.ir",
-      "productSlug": "date-estamaran",
+      "productSlug": "dried-dates",
       "englishName": "Juicy Vacuum-packed Custom Export",
       "russianName": "Сочный, вакуумная упаковка, экспортный заказ",
       "qualityGrade": "شیره دار وکیم سفارشی صادرات",
@@ -45,7 +45,7 @@
     {
       "id": 4,
       "farmerEmail": "mahavi@zareoon.ir",
-      "productSlug": "date-zahidi-iraq",
+      "productSlug": "dried-dates",
       "englishName": "Iraq",
       "russianName": "Ирак",
       "qualityGrade": "عراق",
@@ -59,7 +59,7 @@
     {
       "id": 5,
       "farmerEmail": "mahavi@zareoon.ir",
-      "productSlug": "date-piarom",
+      "productSlug": "dried-dates",
       "englishName": "Jumbo Grade",
       "russianName": "Сорт Jumbo",
       "qualityGrade": "درجه جامبو",
@@ -73,7 +73,7 @@
     {
       "id": 6,
       "farmerEmail": "mahavi@zareoon.ir",
-      "productSlug": "date-piarom",
+      "productSlug": "dried-dates",
       "englishName": "Grade 1",
       "russianName": "1 сорт",
       "qualityGrade": "درجه 1",
@@ -87,7 +87,7 @@
     {
       "id": 7,
       "farmerEmail": "mahavi@zareoon.ir",
-      "productSlug": "date-rabbi-iranshahr",
+      "productSlug": "dried-dates",
       "englishName": "Iranshahr - Sistan and Baluchestan",
       "russianName": "Ираншахр - Систан и Белуджистан",
       "qualityGrade": "ایرانشهر - سیستان و بلوچستان",
@@ -114,7 +114,7 @@
     {
       "id": 9,
       "farmerId": 1,
-      "productSlug": "urea-fertilizer",
+      "productSlug": "fertilizer",
       "englishName": "Urea Fertilizer",
       "russianName": "Мочевина",
       "qualityGrade": "کشاورزی",
@@ -123,6 +123,20 @@
       "totalQuantity": 10,
       "reservedQuantity": 0,
       "minimumOrderQuantity": 1
+    },
+    {
+      "id": 10,
+      "farmerEmail": "mahavi@zareoon.ir",
+      "productSlug": "pistachio",
+      "englishName": "Akbari Export",
+      "russianName": "Акбари экспорт",
+      "qualityGrade": "اکبری صادراتی",
+      "status": "harvested",
+      "unit": "kg",
+      "totalQuantity": 5000,
+      "reservedQuantity": 0,
+      "price": 420000,
+      "minimumOrderQuantity": 200
     }
   ]
 }

@@ -16,6 +16,7 @@ const messagingRouter = require('../modules/messaging/route');
 const supplierProfileRouter = require('../modules/supplierProfile/route');
 const applicantRequestRouter = require('../modules/applicantRequest/route');
 const escrowRouter = require('../modules/escrow/route');
+const subscriptionRouter = require('../modules/subscription/route');
 
 // Use routers
 baseRouter.use('/user', userRouter);
@@ -33,5 +34,6 @@ baseRouter.use('/messaging', messagingRouter);
 baseRouter.use('/tamin', supplierProfileRouter);
 baseRouter.use('/applicant-request', applicantRequestRouter);
 baseRouter.use('/escrow', escrowRouter);
+baseRouter.use('/subscription', subscriptionRouter);
 
 module.exports = baseRouter;

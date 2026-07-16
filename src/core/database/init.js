@@ -38,6 +38,7 @@ require("../../modules/supplierProfile/review/model");
 require("../../modules/account/model");
 require("../../modules/account/profileField/model");
 require("../../modules/escrow/model");
+require("../../modules/subscription/model");
 
 // Import and define all associations
 const defineAssociations = require("../../modules/associations");
