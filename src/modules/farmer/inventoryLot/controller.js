@@ -1,5 +1,6 @@
 const { Op } = require("sequelize");
 const InventoryLot = require("./model");
+const Product = require("../product/model");
 const File = require("../../fileUpload/model");
 const User = require("../../user/user/model");
 const Account = require("../../account/model");
@@ -13,6 +14,64 @@ const {
   attachDisplayContentToLot,
 } = require("../../../utils/inventoryDisplayContent");
 
+const BLOCKED_LISTING = new Set(["category-navigation-only"]);
+const RESTRICTED_LISTING = new Set(["pre-approval-required", "manual-review-only"]);
+
+function normalizeFilterValues(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  const out = {};
+  for (const [k, v] of Object.entries(raw)) {
+    if (v == null) continue;
+    const s = String(v).trim();
+    if (!s) continue;
+    out[k] = s;
+  }
+  return Object.keys(out).length ? out : null;
+}
+
+async function assertProductListable(productId, { isAdmin = false } = {}) {
+  const product = await Product.findByPk(productId);
+  if (!product) {
+    const err = new Error("محصول یافت نشد");
+    err.status = 404;
+    throw err;
+  }
+  const policy = product.listingPolicy || (product.isOrderable ? "conditional" : "category-navigation-only");
+  if (!product.isOrderable || BLOCKED_LISTING.has(policy)) {
+    const err = new Error("این دسته فقط برای ناوبری است و قابل ثبت موجودی نیست");
+    err.status = 400;
+    throw err;
+  }
+  if (RESTRICTED_LISTING.has(policy) && !isAdmin) {
+    const err = new Error("ثبت موجودی برای این محصول نیاز به تأیید ادمین دارد");
+    err.status = 403;
+    throw err;
+  }
+
+  const allowedUnits = Array.isArray(product.allowedMeasurementUnits)
+    ? product.allowedMeasurementUnits
+    : Array.isArray(product.validUnits)
+      ? product.validUnits
+      : [];
+  const allowedPackaging = Array.isArray(product.allowedPackagingTypes)
+    ? product.allowedPackagingTypes
+    : [];
+
+  return { product, allowedUnits, allowedPackaging, policy };
+}
+
+function validateUnitAndPackaging(payload, { allowedUnits, allowedPackaging }) {
+  if (payload.unit && allowedUnits.length && !allowedUnits.includes(payload.unit)) {
+    const err = new Error(`واحد اندازه‌گیری مجاز نیست. واحدهای مجاز: ${allowedUnits.join(", ")}`);
+    err.status = 400;
+    throw err;
+  }
+  if (payload.packagingType && allowedPackaging.length && !allowedPackaging.includes(payload.packagingType)) {
+    const err = new Error(`نوع بسته‌بندی مجاز نیست. گزینه‌ها: ${allowedPackaging.join(", ")}`);
+    err.status = 400;
+    throw err;
+  }
+}
 const supplierInclude = {
   model: User,
   as: "supplier",
@@ -84,6 +143,23 @@ function formatLotRecord(lot) {
 
 function prepareLotPayload(body) {
   const payload = { ...body };
+  if (body.filterValues !== undefined) {
+    payload.filterValues = normalizeFilterValues(body.filterValues);
+  }
+  if (body.hsCode !== undefined) {
+    const hs = body.hsCode != null ? String(body.hsCode).trim() : "";
+    payload.hsCode = hs || null;
+    if (hs) {
+      payload.filterValues = {
+        ...(payload.filterValues || normalizeFilterValues(body.filterValues) || {}),
+        hsCode: hs,
+      };
+    }
+  }
+  if (body.packagingType !== undefined) {
+    const p = body.packagingType != null ? String(body.packagingType).trim() : "";
+    payload.packagingType = p || null;
+  }
   if (body.displayContent !== undefined) {
     return applyDisplayContentToPayload(payload, body);
   }
@@ -106,11 +182,14 @@ function applyHashtagsToPayload(payload, body) {
 const create = async (req, res) => {
   try {
     const payload = prepareLotPayload(req.body);
+    const isAdmin = Boolean(req.user?.roles?.includes?.("Administrator") || req.user?.isAdmin);
+    const { allowedUnits, allowedPackaging } = await assertProductListable(payload.productId, { isAdmin });
+    validateUnitAndPackaging(payload, { allowedUnits, allowedPackaging });
     const created = await InventoryLot.create(payload);
     res.status(201).json({ success: true, data: formatLotRecord(created) });
   } catch (error) {
-    if (error.status === 400) {
-      return res.status(400).json({ success: false, message: error.message });
+    if (error.status === 400 || error.status === 403 || error.status === 404) {
+      return res.status(error.status).json({ success: false, message: error.message });
     }
     throw error;
   }
@@ -119,14 +198,42 @@ const create = async (req, res) => {
 const update = async (req, res) => {
   const id = req.params.id;
   try {
+    const existing = await InventoryLot.findByPk(id);
+    if (!existing) return res.status(404).json({ success: false, message: "Not found" });
     const payload = prepareLotPayload(req.body);
+    const productId = payload.productId != null ? payload.productId : existing.productId;
+    const product = await Product.findByPk(productId);
+    if (!product) return res.status(404).json({ success: false, message: "محصول یافت نشد" });
+    const allowedUnits = Array.isArray(product.allowedMeasurementUnits)
+      ? product.allowedMeasurementUnits
+      : Array.isArray(product.validUnits)
+        ? product.validUnits
+        : [];
+    const allowedPackaging = Array.isArray(product.allowedPackagingTypes)
+      ? product.allowedPackagingTypes
+      : [];
+    const unitCheck = {
+      unit: payload.unit !== undefined ? payload.unit : existing.unit,
+      packagingType: payload.packagingType !== undefined ? payload.packagingType : existing.packagingType,
+    };
+    validateUnitAndPackaging(unitCheck, { allowedUnits, allowedPackaging });
     const [count] = await InventoryLot.update(payload, { where: { id } });
     if (!count) return res.status(404).json({ success: false, message: "Not found" });
-    const updated = await InventoryLot.findByPk(id);
-    res.json({ success: true, data: formatLotRecord(updated) });
+    const updated = await InventoryLot.findByPk(id, {
+      include: [
+        {
+          model: CustomAttributeValue,
+          as: "attributes",
+          include: [{ model: CustomAttributeDefinition, as: "definition", attributes: ["id", "name", "type", "options"] }],
+        },
+        supplierInclude,
+      ],
+    });
+    const [data] = await attachLotCoverImages([updated]);
+    res.json({ success: true, data });
   } catch (error) {
-    if (error.status === 400) {
-      return res.status(400).json({ success: false, message: error.message });
+    if (error.status === 400 || error.status === 403 || error.status === 404) {
+      return res.status(error.status).json({ success: false, message: error.message });
     }
     throw error;
   }

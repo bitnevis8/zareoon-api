@@ -14,6 +14,7 @@ router.post("/verify/mobile", authController.verifyMobileCode); // تأیید ک
 router.post("/login", authController.login); // لاگین کاربر
 router.get("/me", authenticateUser, authController.getUserData); // محافظت شده با middleware
 router.put("/profile", authenticateUser, authController.updateProfile);
+router.post("/become-seller", authenticateUser, authController.becomeSeller); // عضویت فروشندگان
 router.post("/logout", authController.logout); // مسیر خروج
 
 // مسیرهای جدید سیستم احراز هویت

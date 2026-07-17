@@ -13,11 +13,7 @@ const seedLocations = require("../../../modules/location/seeder");
 // Product categories merged into products
 const seedProducts = require("../../../modules/farmer/product/seeder");
 const seedAttributeDefinitions = require("../../../modules/farmer/customAttributeDefinition/seeder");
-const seedAttributeValues = require("../../../modules/farmer/customAttributeValue/seeder");
 const seedInventoryLots = require("../../../modules/farmer/inventoryLot/seeder");
-const seedOrders = require("../../../modules/farmer/order/seeder");
-const seedOrderItems = require("../../../modules/farmer/orderItem/seeder");
-const seedTransactionHistory = require("../../../modules/farmer/transactionHistory/seeder");
 const seedTradeServiceProviders = require("../../../modules/tradeServiceProvider/seeder");
 
 // Group seeders by module for better organization and control
@@ -50,8 +46,9 @@ async function runSeeders() {
   // 3. Run Farmer module (Products only; categories merged)
   await runSeederGroup([seedProducts, seedAttributeDefinitions], "Farmer Product Data");
 
-    // 4. Run Farmer inventory and orders (optional empty)
-    await runSeederGroup([seedInventoryLots, seedOrders, seedOrderItems, seedAttributeValues, seedTransactionHistory], "Farmer Operational Data");
+    // 4. Clear demo inventory (no default stock). Skip demo orders/history.
+    await runSeederGroup([seedInventoryLots], "Farmer Inventory Cleanup");
+    // Demo orders / attribute values / transaction history are intentionally not seeded.
 
     await runSeederGroup([seedTradeServiceProviders], "Trade Service Providers");
 

@@ -1,95 +1,32 @@
 const InventoryLot = require("./model");
-const User = require("../../user/user/model");
-const Product = require("../product/model");
-const seederData = require("./seederData.json");
+const { Op } = require("sequelize");
+const CustomAttributeValue = require("../customAttributeValue/model");
+const TransactionHistory = require("../transactionHistory/model");
 
-const SLUG_ALIASES = {
-  "date-klooteh": "dried-dates",
-  "date-estamaran": "dried-dates",
-  "date-zahidi-iraq": "dried-dates",
-  "date-piarom": "dried-dates",
-  "date-rabbi-iranshahr": "dried-dates",
-  "urea-fertilizer": "fertilizer",
-};
+/** Former demo lot IDs from seederData (dates, aluminum powder, fertilizer, pistachio). */
+const DEMO_LOT_IDS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-async function resolveProductId(lot) {
-  const candidates = [];
-  if (lot.productSlug) {
-    candidates.push(lot.productSlug);
-    if (SLUG_ALIASES[lot.productSlug]) candidates.push(SLUG_ALIASES[lot.productSlug]);
-  }
-
-  for (const slug of candidates) {
-    const bySlug = await Product.findOne({ where: { slug } });
-    if (bySlug) return bySlug.id;
-  }
-  if (lot.productName) {
-    const byName = await Product.findOne({ where: { name: lot.productName } });
-    if (byName) return byName.id;
-  }
-  if (lot.productEnglishName) {
-    const byEnglishName = await Product.findOne({ where: { englishName: lot.productEnglishName } });
-    if (byEnglishName) return byEnglishName.id;
-  }
-  if (lot.productId) {
-    const byId = await Product.findByPk(lot.productId);
-    if (byId) return byId.id;
-  }
-  return null;
-}
-
+/**
+ * Demo inventory lots are intentionally not seeded.
+ * Removes only the known demo lot IDs so real seller inventory is preserved.
+ */
 const seedInventoryLots = async () => {
-  console.log("🌱 Seeding Inventory Lots...");
-  const lots = seederData.data || seederData;
-  for (const l of lots) {
-    let farmerId = l.farmerId;
+  console.log("🌱 Removing demo Inventory Lots (no default stock)...");
 
-    if (!farmerId && l.farmerEmail) {
-      const farmerByEmail = await User.findOne({ where: { email: l.farmerEmail } });
-      if (!farmerByEmail) {
-        console.warn(`⚠️ Skip inventory lot ${l.id}: farmer email ${l.farmerEmail} not found`);
-        continue;
-      }
-      farmerId = farmerByEmail.id;
-    }
-
-    const farmer = await User.findByPk(farmerId);
-    if (!farmer) {
-      console.warn(`⚠️ Skip inventory lot ${l.id}: farmer ${farmerId} not found`);
-      continue;
-    }
-
-    const productId = await resolveProductId(l);
-    if (!productId) {
-      console.warn(
-        `⚠️ Skip inventory lot ${l.id}: product not found (slug=${l.productSlug || "-"}, id=${l.productId || "-"})`
-      );
-      continue;
-    }
-
-    const data = {
-      id: l.id,
-      farmerId,
-      productId,
-      englishName: l.englishName || null,
-      arabicName: l.arabicName || null,
-      russianName: l.russianName || null,
-      qualityGrade: l.qualityGrade,
-      status: l.status || "harvested",
-      unit: l.unit,
-      totalQuantity: l.totalQuantity,
-      reservedQuantity: l.reservedQuantity || 0,
-      price: l.price || null,
-      minimumOrderQuantity: l.minimumOrderQuantity || null,
-      tieredPricing: l.tieredPricing || null,
-      areaHectare: l.areaHectare || null,
-      yieldEstimatePerHectare: l.yieldEstimatePerHectare || null
-    };
-    const existed = await InventoryLot.findByPk(data.id);
-    if (!existed) await InventoryLot.create(data); else await InventoryLot.update(data, { where: { id: data.id } });
+  try {
+    await CustomAttributeValue.destroy({ where: { inventoryLotId: { [Op.in]: DEMO_LOT_IDS } } });
+  } catch (e) {
+    console.warn("⚠️ Could not clear demo attribute values:", e.message);
   }
-  console.log("✅ Inventory Lots seeding completed!");
+
+  try {
+    await TransactionHistory.destroy({ where: { inventoryLotId: { [Op.in]: DEMO_LOT_IDS } } });
+  } catch (e) {
+    console.warn("⚠️ Could not clear demo transaction history:", e.message);
+  }
+
+  const deleted = await InventoryLot.destroy({ where: { id: { [Op.in]: DEMO_LOT_IDS } } });
+  console.log(`✅ Demo inventory cleared (removed ${deleted} lots). No default lots seeded.`);
 };
 
 module.exports = seedInventoryLots;
-

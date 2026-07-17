@@ -53,7 +53,7 @@ Product.init(
     translations: { type: DataTypes.JSON, allowNull: true },
     translationStatus: { type: DataTypes.JSON, allowNull: true },
     translationReview: { type: DataTypes.JSON, allowNull: true },
-    unitSchemaVersion: { type: DataTypes.INTEGER, allowNull: true },
+    unitSchemaVersion: { type: DataTypes.STRING(16), allowNull: true },
   },
   {
     sequelize,

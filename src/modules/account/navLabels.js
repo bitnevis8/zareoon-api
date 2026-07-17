@@ -2,21 +2,21 @@ const { resolveDisplayName, getProfileFieldsMap } = require("./profileService");
 const Account = require("./model");
 
 const ENTITY_NAV_BADGES = {
-  individual: "یوزر",
-  company: "کمپانی",
-  trader: "ساپلایر",
-  manufacturer: "ساپلایر",
-  distributor: "کمپانی",
+  individual: "کاربر",
+  company: "شرکت",
+  trader: "فروشنده",
+  manufacturer: "فروشنده",
+  distributor: "شرکت",
 };
 
-const SUPPLIER_ROLE_SLUGS = new Set(["supplier", "farmer", "loader"]);
+const SELLER_ROLE_SLUGS = new Set(["seller", "supplier", "farmer", "loader"]);
 
-function userHasSupplierRole(user) {
+function userHasSellerRole(user) {
   return (user.userRoles || user.roles || []).some((role) => {
     const slug = String(role.nameEn || role.name || "")
       .toLowerCase()
       .replace(/\s+/g, "_");
-    return SUPPLIER_ROLE_SLUGS.has(slug);
+    return SELLER_ROLE_SLUGS.has(slug) || slug === "seller";
   });
 }
 
@@ -28,9 +28,9 @@ async function buildAccountNav(user) {
     `کاربر ${user.id}`;
 
   if (!account) {
-    const isSupplier = userHasSupplierRole(user);
+    const isSeller = userHasSellerRole(user);
     return {
-      navBadge: isSupplier ? "ساپلایر" : "یوزر",
+      navBadge: isSeller ? "فروشنده" : "کاربر",
       navTitle: fallbackName,
       entityType: null,
       profileSlug: null,
@@ -42,7 +42,7 @@ async function buildAccountNav(user) {
   const navTitle = displayName || account.profileSlug || fallbackName;
 
   return {
-    navBadge: ENTITY_NAV_BADGES[account.entityType] || "یوزر",
+    navBadge: ENTITY_NAV_BADGES[account.entityType] || "کاربر",
     navTitle,
     entityType: account.entityType,
     profileSlug: account.profileSlug,

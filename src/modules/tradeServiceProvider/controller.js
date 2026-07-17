@@ -3,6 +3,7 @@ const { L1_CATEGORY_IDS } = require("./model");
 const User = require("../user/user/model");
 const { Op } = require("sequelize");
 const { isTradeProvidersAutoApprove, validateRegistrationForServices, filterPublicProviders } = require("../siteSetting/service");
+const { ensureServiceProviderRole } = require("../../utils/assignRole");
 
 const userAttrs = ["id", "firstName", "lastName", "username", "mobile", "email"];
 
@@ -189,6 +190,14 @@ const create = async (req, res) => {
       notes: notes?.trim() || null,
       status: initialStatus,
     });
+
+    if (authUserId) {
+      try {
+        await ensureServiceProviderRole(authUserId);
+      } catch (roleErr) {
+        console.warn("Could not assign service_provider role:", roleErr?.message || roleErr);
+      }
+    }
 
     res.status(201).json({
       success: true,

@@ -60,7 +60,10 @@ function mapNodeToProduct(n) {
     translations: tr,
     translationStatus: n.translationStatus || null,
     translationReview: n.translationReview || null,
-    unitSchemaVersion: Number.isFinite(n.unitSchemaVersion) ? n.unitSchemaVersion : null,
+    unitSchemaVersion:
+      n.unitSchemaVersion != null && String(n.unitSchemaVersion).trim()
+        ? String(n.unitSchemaVersion).trim()
+        : null,
   };
 }
 

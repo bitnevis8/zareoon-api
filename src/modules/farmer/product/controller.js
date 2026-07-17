@@ -110,6 +110,16 @@ const list = async (req, res) => {
       "level",
       "isLeaf",
       "translations",
+      "filters",
+      "defaultMeasurementUnit",
+      "allowedMeasurementUnits",
+      "allowedPackagingTypes",
+      "listingPolicy",
+      "attributeSetId",
+      "tradeCompliance",
+      "seo",
+      "metaTitle",
+      "metaDescription",
     ];
   }
   if (q && req.query.limit !== undefined) {

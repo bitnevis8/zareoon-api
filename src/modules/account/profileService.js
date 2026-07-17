@@ -219,7 +219,7 @@ async function formatAccountPublic(account, user) {
     country: account.country,
     isPublic: account.isPublic,
     profileFields,
-    profileUrl: account.profileSlug ? `/tamin/${account.profileSlug}` : null,
+    profileUrl: account.profileSlug ? `/providers/${account.profileSlug}` : null,
     memberSince: account.createdAt || user.createdAt,
   };
 }

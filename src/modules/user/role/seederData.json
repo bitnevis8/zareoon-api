@@ -2,31 +2,26 @@
   {
     "name": "super_admin",
     "nameEn": "Super Admin",
-    "nameFa": "مدیر کل",
-    "description": "دسترسی کامل به تمام بخش‌های مدیریتی و تنظیمات سیستم"
+    "nameFa": "مدیر کل"
   },
   {
     "name": "admin",
     "nameEn": "Admin",
-    "nameFa": "مدیر",
-    "description": "مدیریت کاربران، تامین، سفارش‌ها و خدمات بازرگانی"
+    "nameFa": "مدیر"
   },
   {
-    "name": "employee",
-    "nameEn": "Employee",
-    "nameFa": "کارمند",
-    "description": "دسترسی سازمانی محدود به بخش‌های عملیاتی"
+    "name": "user",
+    "nameEn": "User",
+    "nameFa": "کاربر"
   },
   {
-    "name": "supplier",
-    "nameEn": "Supplier",
-    "nameFa": "تأمین‌کننده",
-    "description": "ثبت و مدیریت محصولات شخصی و پیگیری سفارشات مشتری"
+    "name": "seller",
+    "nameEn": "Seller",
+    "nameFa": "فروشنده"
   },
   {
-    "name": "customer",
-    "nameEn": "Customer",
-    "nameFa": "کاربر معمولی",
-    "description": "مشاهده کاتالوگ، ثبت سفارش و پیگیری خریدها"
+    "name": "service_provider",
+    "nameEn": "Service Provider",
+    "nameFa": "خدمات‌دهنده"
   }
 ]

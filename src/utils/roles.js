@@ -1,14 +1,15 @@
-/** نقش‌های فعال سامانه — slug در فیلد name جدول roles */
+/** نقش‌های سامانه: super_admin, admin, user, seller, service_provider */
 
 const ADMIN_ROLES = new Set(["super_admin", "admin"]);
-const SUPPLIER_ROLES = new Set(["supplier", "farmer", "loader"]);
+const SELLER_ROLES = new Set(["seller"]);
 const LEGACY_ADMIN_ALIASES = new Set(["administrator"]);
 
 function normalizeRoleSlug(role) {
   const raw = (role?.name || role?.nameEn || "").toLowerCase().trim().replace(/\s+/g, "_");
   if (LEGACY_ADMIN_ALIASES.has(raw)) return "admin";
   if (raw === "superadmin") return "super_admin";
-  if (raw === "farmer") return "supplier";
+  if (raw === "farmer" || raw === "loader" || raw === "supplier") return "seller";
+  if (raw === "customer" || raw === "regular_user") return "user";
   return raw;
 }
 
@@ -22,35 +23,46 @@ function isSuperAdmin(user) {
 
 function isAdmin(user) {
   const roles = getRoleSlugs(user);
-  return roles.some((r) => ADMIN_ROLES.has(r) || LEGACY_ADMIN_ALIASES.has(r));
+  return roles.some((r) => ADMIN_ROLES.has(r));
 }
 
-function isEmployee(user) {
-  return getRoleSlugs(user).includes("employee");
+function isSeller(user) {
+  return getRoleSlugs(user).some((r) => SELLER_ROLES.has(r));
 }
 
+/** @deprecated use isSeller */
 function isSupplier(user) {
-  return getRoleSlugs(user).some((r) => SUPPLIER_ROLES.has(r));
+  return isSeller(user);
 }
 
+function isServiceProvider(user) {
+  return getRoleSlugs(user).includes("service_provider");
+}
+
+function isUser(user) {
+  return getRoleSlugs(user).includes("user");
+}
+
+/** @deprecated use isUser */
 function isCustomer(user) {
-  return getRoleSlugs(user).includes("customer");
+  return isUser(user);
 }
 
-/** ویرایش صفحه عمومی — تأمین‌کننده یا مدیر */
 function canManagePublicProfile(user) {
-  return isSupplier(user) || isAdmin(user);
+  return isSeller(user) || isAdmin(user);
 }
 
 module.exports = {
   ADMIN_ROLES,
-  SUPPLIER_ROLES,
+  SELLER_ROLES,
   normalizeRoleSlug,
   getRoleSlugs,
   isSuperAdmin,
   isAdmin,
-  isEmployee,
+  isSeller,
   isSupplier,
+  isServiceProvider,
+  isUser,
   isCustomer,
   canManagePublicProfile,
 };

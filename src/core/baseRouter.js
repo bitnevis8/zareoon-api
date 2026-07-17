@@ -17,6 +17,7 @@ const supplierProfileRouter = require('../modules/supplierProfile/route');
 const applicantRequestRouter = require('../modules/applicantRequest/route');
 const escrowRouter = require('../modules/escrow/route');
 const subscriptionRouter = require('../modules/subscription/route');
+const backupRouter = require('../modules/backup/route');
 
 // Use routers
 baseRouter.use('/user', userRouter);
@@ -35,5 +36,6 @@ baseRouter.use('/tamin', supplierProfileRouter);
 baseRouter.use('/applicant-request', applicantRequestRouter);
 baseRouter.use('/escrow', escrowRouter);
 baseRouter.use('/subscription', subscriptionRouter);
+baseRouter.use('/backup', backupRouter);
 
 module.exports = baseRouter;

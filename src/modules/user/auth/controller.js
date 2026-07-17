@@ -1,6 +1,7 @@
 const BaseController = require("../../../core/baseController");
 const User = require("../user/model");
 const Role = require("../role/model");
+const { findDefaultUserRole, ensureSellerRole } = require("../../../utils/assignRole");
 const bcrypt = require("bcryptjs");
 const { SignJWT, jwtVerify } = require("jose");
 const config = require("config");
@@ -239,13 +240,10 @@ class AuthController extends BaseController {
     try {
       const value = req.body;
 
-      // ✅ یافتن نقش 'Customer'
-      const defaultUserRole = await Role.findOne({
-        where: { name: "customer" }, // یا نام فارسی: { nameFa: "مشتری" }
-      });
+      const defaultUserRole = await findDefaultUserRole();
 
       if (!defaultUserRole) {
-        console.error("❌ Default 'customer' role not found. Please create it.");
+        console.error("❌ Default 'user' role not found. Please create it.");
         return this.response(res, 500, false, "نقش پیش‌فرض یافت نشد.");
       }
 
@@ -352,13 +350,10 @@ class AuthController extends BaseController {
     try {
       const value = req.body;
 
-      // ✅ یافتن نقش 'Customer'
-      const defaultUserRole = await Role.findOne({
-        where: { name: "customer" }, // یا نام فارسی: { nameFa: "مشتری" }
-      });
+      const defaultUserRole = await findDefaultUserRole();
 
       if (!defaultUserRole) {
-        console.error("❌ Default 'customer' role not found. Please create it.");
+        console.error("❌ Default 'user' role not found. Please create it.");
         return this.response(res, 500, false, "نقش پیش‌فرض یافت نشد.");
       }
 
@@ -1142,12 +1137,10 @@ class AuthController extends BaseController {
       }
 
       // یافتن نقش 'Customer'
-      const defaultUserRole = await Role.findOne({
-        where: { name: "customer" },
-      });
+      const defaultUserRole = await findDefaultUserRole();
 
       if (!defaultUserRole) {
-        console.error("❌ Default 'customer' role not found. Please create it.");
+        console.error("❌ Default 'user' role not found. Please create it.");
         return this.response(res, 500, false, "نقش پیش‌فرض یافت نشد.");
       }
 
@@ -1288,6 +1281,39 @@ class AuthController extends BaseController {
     } catch (error) {
       console.error("❌ Complete registration failed:", error);
       this.response(res, 500, false, "خطای داخلی سرور", null, error);
+    }
+  }
+
+  /** عضویت فروشندگان — افزودن نقش seller به کاربر جاری */
+  async becomeSeller(req, res) {
+    try {
+      const userId = req.user?.userId || req.user?.id;
+      if (!userId) {
+        return this.response(res, 401, false, "وارد حساب کاربری شوید.");
+      }
+
+      const result = await ensureSellerRole(userId);
+      if (!result.ok) {
+        return this.response(res, 500, false, "نقش فروشنده در سامانه تعریف نشده است.");
+      }
+
+      const user = await this.User.findByPk(userId, {
+        include: [{ model: Role, as: "userRoles" }],
+      });
+      if (!user) {
+        return this.response(res, 404, false, "کاربر یافت نشد.");
+      }
+
+      return this.response(
+        res,
+        200,
+        true,
+        result.created ? "عضویت فروشندگی با موفقیت فعال شد." : "شما از قبل فروشنده هستید.",
+        this.serializeUser(user)
+      );
+    } catch (error) {
+      console.error("becomeSeller error:", error);
+      return this.response(res, 500, false, "خطا در فعال‌سازی عضویت فروشنده", null, error);
     }
   }
 }
