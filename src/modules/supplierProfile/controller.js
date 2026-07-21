@@ -19,7 +19,7 @@ const Product = require("../farmer/product/model");
 const Order = require("../farmer/order/model");
 const OrderItem = require("../farmer/orderItem/model");
 const { isSupplier, isAdmin } = require("../../utils/roles");
-const { slugify, ensureUniqueSlug, generateProfileSlug } = require("./utils");
+const { slugify, ensureUniqueSlug, generateProfileSlug, assertPublicSlugAvailable, validatePublicSlug, isPublicSlugAvailable } = require("./utils");
 const {
   ENTITY_TYPE_LABELS,
   ENTITY_FIELD_SCHEMAS,
@@ -28,11 +28,21 @@ const {
 const { ENTITY_NAV_BADGES } = require("../account/navLabels");
 const File = require("../fileUpload/model");
 const { formatHashtags } = require("../../utils/hashtags");
+const { getPageDeletionGraceDays } = require("../siteSetting/service");
+const {
+  isPubliclyVisible,
+  canAcceptOrders,
+  maybeArchiveExpired,
+  publicLifecyclePayload,
+  normalizePageStatus,
+  PAGE_STATUSES,
+} = require("../../utils/pageLifecycle");
 const {
   DEFAULT_BUSINESS_HOURS,
   getProfileFieldsMap,
   saveProfileFields,
   getOrCreateAccountForUser,
+  setUserPageVisibility,
   findAccountBySlugOrId,
   findPublicAccountBySlugOrId,
   findSupplierBySlugOrId,
@@ -166,7 +176,7 @@ async function attachLotCoverImages(lots) {
   }));
 }
 
-function mapActivePublicProducts(lots) {
+function mapActivePublicProducts(lots, { includeEmpty = false } = {}) {
   return lots
     .map((lot) => {
       const total = parseFloat(lot.totalQuantity || 0);
@@ -188,27 +198,50 @@ function mapActivePublicProducts(lots) {
         hashtags: formatHashtags(lot.hashtags),
       };
     })
-    .filter((p) => p.availableQuantity > 0);
+    .filter((p) => includeEmpty || p.availableQuantity > 0);
 }
 
 const getPublicProfile = async (req, res) => {
   try {
-    const found = await findPublicAccountBySlugOrId(req.params.slug);
+    const key = String(req.params.slug || "").trim();
+    if (!key || /^\d+$/.test(key)) {
+      return res.status(404).json({ success: false, message: "صفحه تأمین‌کننده یافت نشد" });
+    }
+
+    const found = await findPublicAccountBySlugOrId(key);
     const viewerId = req.user?.userId || req.user?.id;
 
     if (!found) {
       return res.status(404).json({ success: false, message: "صفحه تأمین‌کننده یافت نشد" });
     }
 
-    let { account, user } = found;
+    const { account, user } = found;
 
-    if (account.isPublic === false && viewerId !== user.id) {
-      return res.status(404).json({ success: false, message: "این پروفایل عمومی نیست" });
+    if (!account.profileSlug) {
+      return res.status(404).json({ success: false, message: "صفحه تأمین‌کننده یافت نشد" });
     }
 
-    account = await getOrCreateAccountForUser(user);
+    const graceDays = await getPageDeletionGraceDays();
+    const archived = await maybeArchiveExpired(account, graceDays);
+    if (archived.changed) await account.reload();
+
+    const shopStatus = normalizePageStatus(account.shopStatus);
+    const isOwner = Number(viewerId) === Number(user.id);
+
+    if (account.isPublic === false && !isOwner) {
+      return res.status(404).json({ success: false, message: "این پروفایل عمومی نیست" });
+    }
+    if (!isPubliclyVisible(shopStatus) && !isOwner) {
+      return res.status(404).json({ success: false, message: "صفحه تأمین‌کننده یافت نشد" });
+    }
 
     const profile = await formatAccountPublic(account, user);
+    const lifecycle = publicLifecyclePayload(shopStatus, {
+      deletionRequestedAt: account.deletionRequestedAt,
+      graceDays,
+    });
+    Object.assign(profile, lifecycle);
+    profile.shopStatus = shopStatus;
     profile.entityTypeLabel = ENTITY_TYPE_LABELS[account.entityType] || account.entityType;
     profile.navBadge = ENTITY_NAV_BADGES[account.entityType] || "یوزر";
     profile.fieldSchema = getSchemaForEntity(account.entityType);
@@ -222,7 +255,7 @@ const getPublicProfile = async (req, res) => {
       isFollowing = !!(await SupplierFollow.findOne({
         where: { followerId: viewerId, followingId: user.id },
       }));
-      if (viewerId !== user.id) {
+      if (viewerId !== user.id && canAcceptOrders(shopStatus)) {
         canReview = !!(await hasTradedWith(viewerId, user.id));
         myReview = await SupplierReview.findOne({
           where: { supplierId: user.id, reviewerId: viewerId },
@@ -241,7 +274,9 @@ const getPublicProfile = async (req, res) => {
       order: [["updatedAt", "DESC"]],
     });
     const lotsWithCovers = await attachLotCoverImages(lotsRaw);
-    const activeProducts = mapActivePublicProducts(lotsWithCovers);
+    const activeProducts = mapActivePublicProducts(lotsWithCovers, {
+      includeEmpty: isOwner,
+    });
 
     res.json({
       success: true,
@@ -251,8 +286,9 @@ const getPublicProfile = async (req, res) => {
         isFollowing,
         canReview,
         myReview,
-        isOwner: viewerId === user.id,
-        products: activeProducts,
+        isOwner,
+        products: canAcceptOrders(shopStatus) || isOwner ? activeProducts : [],
+        canOrder: canAcceptOrders(shopStatus),
       },
     });
   } catch (error) {
@@ -352,22 +388,109 @@ const updateMyProfile = async (req, res) => {
     if (body.headline !== undefined) accountUpdates.headline = String(body.headline).slice(0, 200);
     if (body.bio !== undefined) accountUpdates.bio = String(body.bio).slice(0, 5000);
     if (body.publicPhone !== undefined) accountUpdates.publicPhone = String(body.publicPhone).slice(0, 30);
+    if (body.publicLandline !== undefined) {
+      accountUpdates.publicLandline = String(body.publicLandline || "").slice(0, 30) || null;
+    }
+    if (body.publicEmail !== undefined) {
+      accountUpdates.publicEmail = String(body.publicEmail || "").trim().slice(0, 120) || null;
+    }
+    {
+      const { applyShopContactsToAccountPatch } = require("../../utils/shopContacts");
+      applyShopContactsToAccountPatch(body, accountUpdates);
+    }
     if (body.coverImage !== undefined) accountUpdates.coverImage = body.coverImage;
     if (body.businessHours !== undefined) accountUpdates.businessHours = body.businessHours;
     if (body.country !== undefined) accountUpdates.country = String(body.country).slice(0, 100);
-    if (body.isPublic !== undefined) accountUpdates.isPublic = !!body.isPublic;
-    if (body.isProfilePublic !== undefined) accountUpdates.isPublic = !!body.isProfilePublic;
+    if (body.addressLabel !== undefined) {
+      accountUpdates.addressLabel = String(body.addressLabel || "").trim().slice(0, 300) || null;
+    }
+    if (body.latitude !== undefined || body.longitude !== undefined) {
+      const lat = body.latitude != null && body.latitude !== "" ? Number(body.latitude) : null;
+      const lng = body.longitude != null && body.longitude !== "" ? Number(body.longitude) : null;
+      if (lat != null && Number.isFinite(lat) && lng != null && Number.isFinite(lng)) {
+        accountUpdates.latitude = lat;
+        accountUpdates.longitude = lng;
+      } else if (body.latitude === null || body.longitude === null) {
+        accountUpdates.latitude = null;
+        accountUpdates.longitude = null;
+      }
+    }
+
+    const wantsPublic =
+      body.isPublic !== undefined
+        ? !!body.isPublic
+        : body.isProfilePublic !== undefined
+          ? !!body.isProfilePublic
+          : undefined;
+    if (wantsPublic !== undefined) {
+      try {
+        await setUserPageVisibility(userId, wantsPublic, { requirePermission: true });
+        await account.reload();
+      } catch (visErr) {
+        return res.status(visErr.statusCode || 403).json({ success: false, message: visErr.message });
+      }
+    }
 
     if (body.profileSlug !== undefined) {
-      const clean = slugify(body.profileSlug);
-      if (clean.length < 3) {
-        return res.status(400).json({ success: false, message: "نام کاربری صفحه باید حداقل ۳ کاراکتر باشد" });
+      const nextRaw = String(body.profileSlug || "").trim();
+      const current = String(account.profileSlug || "").toLowerCase();
+      const {
+        slugify,
+        assertPublicSlugAvailable: assertSlug,
+      } = require("../../utils/publicPageSlug");
+      const nextNorm = slugify(nextRaw);
+
+      if (!account.profileSlug) {
+        try {
+          accountUpdates.profileSlug = await assertSlug(nextRaw, {
+            excludeAccountId: account.id,
+            excludeUserId: userId,
+          });
+        } catch (slugErr) {
+          return res.status(slugErr.statusCode || 400).json({ success: false, message: slugErr.message });
+        }
+      } else if (nextNorm && nextNorm !== current) {
+        // تغییر اسلاگ فوری نیست — درخواست زمان‌بندی‌شده
+        try {
+          const { scheduleSlugChange, formatPendingBanner } = require("../publicSlug/service");
+          const scheduled = await scheduleSlugChange(userId, nextRaw);
+          // بقیه فیلدها را ذخیره کن و پیام تغییر آدرس برگردان
+          if (Object.keys(accountUpdates).length) {
+            await account.update(accountUpdates);
+          }
+          if (body.profileFields && typeof body.profileFields === "object") {
+            await saveProfileFields(
+              account.id,
+              accountUpdates.entityType || account.entityType,
+              body.profileFields
+            );
+          }
+          await account.reload();
+          const profile = await formatAccountPublic(account, owner);
+          profile.entityTypeLabel = ENTITY_TYPE_LABELS[account.entityType];
+          profile.fieldSchema = getSchemaForEntity(account.entityType);
+          return res.json({
+            success: true,
+            data: profile,
+            slugChange: formatPendingBanner(scheduled.request),
+            message: scheduled.message,
+          });
+        } catch (slugErr) {
+          return res.status(slugErr.statusCode || 400).json({ success: false, message: slugErr.message });
+        }
       }
-      accountUpdates.profileSlug = await ensureUniqueSlug(clean, account.id);
     }
 
     if (Object.keys(accountUpdates).length) {
       await account.update(accountUpdates);
+    }
+
+    if (accountUpdates.profileSlug) {
+      const TradeServiceProvider = require("../tradeServiceProvider/model");
+      await TradeServiceProvider.update(
+        { profileSlug: accountUpdates.profileSlug },
+        { where: { userId } }
+      );
     }
 
     const entityType = accountUpdates.entityType || account.entityType;
@@ -534,20 +657,285 @@ const getMyProfileSettings = async (req, res) => {
 
     const account = await getOrCreateAccountForUser(owner);
     const profile = await formatAccountPublic(account, owner);
+    const followingCount = await SupplierFollow.count({ where: { followerId: userId } });
 
     res.json({
       success: true,
       data: {
         ...profile,
+        followingCount,
         entityTypeLabel: ENTITY_TYPE_LABELS[account.entityType],
         fieldSchema: getSchemaForEntity(account.entityType),
         entityTypes: Object.entries(ENTITY_TYPE_LABELS).map(([value, label]) => ({ value, label })),
         isProfilePublic: account.isPublic !== false,
+        canHidePublicPage: !!account.canHidePublicPage,
       },
     });
   } catch (error) {
     console.error("getMyProfileSettings:", error);
     res.status(500).json({ success: false, message: "خطا در دریافت تنظیمات" });
+  }
+};
+
+const checkSlugAvailable = async (req, res) => {
+  try {
+    const {
+      validatePublicSlug,
+      isPublicSlugAvailable,
+      loadBlockedPageSlugs,
+      loadSlugLengthRules,
+    } = require("../../utils/publicPageSlug");
+    const [blocked, rules] = await Promise.all([loadBlockedPageSlugs(), loadSlugLengthRules()]);
+    const validated = validatePublicSlug(req.query?.slug || "", blocked, rules);
+    if (!validated.ok) {
+      return res.json({
+        success: true,
+        data: {
+          available: false,
+          slug: validated.slug,
+          message: validated.message,
+          slugRules: rules,
+        },
+      });
+    }
+    const excludeAccountId = req.query?.excludeAccountId ? Number(req.query.excludeAccountId) : null;
+    const excludeUserId = req.user?.userId || req.user?.id || null;
+    const available = await isPublicSlugAvailable(validated.slug, {
+      excludeAccountId,
+      excludeUserId: excludeUserId ? Number(excludeUserId) : null,
+    });
+    res.json({
+      success: true,
+      data: {
+        available,
+        slug: validated.slug,
+        message: available ? "این نام آزاد است" : validated.message || "این نام قبلاً رزرو شده است",
+        slugRules: rules,
+      },
+    });
+  } catch (error) {
+    console.error("checkSlugAvailable:", error);
+    res.status(500).json({ success: false, message: "خطا در بررسی نام" });
+  }
+};
+
+const listRecentPublicShops = async (req, res) => {
+  try {
+    const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 24);
+    const rows = await Account.findAll({
+      where: {
+        profileSlug: { [Op.ne]: null },
+        isPublic: true,
+        shopStatus: { [Op.in]: ["ACTIVE", "PENDING_DELETION", "CLOSED", "SUSPENDED"] },
+      },
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "firstName", "lastName", "username", "avatar"],
+          required: true,
+        },
+      ],
+      order: [
+        ["createdAt", "DESC"],
+        ["id", "DESC"],
+      ],
+      limit: Math.min(limit * 3, 60),
+    });
+
+    const data = [];
+    for (const a of rows) {
+      if (!isPubliclyVisible(a.shopStatus || "ACTIVE")) continue;
+      const u = a.user;
+      const displayName =
+        [u?.firstName, u?.lastName].filter(Boolean).join(" ").trim() ||
+        u?.username ||
+        a.profileSlug;
+      data.push({
+        id: a.id,
+        userId: u?.id,
+        profileSlug: a.profileSlug,
+        displayName,
+        headline: a.headline || null,
+        avatar: u?.avatar || null,
+        profileUrl: `/${a.profileSlug}`,
+        createdAt: a.createdAt,
+      });
+      if (data.length >= limit) break;
+    }
+
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error("listRecentPublicShops:", error);
+    res.status(500).json({ success: false, message: "خطا در دریافت فروشگاه‌ها" });
+  }
+};
+
+const adminListShops = async (req, res) => {
+  try {
+    const items = await Account.findAll({
+      where: { profileSlug: { [Op.ne]: null } },
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "firstName", "lastName", "username", "mobile", "email", "isActive"],
+          required: true,
+        },
+      ],
+      order: [["updatedAt", "DESC"]],
+      limit: 500,
+    });
+    res.json({
+      success: true,
+      data: items.map((a) => ({
+        id: a.id,
+        profileSlug: a.profileSlug,
+        isPublic: a.isPublic !== false,
+        canHidePublicPage: !!a.canHidePublicPage,
+        shopStatus: a.shopStatus || "ACTIVE",
+        deletionRequestedAt: a.deletionRequestedAt || null,
+        headline: a.headline,
+        user: a.user,
+        profileUrl: a.profileSlug ? `/${a.profileSlug}` : null,
+        updatedAt: a.updatedAt,
+      })),
+    });
+  } catch (error) {
+    console.error("adminListShops:", error);
+    res.status(500).json({ success: false, message: "خطا در دریافت فروشگاه‌ها" });
+  }
+};
+
+const adminUpdateShop = async (req, res) => {
+  try {
+    const account = await Account.findByPk(req.params.id);
+    if (!account) return res.status(404).json({ success: false, message: "یافت نشد" });
+
+    const updates = {};
+    if (req.body.canHidePublicPage !== undefined) {
+      updates.canHidePublicPage = !!req.body.canHidePublicPage;
+      if (!updates.canHidePublicPage) {
+        updates.isPublic = true;
+      }
+    }
+    if (req.body.isPublic !== undefined) {
+      updates.isPublic = !!req.body.isPublic;
+    }
+    if (req.body.shopStatus !== undefined) {
+      const next = normalizePageStatus(req.body.shopStatus, null);
+      if (!next || !PAGE_STATUSES.includes(next)) {
+        return res.status(400).json({ success: false, message: "وضعیت فروشگاه نامعتبر است" });
+      }
+      updates.shopStatus = next;
+      if (next === "PENDING_DELETION" && !account.deletionRequestedAt) {
+        updates.deletionRequestedAt = new Date();
+      }
+      if (next === "ACTIVE") {
+        updates.deletionRequestedAt = null;
+      }
+    }
+
+    if (Object.keys(updates).length) {
+      await account.update(updates);
+      if (updates.isPublic !== undefined && account.userId) {
+        const TradeServiceProvider = require("../tradeServiceProvider/model");
+        await TradeServiceProvider.update(
+          { isPublic: updates.isPublic },
+          { where: { userId: account.userId } }
+        );
+      }
+    }
+
+    await account.reload();
+    res.json({
+      success: true,
+      data: {
+        id: account.id,
+        profileSlug: account.profileSlug,
+        isPublic: account.isPublic !== false,
+        canHidePublicPage: !!account.canHidePublicPage,
+        shopStatus: account.shopStatus,
+        deletionRequestedAt: account.deletionRequestedAt,
+      },
+      message: "ذخیره شد",
+    });
+  } catch (error) {
+    console.error("adminUpdateShop:", error);
+    res.status(500).json({ success: false, message: "خطا در ذخیره" });
+  }
+};
+
+const requestShopDeletion = async (req, res) => {
+  try {
+    const userId = req.user?.userId || req.user?.id;
+    if (!userId) return res.status(401).json({ success: false, message: "احراز هویت لازم است" });
+    const account = await Account.findOne({ where: { userId } });
+    if (!account?.profileSlug) {
+      return res.status(404).json({ success: false, message: "فروشگاهی یافت نشد" });
+    }
+    const graceDays = await getPageDeletionGraceDays();
+    await account.update({
+      shopStatus: "PENDING_DELETION",
+      deletionRequestedAt: new Date(),
+    });
+    res.json({
+      success: true,
+      data: {
+        shopStatus: account.shopStatus,
+        deletionRequestedAt: account.deletionRequestedAt,
+      },
+      message: `درخواست بستن فروشگاه ثبت شد. صفحه حدود ${graceDays} روز دیگر نمایش داده می‌شود ولی سفارش جدید قبول نمی‌کند.`,
+    });
+  } catch (error) {
+    console.error("requestShopDeletion:", error);
+    res.status(500).json({ success: false, message: "خطا در ثبت درخواست حذف" });
+  }
+};
+
+const cancelShopDeletion = async (req, res) => {
+  try {
+    const userId = req.user?.userId || req.user?.id;
+    if (!userId) return res.status(401).json({ success: false, message: "احراز هویت لازم است" });
+    const account = await Account.findOne({ where: { userId } });
+    if (!account) return res.status(404).json({ success: false, message: "یافت نشد" });
+    if (normalizePageStatus(account.shopStatus) !== "PENDING_DELETION") {
+      return res.status(400).json({ success: false, message: "درخواست حذفی در جریان نیست" });
+    }
+    await account.update({ shopStatus: "ACTIVE", deletionRequestedAt: null });
+    res.json({ success: true, data: { shopStatus: "ACTIVE" }, message: "فروشگاه دوباره فعال شد" });
+  } catch (error) {
+    console.error("cancelShopDeletion:", error);
+    res.status(500).json({ success: false, message: "خطا در لغو حذف" });
+  }
+};
+
+const getMySocialStats = async (req, res) => {
+  try {
+    const userId = currentUserId(req);
+    if (!userId) return res.status(401).json({ success: false, message: "ورود لازم است" });
+
+    const [followingCount, followerCount] = await Promise.all([
+      SupplierFollow.count({ where: { followerId: userId } }),
+      SupplierFollow.count({ where: { followingId: userId } }),
+    ]);
+
+    let productCount = 0;
+    try {
+      productCount = await InventoryLot.count({
+        where: { farmerId: userId },
+      });
+    } catch {
+      productCount = 0;
+    }
+
+    res.json({
+      success: true,
+      data: { productCount, followerCount, followingCount },
+    });
+  } catch (error) {
+    console.error("getMySocialStats:", error);
+    res.status(500).json({ success: false, message: "خطا در دریافت آمار" });
   }
 };
 
@@ -557,10 +945,17 @@ module.exports = {
   getPublicProfile,
   getPosts,
   getReviews,
-  updateMyProfile,
-  getMyProfileSettings,
   createPost,
   deletePost,
   toggleFollow,
   createReview,
+  getMyProfileSettings,
+  getMySocialStats,
+  updateMyProfile,
+  checkSlugAvailable,
+  listRecentPublicShops,
+  adminListShops,
+  adminUpdateShop,
+  requestShopDeletion,
+  cancelShopDeletion,
 };

@@ -15,6 +15,7 @@ const seedProducts = require("../../../modules/farmer/product/seeder");
 const seedAttributeDefinitions = require("../../../modules/farmer/customAttributeDefinition/seeder");
 const seedInventoryLots = require("../../../modules/farmer/inventoryLot/seeder");
 const seedTradeServiceProviders = require("../../../modules/tradeServiceProvider/seeder");
+const seedClearDefaultShops = require("../../../modules/account/clearDefaultShopsSeeder");
 
 // Group seeders by module for better organization and control
 const userSeeders = [seedRoles, seedUsers, seedUserRoles];
@@ -46,11 +47,11 @@ async function runSeeders() {
   // 3. Run Farmer module (Products only; categories merged)
   await runSeederGroup([seedProducts, seedAttributeDefinitions], "Farmer Product Data");
 
-    // 4. Clear demo inventory (no default stock). Skip demo orders/history.
-    await runSeederGroup([seedInventoryLots], "Farmer Inventory Cleanup");
-    // Demo orders / attribute values / transaction history are intentionally not seeded.
-
-    await runSeederGroup([seedTradeServiceProviders], "Trade Service Providers");
+    // 4. Clear demo shops / inventory / trade providers (no defaults)
+    await runSeederGroup(
+      [seedInventoryLots, seedClearDefaultShops, seedTradeServiceProviders],
+      "Clear Default Shops & Stock"
+    );
 
     console.log("\n✅ All database seeding completed successfully!");
   } catch (error) {

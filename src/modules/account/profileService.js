@@ -4,7 +4,7 @@ const User = require("../user/user/model");
 const sequelize = require("../../core/database/mysql/connection");
 const { Op } = require("sequelize");
 const { isSupplier } = require("../../utils/roles");
-const { generateProfileSlug, slugify, ensureUniqueSlug } = require("../supplierProfile/utils");
+const { slugify, ensureUniqueSlug } = require("../supplierProfile/utils");
 const { pickProfileFields } = require("./entitySchemas");
 
 const DEFAULT_BUSINESS_HOURS = {
@@ -51,7 +51,7 @@ async function saveProfileFields(accountId, entityType, data) {
   return picked;
 }
 
-async function getOrCreateAccountForUser(user, { entityType } = {}) {
+async function getOrCreateAccountForUser(user, { entityType, profileSlug } = {}) {
   let account = await Account.findOne({ where: { userId: user.id } });
   if (!account) {
     try {
@@ -59,6 +59,8 @@ async function getOrCreateAccountForUser(user, { entityType } = {}) {
         userId: user.id,
         entityType: entityType || "individual",
         isPublic: true,
+        canHidePublicPage: false,
+        profileSlug: profileSlug || null,
       });
     } catch (error) {
       // Race / leftover row: unique user_id — re-fetch instead of crashing
@@ -68,10 +70,10 @@ async function getOrCreateAccountForUser(user, { entityType } = {}) {
       if (!account) throw error;
     }
   }
-  if (!account.profileSlug) {
-    const slug = await generateProfileSlug(user);
-    await account.update({ profileSlug: slug });
+  if (profileSlug && !account.profileSlug) {
+    await account.update({ profileSlug });
   }
+  // دیگر slug خودکار نمی‌سازیم — کاربر باید نام را انتخاب کند
   return account;
 }
 
@@ -80,56 +82,41 @@ function userIsSupplierRole(user) {
   return isSupplier({ roles });
 }
 
-async function findUserBySlugOrId(slugOrId) {
-  const slug = decodeURIComponent(String(slugOrId || "")).trim();
-  if (!slug) return null;
+/**
+ * صفحه عمومی فقط با profileSlug انگلیسی (نه id عددی، نه username).
+ */
+async function findPublicAccountBySlugOrId(slugOrId) {
+  const raw = decodeURIComponent(String(slugOrId || "")).trim();
+  if (!raw || /^\d+$/.test(raw)) return null;
 
   const Role = require("../user/role/model");
-  const roleInclude = {
-    model: Role,
-    as: "userRoles",
-    attributes: ["id", "name", "nameEn", "nameFa"],
-    through: { attributes: [] },
-  };
-
-  const isNumeric = /^\d+$/.test(slug);
-  if (isNumeric) {
-    return User.findOne({
-      where: { id: Number(slug), isActive: true },
-      include: [roleInclude],
-    });
-  }
-
-  const byUsername = await User.findOne({
-    where: { username: slug, isActive: true },
-    include: [roleInclude],
-  });
-  if (byUsername) return byUsername;
-
-  return User.findOne({
+  const found = await Account.findOne({
     where: {
-      isActive: true,
-      [Op.and]: [sequelize.where(sequelize.fn("LOWER", sequelize.col("username")), slug.toLowerCase())],
+      profileSlug: { [Op.ne]: null },
+      [Op.and]: [
+        sequelize.where(sequelize.fn("LOWER", sequelize.col("profile_slug")), raw.toLowerCase()),
+      ],
     },
-    include: [roleInclude],
+    include: [
+      {
+        model: User,
+        as: "user",
+        where: { isActive: true },
+        required: true,
+        include: [
+          {
+            model: Role,
+            as: "userRoles",
+            attributes: ["id", "name", "nameEn", "nameFa"],
+            through: { attributes: [] },
+          },
+        ],
+      },
+    ],
   });
-}
 
-/** یافتن حساب عمومی از slug، username یا شناسه کاربر (بدون محدودیت نقش) */
-async function findPublicAccountBySlugOrId(slugOrId) {
-  const slug = decodeURIComponent(String(slugOrId || "")).trim();
-  if (!slug) return null;
-
-  let account = await findAccountBySlugOrId(slug);
-  if (account?.user) {
-    return { account, user: account.user };
-  }
-
-  const user = await findUserBySlugOrId(slug);
-  if (!user) return null;
-
-  account = await getOrCreateAccountForUser(user);
-  return { account, user };
+  if (!found?.user || !found.profileSlug) return null;
+  return { account: found, user: found.user };
 }
 
 /** @deprecated alias — همان findPublicAccountBySlugOrId */
@@ -137,9 +124,11 @@ async function findSupplierBySlugOrId(slugOrId) {
   return findPublicAccountBySlugOrId(slugOrId);
 }
 
+/** داخلی/ادمین: یافتن حساب با slug یا id (نه برای URL عمومی) */
 async function findAccountBySlugOrId(slugOrId, includeUser = true) {
-  const isNumeric = /^\d+$/.test(String(slugOrId));
   const Role = require("../user/role/model");
+  const isNumeric = /^\d+$/.test(String(slugOrId));
+  const slug = decodeURIComponent(String(slugOrId || "")).trim();
 
   const userInclude = includeUser
     ? {
@@ -161,29 +150,18 @@ async function findAccountBySlugOrId(slugOrId, includeUser = true) {
   const include = userInclude ? [userInclude] : [];
 
   if (isNumeric) {
-    const byUser = await Account.findOne({
-      where: { userId: Number(slugOrId) },
+    return Account.findOne({
+      where: { id: Number(slugOrId) },
       include,
     });
-    if (byUser) return byUser;
   }
 
-  const slug = decodeURIComponent(String(slugOrId || "")).trim();
+  if (!slug) return null;
 
-  const bySlug = await Account.findOne({
-    where: isNumeric ? { id: Number(slugOrId) } : { profileSlug: slug },
+  return Account.findOne({
+    where: sequelize.where(sequelize.fn("LOWER", sequelize.col("profile_slug")), slug.toLowerCase()),
     include,
   });
-  if (bySlug) return bySlug;
-
-  if (!isNumeric && slug) {
-    return Account.findOne({
-      where: sequelize.where(sequelize.fn("LOWER", sequelize.col("profile_slug")), slug.toLowerCase()),
-      include,
-    });
-  }
-
-  return null;
 }
 
 function resolveDisplayName(user, entityType, profileFields) {
@@ -214,14 +192,53 @@ async function formatAccountPublic(account, user) {
     headline: account.headline,
     bio: account.bio,
     publicPhone: account.publicPhone,
+    publicLandline: account.publicLandline || null,
+    publicEmail: account.publicEmail || null,
+    shopContacts: (() => {
+      const { normalizeShopContacts } = require("../../utils/shopContacts");
+      return normalizeShopContacts(account.shopContacts, {
+        publicPhone: account.publicPhone,
+        publicLandline: account.publicLandline,
+        publicEmail: account.publicEmail,
+      });
+    })(),
     coverImage: account.coverImage,
     businessHours: account.businessHours || DEFAULT_BUSINESS_HOURS,
     country: account.country,
+    latitude: account.latitude != null ? Number(account.latitude) : null,
+    longitude: account.longitude != null ? Number(account.longitude) : null,
+    addressLabel: account.addressLabel || null,
     isPublic: account.isPublic,
+    canHidePublicPage: !!account.canHidePublicPage,
+    shopStatus: account.shopStatus || "ACTIVE",
+    deletionRequestedAt: account.deletionRequestedAt || null,
     profileFields,
-    profileUrl: account.profileSlug ? `/providers/${account.profileSlug}` : null,
+    profileUrl: account.profileSlug ? `/${account.profileSlug}` : null,
     memberSince: account.createdAt || user.createdAt,
   };
+}
+
+/**
+ * تغییر نمایش عمومی صفحه کاربر (فروشگاه + خدمات هم‌زمان).
+ * کاربر فقط اگر canHidePublicPage داشته باشد می‌تواند خصوصی کند.
+ */
+async function setUserPageVisibility(userId, isPublic, { requirePermission = true } = {}) {
+  const account = await Account.findOne({ where: { userId } });
+  if (!account) {
+    const err = new Error("حساب یافت نشد");
+    err.statusCode = 404;
+    throw err;
+  }
+  const nextPublic = !!isPublic;
+  if (requirePermission && !nextPublic && !account.canHidePublicPage) {
+    const err = new Error("اجازه خصوصی‌سازی صفحه را ندارید. این مجوز فقط توسط مدیریت داده می‌شود.");
+    err.statusCode = 403;
+    throw err;
+  }
+  await account.update({ isPublic: nextPublic });
+  const TradeServiceProvider = require("../tradeServiceProvider/model");
+  await TradeServiceProvider.update({ isPublic: nextPublic }, { where: { userId } });
+  return account;
 }
 
 module.exports = {
@@ -233,6 +250,7 @@ module.exports = {
   findPublicAccountBySlugOrId,
   findSupplierBySlugOrId,
   formatAccountPublic,
+  setUserPageVisibility,
   resolveDisplayName,
   slugify,
   ensureUniqueSlug,

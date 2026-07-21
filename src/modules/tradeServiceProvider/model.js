@@ -48,6 +48,21 @@ TradeServiceProvider.init(
     documentUrls: { type: DataTypes.JSON, allowNull: true },
     rating: { type: DataTypes.DECIMAL(3, 2), allowNull: true, defaultValue: null },
     reviewCount: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+    profileSlug: { type: DataTypes.STRING(120), allowNull: true, unique: true },
+    isPublic: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+    /**
+     * ACTIVE | INACTIVE | SUSPENDED | CLOSED | PENDING_DELETION | ARCHIVED
+     */
+    pageStatus: {
+      type: DataTypes.STRING(32),
+      allowNull: false,
+      defaultValue: "ACTIVE",
+    },
+    deletionRequestedAt: { type: DataTypes.DATE, allowNull: true },
+    businessHours: { type: DataTypes.JSON, allowNull: true },
+    latitude: { type: DataTypes.DECIMAL(10, 7), allowNull: true },
+    longitude: { type: DataTypes.DECIMAL(10, 7), allowNull: true },
+    addressLabel: { type: DataTypes.STRING(300), allowNull: true },
   },
   {
     sequelize,
@@ -59,6 +74,8 @@ TradeServiceProvider.init(
       { fields: ["category_id"] },
       { fields: ["status"] },
       { fields: ["user_id"] },
+      { fields: ["profile_slug"] },
+      { fields: ["is_public"] },
     ],
   }
 );

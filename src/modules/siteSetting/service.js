@@ -1,7 +1,19 @@
 const SiteSetting = require("./model");
 
 const TRADE_PROVIDERS_AUTO_APPROVE = "tradeProvidersAutoApprove";
+const SHOPS_AUTO_APPROVE = "shopsAutoApprove";
+const PAGE_DELETION_GRACE_DAYS = "pageDeletionGraceDays";
 const VIP_TRADE_CATEGORIES = "vipTradeCategories";
+const ENABLED_LANGUAGES = "enabledLanguages";
+const BLOCKED_PAGE_SLUGS = "blockedPageSlugs";
+const PUBLIC_PAGE_SLUG_RULES = "publicPageSlugRules";
+
+const ALL_LANGUAGE_CODES = ["fa", "es", "en", "ar", "nl", "tr", "ru", "ur", "fi"];
+
+const DEFAULT_PUBLIC_PAGE_SLUG_RULES = {
+  minLength: 5,
+  maxLength: 30,
+};
 
 const DEFAULT_VIP_MESSAGE = {
   fa: "این بخش VIP است و عضویت در آن امکان‌پذیر نیست.",
@@ -43,7 +55,26 @@ async function setJsonSetting(key, value) {
 }
 
 async function isTradeProvidersAutoApprove() {
-  return getBoolSetting(TRADE_PROVIDERS_AUTO_APPROVE, false);
+  return getBoolSetting(TRADE_PROVIDERS_AUTO_APPROVE, true);
+}
+
+async function isShopsAutoApprove() {
+  return getBoolSetting(SHOPS_AUTO_APPROVE, true);
+}
+
+async function getPageDeletionGraceDays() {
+  const row = await SiteSetting.findByPk(PAGE_DELETION_GRACE_DAYS);
+  if (!row || row.value == null) return 30;
+  const n = Number(row.value);
+  if (!Number.isFinite(n) || n < 1) return 30;
+  return Math.min(Math.floor(n), 365);
+}
+
+async function setPageDeletionGraceDays(days) {
+  const n = Number(days);
+  const value = Number.isFinite(n) && n >= 1 ? Math.min(Math.floor(n), 365) : 30;
+  await SiteSetting.upsert({ key: PAGE_DELETION_GRACE_DAYS, value });
+  return value;
 }
 
 async function getVipTradeCategoriesConfig() {
@@ -97,10 +128,24 @@ function resolveVipMessage(cfg, lang = "fa") {
 async function validateRegistrationForServices(normalizedServices, lang = "fa") {
   const vipConfig = await getVipTradeCategoriesConfig();
   const seen = new Set();
+  /** بسته‌بندی و آماده‌سازی — خدمت اختصاصی زارعون؛ عضویت آزاد ندارد */
+  const PLATFORM_OWNED = new Set(["packaging-prep"]);
 
   for (const svc of normalizedServices) {
     if (seen.has(svc.categoryId)) continue;
     seen.add(svc.categoryId);
+
+    if (PLATFORM_OWNED.has(svc.categoryId)) {
+      return {
+        ok: false,
+        categoryId: svc.categoryId,
+        message:
+          lang === "en"
+            ? "This service is operated exclusively by Zareoon. Provider registration is not available."
+            : "این خدمت به‌صورت اختصاصی توسط زارعون ارائه می‌شود و عضویت ارائه‌دهنده برای آن فعال نیست.",
+      };
+    }
+
     const cfg = vipConfig[svc.categoryId];
     if (cfg?.enabled) {
       return {
@@ -127,13 +172,26 @@ async function filterPublicProviders(items, categoryFilter) {
 async function getTradeSettings() {
   return {
     tradeProvidersAutoApprove: await isTradeProvidersAutoApprove(),
+    shopsAutoApprove: await isShopsAutoApprove(),
+    pageDeletionGraceDays: await getPageDeletionGraceDays(),
     vipTradeCategories: await getVipTradeCategoriesConfig(),
   };
 }
 
-async function updateTradeSettings({ tradeProvidersAutoApprove, vipTradeCategories }) {
+async function updateTradeSettings({
+  tradeProvidersAutoApprove,
+  shopsAutoApprove,
+  pageDeletionGraceDays,
+  vipTradeCategories,
+}) {
   if (tradeProvidersAutoApprove !== undefined) {
     await setBoolSetting(TRADE_PROVIDERS_AUTO_APPROVE, tradeProvidersAutoApprove);
+  }
+  if (shopsAutoApprove !== undefined) {
+    await setBoolSetting(SHOPS_AUTO_APPROVE, shopsAutoApprove);
+  }
+  if (pageDeletionGraceDays !== undefined) {
+    await setPageDeletionGraceDays(pageDeletionGraceDays);
   }
   if (vipTradeCategories !== undefined) {
     await updateVipTradeCategoriesConfig(vipTradeCategories);
@@ -166,11 +224,149 @@ async function getPublicVipCategories() {
   return publicMap;
 }
 
+function normalizeLanguageCodes(codes) {
+  if (!Array.isArray(codes)) return [...ALL_LANGUAGE_CODES];
+  const unique = [...new Set(codes.map((c) => String(c || "").trim().toLowerCase()))].filter((c) =>
+    ALL_LANGUAGE_CODES.includes(c)
+  );
+  if (!unique.includes("fa")) unique.unshift("fa");
+  return unique.length ? unique : [...ALL_LANGUAGE_CODES];
+}
+
+async function getEnabledLanguages() {
+  const stored = await getJsonSetting(ENABLED_LANGUAGES, null);
+  if (!stored) return [...ALL_LANGUAGE_CODES];
+  let next = normalizeLanguageCodes(stored);
+
+  // One-time migrations for languages added after the setting was first saved.
+  const migrations = [
+    { code: "es", flag: "enabledLanguagesEsV1" },
+    { code: "nl", flag: "enabledLanguagesNlV1" },
+  ];
+  let changed = false;
+  for (const { code, flag } of migrations) {
+    if (!next.includes(code) && ALL_LANGUAGE_CODES.includes(code)) {
+      const migrated = await getBoolSetting(flag, false);
+      if (!migrated) {
+        next = normalizeLanguageCodes([...next, code]);
+        await setBoolSetting(flag, true);
+        changed = true;
+      }
+    }
+  }
+  if (changed) await setJsonSetting(ENABLED_LANGUAGES, next);
+  return next;
+}
+
+async function updateEnabledLanguages(codes) {
+  const next = normalizeLanguageCodes(codes);
+  await setJsonSetting(ENABLED_LANGUAGES, next);
+  return next;
+}
+
+function normalizeBlockedSlugs(list) {
+  if (!Array.isArray(list)) return [];
+  const { normalizeToken } = require("../../utils/reservedUsernamesCatalog");
+  const unique = [
+    ...new Set(
+      list
+        .map((item) => normalizeToken(item))
+        .filter((s) => s && s.length >= 2 && !/^\d+$/.test(s))
+    ),
+  ];
+  return unique.sort();
+}
+
+async function ensureBlockedPageSlugsSeeded() {
+  const row = await SiteSetting.findByPk(BLOCKED_PAGE_SLUGS);
+  if (row && row.value != null) {
+    const current = Array.isArray(row.value) ? row.value : [];
+    if (current.length > 0) {
+      return { seeded: false, slugs: normalizeBlockedSlugs(current) };
+    }
+  }
+  const { getDefaultReservedSlugs } = require("../../utils/reservedUsernamesCatalog");
+  const defaults = normalizeBlockedSlugs(getDefaultReservedSlugs());
+  await setJsonSetting(BLOCKED_PAGE_SLUGS, defaults);
+  return { seeded: true, slugs: defaults };
+}
+
+async function getBlockedPageSlugs() {
+  const { slugs } = await ensureBlockedPageSlugsSeeded();
+  return slugs;
+}
+
+async function updateBlockedPageSlugs(list) {
+  const next = normalizeBlockedSlugs(list);
+  await setJsonSetting(BLOCKED_PAGE_SLUGS, next);
+  return next;
+}
+
+async function resetBlockedPageSlugsFromCatalog() {
+  const { getDefaultReservedSlugs } = require("../../utils/reservedUsernamesCatalog");
+  return updateBlockedPageSlugs(getDefaultReservedSlugs());
+}
+
+async function exportBlockedPageSlugsCatalog() {
+  const { buildExportDocument, loadCatalogFile } = require("../../utils/reservedUsernamesCatalog");
+  const slugs = await getBlockedPageSlugs();
+  const catalog = loadCatalogFile();
+  return buildExportDocument(slugs, {
+    version: catalog.version,
+    source: "admin-export",
+  });
+}
+
+async function importBlockedPageSlugsCatalog(payload, { mode = "replace" } = {}) {
+  const { extractSlugsFromImportPayload } = require("../../utils/reservedUsernamesCatalog");
+  const incoming = extractSlugsFromImportPayload(payload);
+  if (mode === "merge") {
+    const current = await getBlockedPageSlugs();
+    return updateBlockedPageSlugs([...current, ...incoming]);
+  }
+  return updateBlockedPageSlugs(incoming);
+}
+
+function clampSlugRules(input = {}) {
+  let minLength = Number(input.minLength);
+  let maxLength = Number(input.maxLength);
+  if (!Number.isFinite(minLength)) minLength = DEFAULT_PUBLIC_PAGE_SLUG_RULES.minLength;
+  if (!Number.isFinite(maxLength)) maxLength = DEFAULT_PUBLIC_PAGE_SLUG_RULES.maxLength;
+  minLength = Math.min(20, Math.max(2, Math.floor(minLength)));
+  maxLength = Math.min(80, Math.max(5, Math.floor(maxLength)));
+  if (maxLength < minLength) maxLength = minLength;
+  return { minLength, maxLength };
+}
+
+async function getPublicPageSlugRules() {
+  const stored = await getJsonSetting(PUBLIC_PAGE_SLUG_RULES, null);
+  if (!stored || typeof stored !== "object") {
+    return { ...DEFAULT_PUBLIC_PAGE_SLUG_RULES };
+  }
+  return clampSlugRules(stored);
+}
+
+async function setPublicPageSlugRules(rules) {
+  const next = clampSlugRules(rules || {});
+  await setJsonSetting(PUBLIC_PAGE_SLUG_RULES, next);
+  return next;
+}
+
 module.exports = {
   TRADE_PROVIDERS_AUTO_APPROVE,
+  SHOPS_AUTO_APPROVE,
+  PAGE_DELETION_GRACE_DAYS,
   VIP_TRADE_CATEGORIES,
+  ENABLED_LANGUAGES,
+  BLOCKED_PAGE_SLUGS,
+  PUBLIC_PAGE_SLUG_RULES,
+  ALL_LANGUAGE_CODES,
   DEFAULT_VIP_MESSAGE,
+  DEFAULT_PUBLIC_PAGE_SLUG_RULES,
   isTradeProvidersAutoApprove,
+  isShopsAutoApprove,
+  getPageDeletionGraceDays,
+  setPageDeletionGraceDays,
   getVipTradeCategoriesConfig,
   getVipCategoryConfig,
   isCategoryVipExclusive,
@@ -183,4 +379,17 @@ module.exports = {
   getTradeSettings,
   updateTradeSettings,
   getPublicVipCategories,
+  getEnabledLanguages,
+  updateEnabledLanguages,
+  normalizeLanguageCodes,
+  getBlockedPageSlugs,
+  updateBlockedPageSlugs,
+  normalizeBlockedSlugs,
+  ensureBlockedPageSlugsSeeded,
+  resetBlockedPageSlugsFromCatalog,
+  exportBlockedPageSlugsCatalog,
+  importBlockedPageSlugsCatalog,
+  getPublicPageSlugRules,
+  setPublicPageSlugRules,
+  clampSlugRules,
 };

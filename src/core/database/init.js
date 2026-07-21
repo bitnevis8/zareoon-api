@@ -35,6 +35,8 @@ require("../../modules/messaging/message/model");
 require("../../modules/supplierProfile/post/model");
 require("../../modules/supplierProfile/follow/model");
 require("../../modules/supplierProfile/review/model");
+require("../../modules/tradeServiceProvider/review/model");
+require("../../modules/publicSlug/model");
 require("../../modules/account/model");
 require("../../modules/account/profileField/model");
 require("../../modules/escrow/model");
@@ -68,6 +70,41 @@ const initializeDatabase = async (options = { force: false, seed: false, useMong
       await mysqlConnection.query('SET FOREIGN_KEY_CHECKS = 1');
     } else {
       await mysqlConnection.sync();
+      // ستون‌های جدید احراز هویت (اگر هنوز نیستند)
+      const alters = [
+        "ALTER TABLE users ADD COLUMN must_change_password TINYINT(1) NOT NULL DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN sms_daily_count INT NOT NULL DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN sms_daily_date DATE NULL",
+        "ALTER TABLE trade_service_providers ADD COLUMN profile_slug VARCHAR(120) NULL",
+        "ALTER TABLE trade_service_providers ADD COLUMN is_public TINYINT(1) NOT NULL DEFAULT 1",
+        "CREATE UNIQUE INDEX trade_service_providers_profile_slug_unique ON trade_service_providers (profile_slug)",
+        "ALTER TABLE accounts ADD COLUMN can_hide_public_page TINYINT(1) NOT NULL DEFAULT 0",
+        "ALTER TABLE accounts ADD COLUMN latitude DECIMAL(10,7) NULL",
+        "ALTER TABLE accounts ADD COLUMN longitude DECIMAL(10,7) NULL",
+        "ALTER TABLE accounts ADD COLUMN address_label VARCHAR(300) NULL",
+        "ALTER TABLE accounts ADD COLUMN business_hours JSON NULL",
+        "ALTER TABLE trade_service_providers ADD COLUMN business_hours JSON NULL",
+        "ALTER TABLE trade_service_providers ADD COLUMN latitude DECIMAL(10,7) NULL",
+        "ALTER TABLE trade_service_providers ADD COLUMN longitude DECIMAL(10,7) NULL",
+        "ALTER TABLE trade_service_providers ADD COLUMN address_label VARCHAR(300) NULL",
+        "ALTER TABLE accounts ADD COLUMN shop_status VARCHAR(32) NOT NULL DEFAULT 'ACTIVE'",
+        "ALTER TABLE accounts ADD COLUMN deletion_requested_at DATETIME NULL",
+        "ALTER TABLE trade_service_providers ADD COLUMN page_status VARCHAR(32) NOT NULL DEFAULT 'ACTIVE'",
+        "ALTER TABLE trade_service_providers ADD COLUMN deletion_requested_at DATETIME NULL",
+        "ALTER TABLE accounts ADD COLUMN last_slug_changed_at DATETIME NULL",
+        "ALTER TABLE accounts ADD COLUMN public_landline VARCHAR(30) NULL",
+        "ALTER TABLE accounts ADD COLUMN public_email VARCHAR(120) NULL",
+        "ALTER TABLE accounts ADD COLUMN shop_contacts JSON NULL",
+      ];
+      for (const sql of alters) {
+        try {
+          await mysqlConnection.query(sql);
+        } catch (e) {
+          if (!/Duplicate column|ER_DUP_FIELDNAME|Duplicate key name|ER_DUP_KEYNAME/i.test(e.message || "")) {
+            console.warn("⚠️ Auth column alter skipped:", e.message);
+          }
+        }
+      }
     }
 
     try {

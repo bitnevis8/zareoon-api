@@ -11,18 +11,10 @@ const { main } = require("../../../utils/emailSender/nodemailerConfig");
 const moment = require("moment");
 const { Op } = require("sequelize");
 const { buildAccountNav } = require("../../account/navLabels");
-
-// تابع کمکی برای تنظیمات کوکی
-function getCookieConfig(isProduction, rememberMe = false) {
-  return {
-    httpOnly: true,
-    secure: isProduction, // در سرور `true` باشد، در لوکال `false`
-    maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000, // 30 روز یا 24 ساعت
-    path: "/",
-    domain: isProduction ? ".zareoon.ir" : undefined, // برای دسترسی از همه ساب‌دامین‌ها
-    sameSite: isProduction ? "None" : "Lax", // در سرور `None`، در لوکال `Lax`
-  };
-}
+const {
+  getCookieConfig,
+  setUserSessionCookie,
+} = require("../../../utils/sessionToken");
 
 class AuthController extends BaseController {
 
@@ -49,6 +41,7 @@ class AuthController extends BaseController {
       isEmailVerified: user.isEmailVerified,
       isMobileVerified: user.isMobileVerified,
       isActive: user.isActive,
+      mustChangePassword: !!user.mustChangePassword,
       roles: (user.userRoles || []).map((role) => ({
         id: role.id,
         name: role.name,
@@ -56,6 +49,59 @@ class AuthController extends BaseController {
         nameFa: role.nameFa,
       })),
     };
+  }
+
+  getSmsToday() {
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  /** سقف ۵ پیامک در روز برای هر کاربر/شماره */
+  assertSmsDailyLimit(user) {
+    const today = this.getSmsToday();
+    const stored = user.smsDailyDate ? String(user.smsDailyDate).slice(0, 10) : null;
+    if (stored !== today) {
+      user.smsDailyCount = 0;
+      user.smsDailyDate = today;
+    }
+    if ((user.smsDailyCount || 0) >= 5) {
+      const err = new Error("سقف ۵ پیامک روزانه برای این شماره پر شده است");
+      err.statusCode = 429;
+      throw err;
+    }
+  }
+
+  bumpSmsDaily(user) {
+    const today = this.getSmsToday();
+    const stored = user.smsDailyDate ? String(user.smsDailyDate).slice(0, 10) : null;
+    if (stored !== today) {
+      user.smsDailyCount = 0;
+      user.smsDailyDate = today;
+    }
+    user.smsDailyCount = (user.smsDailyCount || 0) + 1;
+  }
+
+  async sendSmsCode(mobile, code) {
+    const data = JSON.stringify({
+      mobile,
+      templateId: config.get("SMS.TEMPLATE_ID"),
+      parameters: [{ name: "CODE", value: String(code) }],
+    });
+    await axios({
+      method: "post",
+      url: "https://api.sms.ir/v1/send/verify",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "text/plain",
+        "x-api-key": config.get("SMS.API_KEY"),
+      },
+      data,
+    });
+  }
+
+  isOtpExpired(sentAt, minutes = 3) {
+    if (!sentAt) return true;
+    const diffInMinutes = (Date.now() - new Date(sentAt).getTime()) / (1000 * 60);
+    return diffInMinutes > minutes;
   }
   // اضافه کردن متد logout در AuthController
   async logout(req, res) {
@@ -293,28 +339,9 @@ class AuthController extends BaseController {
       );
       console.log("✅ Email verification sent to:", value.email);
 
-      // ✅ تولید JWT و ست کردن کوکی httpOnly
-      const secretKey = config.get("JWT_SECRET");
-      const encoder = new TextEncoder();
-      const token = await new SignJWT({
-        userId: newUser.id,
-        email: newUser.email,
-        username: newUser.username,
-        isEmailVerified: false,
-      })
-        .setProtectedHeader({ alg: "HS256" })
-        .setExpirationTime("30d")
-        .sign(encoder.encode(secretKey));
-
-      const isProduction = process.env.NODE_ENV === "production";
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: isProduction,
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-        path: "/",
-        domain: isProduction ? ".zareoon.ir" : undefined,
-        sameSite: isProduction ? "None" : "Lax",
-      });
+      // ✅ JWT با نقش پیش‌فرض user
+      await newUser.reload({ include: [{ model: Role, as: "userRoles" }] });
+      const token = await setUserSessionCookie(res, newUser, { rememberMe: true });
 
       // ✅ بازیابی نقش‌ها برای کاربر جدید
       const roles = await newUser.getUserRoles();
@@ -429,27 +456,9 @@ class AuthController extends BaseController {
         );
       }
 
-      // ✅ تولید JWT
-      const secretKey = config.get("JWT_SECRET");
-      const encoder = new TextEncoder();
-      const token = await new SignJWT({ userMobile: newUser.mobile })
-        .setProtectedHeader({ alg: "HS256" })
-        .setExpirationTime("30d")
-        .sign(encoder.encode(secretKey));
-
-      const isProduction = process.env.NODE_ENV === "production";
-
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: isProduction, // در سرور `true` باشد، در لوکال `false`
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 روز
-        path: "/",
-        domain: isProduction ? ".zareoon.ir" : undefined, // در لوکال `undefined` باشد
-        sameSite: isProduction ? "None" : "Lax", // در سرور `None`، در لوکال `Lax`
-      });
-
-      // ✅ بازیابی نقش‌ها برای کاربر جدید
-      const roles = await newUser.getUserRoles();
+      // ✅ JWT با userId و نقش پیش‌فرض user
+      await newUser.reload({ include: [{ model: Role, as: "userRoles" }] });
+      const token = await setUserSessionCookie(res, newUser, { rememberMe: true });
 
       this.response(
         res,
@@ -457,13 +466,14 @@ class AuthController extends BaseController {
         true,
         "حساب کاربری ایجاد شد. کد تأیید به موبایل ارسال شد.",
         {
+          token,
           userId: newUser.id,
           email: newUser.email,
           username: newUser.username,
           firstName: newUser.firstName,
           lastName: newUser.lastName,
           isMobileVerified: newUser.isMobileVerified,
-          roles: roles.map(role => ({
+          roles: (newUser.userRoles || []).map((role) => ({
             id: role.id,
             name: role.name,
             nameEn: role.nameEn,
@@ -711,47 +721,12 @@ class AuthController extends BaseController {
       user.mobileVerifyCode = null;
       await user.save();
 
-      // ✅ تولید توکن
-      const secretKey = config.get("JWT_SECRET");
-      const encoder = new TextEncoder();
-      const token = await new SignJWT({ userId: user.id })
-        .setProtectedHeader({ alg: "HS256" })
-        .setExpirationTime("30d")
-        .sign(encoder.encode(secretKey));
-
-      // ✅ تنظیم کوکی
-      const isProduction = process.env.NODE_ENV === "production";
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: isProduction,
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-        path: "/",
-        domain: isProduction ? ".zareoon.ir" : undefined,
-        sameSite: isProduction ? "None" : "Lax",
-      });
-
-      // بازیابی نقش‌های کاربر
-      const roles = await user.getUserRoles();
+      await user.reload({ include: [{ model: Role, as: "userRoles" }] });
+      const token = await setUserSessionCookie(res, user, { rememberMe: true });
 
       return this.response(res, 200, true, "موبایل با موفقیت تایید شد.", {
-        token: token, // برای Mobile apps
-        user: {
-          id: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          mobile: user.mobile,
-          email: user.email,
-          username: user.username,
-          isEmailVerified: user.isEmailVerified,
-          isMobileVerified: user.isMobileVerified,
-          isActive: user.isActive,
-          roles: roles.map(role => ({
-            id: role.id,
-            name: role.name,
-            nameEn: role.nameEn,
-            nameFa: role.nameFa,
-          }))
-        }
+        token,
+        user: this.serializeUser(user),
       });
     } catch (error) {
       console.error("❌ Mobile verification failed:", error);
@@ -791,6 +766,16 @@ class AuthController extends BaseController {
       if (!isPasswordValid) {
         console.warn("❌ Login failed: Incorrect password for", value.identifier);
         return this.response(res, 400, false, "رمز عبور اشتباه است.");
+      }
+
+      // رمز موقت فراموشی — اعتبار ۵ دقیقه
+      if (user.mustChangePassword && this.isOtpExpired(user.mobileVerificationSentAt, 5)) {
+        return this.response(
+          res,
+          400,
+          false,
+          "رمز موقت منقضی شده است. دوباره فراموشی رمز عبور را بزنید."
+        );
       }
 
       // ✅ بررسی فعال بودن حساب
@@ -846,7 +831,8 @@ class AuthController extends BaseController {
       console.log("Remember Me:", rememberMe);
 
       this.response(res, 200, true, "ورود موفقیت‌آمیز بود.", {
-        token: token, // برای Mobile apps
+        token: token,
+        mustChangePassword: !!user.mustChangePassword,
         user: {
           id: user.id,
           userId: user.id,
@@ -858,12 +844,13 @@ class AuthController extends BaseController {
           isEmailVerified: user.isEmailVerified,
           isMobileVerified: user.isMobileVerified,
           isActive: user.isActive,
-          roles: user.userRoles && user.userRoles.length > 0 ? user.userRoles.map(role => ({ // Return all roles in the response safely
+          mustChangePassword: !!user.mustChangePassword,
+          roles: user.userRoles && user.userRoles.length > 0 ? user.userRoles.map(role => ({
             id: role.id,
             name: role.name,
             nameEn: role.nameEn,
             nameFa: role.nameFa,
-          })) : [], // If no roles, return an empty array
+          })) : [],
         }
       });
     } catch (error) {
@@ -881,7 +868,6 @@ class AuthController extends BaseController {
         return this.response(res, 400, false, "شناسه الزامی است");
       }
 
-      // تشخیص نوع شناسه
       const isEmail = identifier.includes("@");
       const isMobile = /^09\d{9}$/.test(identifier);
 
@@ -890,20 +876,20 @@ class AuthController extends BaseController {
       }
 
       let user = null;
-      
       if (isEmail) {
         user = await this.User.findOne({ where: { email: identifier } });
-      } else if (isMobile) {
+      } else {
         user = await this.User.findOne({ where: { mobile: identifier } });
       }
 
-      console.log(`🔍 Checking identifier: ${identifier}, isEmail: ${isEmail}, isMobile: ${isMobile}, userExists: ${!!user}`);
+      // کاربر موقت/غیرفعال ثبت‌نام ناقص = حساب جدید محسوب می‌شود
+      const userExists = !!(user && user.isActive);
 
       return this.response(res, 200, true, "بررسی انجام شد", {
-        userExists: !!user,
-        identifier: identifier,
-        isEmail: isEmail,
-        isMobile: isMobile
+        userExists,
+        identifier,
+        isEmail,
+        isMobile,
       });
     } catch (error) {
       console.error("❌ Check identifier failed:", error);
@@ -935,28 +921,17 @@ class AuthController extends BaseController {
       }
 
       // بررسی کد تایید
-      if (user.mobileVerifyCode !== code) {
+      if (String(user.mobileVerifyCode) !== String(code).trim()) {
         return this.response(res, 400, false, "کد تایید اشتباه است");
       }
 
-      // بررسی انقضای کد (2 دقیقه)
+      // بررسی انقضای کد (۳ دقیقه)
       if (!user.mobileVerificationSentAt) {
-        console.log(`❌ mobileVerificationSentAt is null`);
         return this.response(res, 400, false, "زمان ارسال کد مشخص نیست");
       }
 
-      const now = new Date();
-      const codeSentAt = new Date(user.mobileVerificationSentAt);
-      const diffInMinutes = (now - codeSentAt) / (1000 * 60);
-      
-      console.log(`🕐 Code verification time check:`);
-      console.log(`   Now: ${now.toISOString()}`);
-      console.log(`   Code sent at: ${codeSentAt.toISOString()}`);
-      console.log(`   Difference: ${diffInMinutes.toFixed(2)} minutes`);
-      
-      if (diffInMinutes > 2) {
-        console.log(`❌ Code expired: ${diffInMinutes.toFixed(2)} minutes > 2 minutes`);
-        return this.response(res, 400, false, "کد تایید منقضی شده است");
+      if (this.isOtpExpired(user.mobileVerificationSentAt, 3)) {
+        return this.response(res, 400, false, "کد تایید منقضی شده است. دوباره درخواست دهید.");
       }
 
       if (action === "register") {
@@ -1057,10 +1032,13 @@ class AuthController extends BaseController {
         return this.response(res, 400, false, "شناسه و نوع عملیات الزامی است");
       }
 
-      // یافتن کاربر
+      // ورود با پیامک حذف شده — فقط register (و در صورت نیاز forgot از مسیر جدا)
+      if (action === "login") {
+        return this.response(res, 400, false, "ورود با پیامک غیرفعال است. از رمز عبور استفاده کنید.");
+      }
+
       const isEmail = identifier.includes("@");
       let user = null;
-      
       if (isEmail) {
         user = await this.User.findOne({ where: { email: identifier } });
       } else {
@@ -1071,42 +1049,28 @@ class AuthController extends BaseController {
         return this.response(res, 404, false, "کاربر یافت نشد");
       }
 
-      // تولید کد جدید
+      try {
+        this.assertSmsDailyLimit(user);
+      } catch (limitErr) {
+        return this.response(res, limitErr.statusCode || 429, false, limitErr.message);
+      }
+
       const mobileVerifyCode = Math.floor(100000 + Math.random() * 900000);
-      user.mobileVerifyCode = mobileVerifyCode;
+      user.mobileVerifyCode = String(mobileVerifyCode);
       user.mobileVerificationSentAt = new Date();
+      this.bumpSmsDaily(user);
       await user.save();
 
-      // ارسال پیامک
-      const data = JSON.stringify({
-        mobile: user.mobile,
-        templateId: config.get("SMS.TEMPLATE_ID"),
-        parameters: [
-          { name: "CODE", value: mobileVerifyCode.toString() }
-        ]
-      });
-
-      const smsConfig = {
-        method: "post",
-        url: "https://api.sms.ir/v1/send/verify",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "text/plain",
-          "x-api-key": config.get("SMS.API_KEY")
-        },
-        data: data
-      };
-
       try {
-        const response = await axios(smsConfig);
-        console.log("✅ SMS verification sent to:", user.mobile);
-        console.log("📱 SMS Response:", response.data);
+        await this.sendSmsCode(user.mobile, mobileVerifyCode);
       } catch (smsError) {
         console.error("❌ SMS sending failed:", smsError.response?.data || smsError.message);
         return this.response(res, 500, false, "خطا در ارسال پیامک");
       }
 
-      return this.response(res, 200, true, "کد جدید ارسال شد");
+      return this.response(res, 200, true, "کد جدید ارسال شد", {
+        expiresInSeconds: 180,
+      });
     } catch (error) {
       console.error("❌ Resend code failed:", error);
       this.response(res, 500, false, "خطای داخلی سرور", null, error);
@@ -1121,82 +1085,64 @@ class AuthController extends BaseController {
       if (!mobile) {
         return this.response(res, 400, false, "شماره موبایل الزامی است");
       }
-
-      // بررسی فرمت موبایل
       if (!/^09\d{9}$/.test(mobile)) {
         return this.response(res, 400, false, "فرمت شماره موبایل نامعتبر است");
       }
 
-      // بررسی وجود کاربر
-      const existingUser = await this.User.findOne({
-        where: { mobile: mobile },
-      });
-      
-      if (existingUser) {
+      let user = await this.User.findOne({ where: { mobile } });
+
+      if (user && user.isActive) {
         return this.response(res, 409, false, "این شماره موبایل قبلاً ثبت شده است");
       }
 
-      // یافتن نقش 'Customer'
       const defaultUserRole = await findDefaultUserRole();
-
       if (!defaultUserRole) {
-        console.error("❌ Default 'user' role not found. Please create it.");
         return this.response(res, 500, false, "نقش پیش‌فرض یافت نشد.");
       }
 
-      // تولید کد احراز هویت
+      if (user) {
+        try {
+          this.assertSmsDailyLimit(user);
+        } catch (limitErr) {
+          return this.response(res, limitErr.statusCode || 429, false, limitErr.message);
+        }
+      }
+
       const mobileVerifyCode = Math.floor(100000 + Math.random() * 900000);
 
-      // ایجاد کاربر موقت (بدون firstName, lastName, password)
-      const tempUser = await this.User.create({
-        firstName: "temp", // موقت
-        lastName: "temp", // موقت
-        mobile: mobile,
-        username: `temp_${Date.now()}`, // موقت
-        password: "temp123", // موقت
-        mobileVerifyCode,
-        mobileVerificationSentAt: new Date(), // زمان ارسال کد
-        isMobileVerified: false,
-        isActive: false, // غیرفعال تا تکمیل ثبت‌نام
-      });
-
-      // اختصاص نقش پیش‌فرض
-      const UserRole = require("../userRole/model");
-      await UserRole.create({
-        userId: tempUser.id,
-        roleId: defaultUserRole.id
-      });
-
-      // ارسال پیامک
-      const data = JSON.stringify({
-        mobile: mobile,
-        templateId: config.get("SMS.TEMPLATE_ID"),
-        parameters: [
-          { name: "CODE", value: mobileVerifyCode.toString() }
-        ]
-      });
-
-      const smsConfig = {
-        method: "post",
-        url: "https://api.sms.ir/v1/send/verify",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "text/plain",
-          "x-api-key": config.get("SMS.API_KEY")
-        },
-        data: data
-      };
+      if (user) {
+        user.mobileVerifyCode = String(mobileVerifyCode);
+        user.mobileVerificationSentAt = new Date();
+        user.isMobileVerified = false;
+        user.isActive = false;
+        this.bumpSmsDaily(user);
+        await user.save();
+      } else {
+        user = await this.User.create({
+          firstName: "temp",
+          lastName: "temp",
+          mobile,
+          username: `temp_${Date.now()}`,
+          password: `temp_${Math.random().toString(36).slice(2)}`,
+          mobileVerifyCode: String(mobileVerifyCode),
+          mobileVerificationSentAt: new Date(),
+          isMobileVerified: false,
+          isActive: false,
+          smsDailyCount: 1,
+          smsDailyDate: this.getSmsToday(),
+        });
+        const UserRole = require("../userRole/model");
+        await UserRole.create({ userId: user.id, roleId: defaultUserRole.id });
+      }
 
       try {
-        const response = await axios(smsConfig);
-        console.log("✅ SMS verification sent to:", mobile);
-        console.log("📱 SMS Response:", response.data);
+        await this.sendSmsCode(mobile, mobileVerifyCode);
       } catch (smsError) {
         console.error("❌ SMS sending failed:", smsError.response?.data || smsError.message);
         return this.response(res, 500, false, "خطا در ارسال پیامک");
       }
 
-      return this.response(res, 200, true, "کد تایید ارسال شد");
+      return this.response(res, 200, true, "کد تایید ارسال شد", { expiresInSeconds: 180 });
     } catch (error) {
       console.error("❌ Send code for registration failed:", error);
       this.response(res, 500, false, "خطای داخلی سرور", null, error);
@@ -1206,77 +1152,50 @@ class AuthController extends BaseController {
   // 📌 تکمیل ثبت‌نام
   async completeRegistration(req, res) {
     try {
-      const { fullName, email, mobile, password } = req.body;
+      const { firstName, lastName, fullName, mobile, password, acceptTerms } = req.body;
 
-      if (!fullName || !password) {
-        return this.response(res, 400, false, "نام کامل و رمز عبور الزامی است");
+      const resolvedFirst =
+        (firstName && String(firstName).trim()) ||
+        (fullName ? String(fullName).trim().split(/\s+/)[0] : "");
+      const resolvedLast =
+        (lastName && String(lastName).trim()) ||
+        (fullName ? String(fullName).trim().split(/\s+/).slice(1).join(" ") : "");
+
+      if (!resolvedFirst || !resolvedLast || !password || !mobile) {
+        return this.response(res, 400, false, "نام، نام خانوادگی، موبایل و رمز عبور الزامی است");
+      }
+      if (acceptTerms === false) {
+        return this.response(res, 400, false, "پذیرش قوانین الزامی است");
+      }
+      if (String(password).length < 6) {
+        return this.response(res, 400, false, "رمز عبور باید حداقل ۶ کاراکتر باشد");
       }
 
-      // یافتن کاربر بر اساس موبایل یا ایمیل
-      let user = null;
-      if (mobile) {
-        user = await this.User.findOne({ where: { mobile: mobile } });
-      } else if (email) {
-        user = await this.User.findOne({ where: { email: email } });
-      }
-
+      const user = await this.User.findOne({ where: { mobile } });
       if (!user) {
         return this.response(res, 404, false, "کاربر یافت نشد");
       }
-
       if (!user.isMobileVerified) {
         return this.response(res, 400, false, "شماره موبایل تایید نشده است");
       }
 
-      // به‌روزرسانی اطلاعات کاربر
-      user.firstName = fullName.split(" ")[0] || fullName;
-      user.lastName = fullName.split(" ").slice(1).join(" ") || "";
-      user.password = password; // hooks مدل رمزنگاری می‌کند
+      user.firstName = resolvedFirst;
+      user.lastName = resolvedLast;
+      user.password = password;
       user.isActive = true;
+      user.mustChangePassword = false;
+      user.mobileVerifyCode = null;
       await user.save();
 
-      // تولید JWT
-      const secretKey = config.get("JWT_SECRET");
-      const encoder = new TextEncoder();
-      const token = await new SignJWT({ userMobile: user.mobile })
-        .setProtectedHeader({ alg: "HS256" })
-        .setExpirationTime("30d")
-        .sign(encoder.encode(secretKey));
-
-      const isProduction = process.env.NODE_ENV === "production";
-
-      // HttpOnly cookie برای Web
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: isProduction,
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-        path: "/",
-        domain: isProduction ? ".zareoon.ir" : undefined,
-        sameSite: isProduction ? "None" : "Lax",
-      });
-
-      // بازیابی نقش‌های کاربر
-      const roles = await user.getUserRoles();
+      await user.reload({ include: [{ model: Role, as: "userRoles" }] });
+      const token = await setUserSessionCookie(res, user, { rememberMe: true });
 
       return this.response(res, 200, true, "ثبت‌نام تکمیل شد", {
-        token: token, // برای Mobile apps
+        token,
         user: {
-          id: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          mobile: user.mobile,
-          email: user.email,
-          username: user.username,
-          isEmailVerified: user.isEmailVerified,
-          isMobileVerified: user.isMobileVerified,
-          isActive: user.isActive,
-          roles: roles.map(role => ({
-            id: role.id,
-            name: role.name,
-            nameEn: role.nameEn,
-            nameFa: role.nameFa,
-          }))
-        }
+          ...this.serializeUser(user),
+          mustChangePassword: false,
+        },
       });
     } catch (error) {
       console.error("❌ Complete registration failed:", error);
@@ -1284,13 +1203,113 @@ class AuthController extends BaseController {
     }
   }
 
-  /** عضویت فروشندگان — افزودن نقش seller به کاربر جاری */
+  /** فراموشی رمز — ارسال رمز موقت پیامکی */
+  async forgotPassword(req, res) {
+    try {
+      const { mobile, identifier } = req.body;
+      const phone = mobile || identifier;
+      if (!phone || !/^09\d{9}$/.test(phone)) {
+        return this.response(res, 400, false, "شماره موبایل معتبر الزامی است");
+      }
+
+      const user = await this.User.findOne({ where: { mobile: phone } });
+      if (!user || !user.isActive) {
+        return this.response(res, 404, false, "حساب کاربری یافت نشد");
+      }
+
+      try {
+        this.assertSmsDailyLimit(user);
+      } catch (limitErr) {
+        return this.response(res, limitErr.statusCode || 429, false, limitErr.message);
+      }
+
+      const tempPassword = String(Math.floor(100000 + Math.random() * 900000));
+      user.password = tempPassword;
+      user.mustChangePassword = true;
+      user.mobileVerificationSentAt = new Date();
+      this.bumpSmsDaily(user);
+      await user.save();
+
+      try {
+        await this.sendSmsCode(phone, tempPassword);
+      } catch (smsError) {
+        console.error("❌ SMS sending failed:", smsError.response?.data || smsError.message);
+        return this.response(res, 500, false, "خطا در ارسال پیامک");
+      }
+
+      return this.response(res, 200, true, "رمز موقت پیامک شد", {
+        expiresInSeconds: 300,
+      });
+    } catch (error) {
+      console.error("❌ Forgot password failed:", error);
+      this.response(res, 500, false, "خطای داخلی سرور", null, error);
+    }
+  }
+
+  /** تنظیم رمز جدید پس از ورود با رمز موقت */
+  async setNewPassword(req, res) {
+    try {
+      const { newPassword, confirmPassword } = req.body;
+      const userId = req.user?.userId || req.user?.id;
+      if (!userId) {
+        return this.response(res, 401, false, "وارد حساب کاربری شوید.");
+      }
+      if (!newPassword || newPassword !== confirmPassword) {
+        return this.response(res, 400, false, "رمز عبور و تکرار آن باید یکسان باشند");
+      }
+      if (String(newPassword).length < 6) {
+        return this.response(res, 400, false, "رمز عبور باید حداقل ۶ کاراکتر باشد");
+      }
+
+      const user = await this.User.findByPk(userId, {
+        include: [{ model: Role, as: "userRoles", through: { attributes: [] } }],
+      });
+      if (!user) {
+        return this.response(res, 404, false, "کاربر یافت نشد");
+      }
+      if (!user.mustChangePassword) {
+        return this.response(res, 400, false, "تغییر رمز اجباری نیست");
+      }
+
+      user.password = newPassword;
+      user.mustChangePassword = false;
+      await user.save();
+
+      return this.response(res, 200, true, "رمز عبور جدید ذخیره شد", {
+        user: this.serializeUser(user),
+      });
+    } catch (error) {
+      console.error("❌ Set new password failed:", error);
+      this.response(res, 500, false, "خطای داخلی سرور", null, error);
+    }
+  }
+
+  /** عضویت فروشندگان — افزودن نقش seller + رزرو نام صفحه */
   async becomeSeller(req, res) {
     try {
       const userId = req.user?.userId || req.user?.id;
       if (!userId) {
         return this.response(res, 401, false, "وارد حساب کاربری شوید.");
       }
+
+      const {
+        profileSlug,
+        shopName,
+        publicPhone,
+        publicLandline,
+        publicEmail,
+        businessHours,
+        latitude,
+        longitude,
+        addressLabel,
+        headline,
+      } = req.body || {};
+      const rawSlug = profileSlug || shopName;
+
+      const { assertPublicSlugAvailable } = require("../../../utils/publicPageSlug");
+      const { getOrCreateAccountForUser } = require("../../account/profileService");
+      const { isShopsAutoApprove } = require("../../siteSetting/service");
+      const { initialStatusFromAutoApprove } = require("../../../utils/pageLifecycle");
 
       const result = await ensureSellerRole(userId);
       if (!result.ok) {
@@ -1304,13 +1323,95 @@ class AuthController extends BaseController {
         return this.response(res, 404, false, "کاربر یافت نشد.");
       }
 
-      return this.response(
-        res,
-        200,
-        true,
-        result.created ? "عضویت فروشندگی با موفقیت فعال شد." : "شما از قبل فروشنده هستید.",
-        this.serializeUser(user)
-      );
+      const account = await getOrCreateAccountForUser(user);
+      const autoApprove = await isShopsAutoApprove();
+      const shopStatus = initialStatusFromAutoApprove(autoApprove);
+
+      const accountPatch = {
+        isPublic: true,
+        shopStatus,
+        deletionRequestedAt: null,
+      };
+      if (headline !== undefined) accountPatch.headline = String(headline || "").slice(0, 200) || null;
+      if (publicPhone !== undefined) accountPatch.publicPhone = String(publicPhone || "").slice(0, 30) || null;
+      if (publicLandline !== undefined) {
+        accountPatch.publicLandline = String(publicLandline || "").slice(0, 30) || null;
+      }
+      if (publicEmail !== undefined) {
+        accountPatch.publicEmail = String(publicEmail || "").trim().slice(0, 120) || null;
+      }
+      {
+        const { normalizeShopContacts, legacyFromContacts, applyShopContactsToAccountPatch } = require("../../../utils/shopContacts");
+        const applied = applyShopContactsToAccountPatch(req.body || {}, accountPatch);
+        if (!applied && (publicPhone !== undefined || publicLandline !== undefined || publicEmail !== undefined)) {
+          const contacts = normalizeShopContacts(null, {
+            publicPhone: accountPatch.publicPhone,
+            publicLandline: accountPatch.publicLandline,
+            publicEmail: accountPatch.publicEmail,
+          });
+          accountPatch.shopContacts = contacts;
+          Object.assign(accountPatch, legacyFromContacts(contacts));
+        }
+      }
+      if (businessHours && typeof businessHours === "object") accountPatch.businessHours = businessHours;
+      if (addressLabel !== undefined) {
+        accountPatch.addressLabel = String(addressLabel || "").trim().slice(0, 300) || null;
+      }
+      if (latitude != null && longitude != null && Number.isFinite(Number(latitude)) && Number.isFinite(Number(longitude))) {
+        accountPatch.latitude = Number(latitude);
+        accountPatch.longitude = Number(longitude);
+      }
+
+      // اگر قبلاً برای خدمات/فروشگاه اسلاگ دارد، دوباره نپرس
+      if (!rawSlug || !String(rawSlug).trim()) {
+        if (!account.profileSlug) {
+          return this.response(res, 400, false, "ابتدا نام صفحه فروشگاه را انتخاب کنید");
+        }
+      } else {
+        try {
+          if (!account.profileSlug) {
+            const slug = await assertPublicSlugAvailable(rawSlug, {
+              excludeAccountId: account.id,
+              excludeUserId: userId,
+            });
+            accountPatch.profileSlug = slug;
+          }
+        } catch (slugErr) {
+          return this.response(res, slugErr.statusCode || 400, false, slugErr.message);
+        }
+      }
+
+      await account.update(accountPatch);
+      await account.reload();
+      const TradeServiceProvider = require("../../tradeServiceProvider/model");
+      if (account.profileSlug) {
+        await TradeServiceProvider.update(
+          { profileSlug: account.profileSlug },
+          { where: { userId } }
+        );
+      }
+
+      await user.reload({ include: [{ model: Role, as: "userRoles" }] });
+      const { buildAccountNav } = require("../../account/navLabels");
+      const accountNav = await buildAccountNav(user);
+
+      // نقش seller بلافاصله در JWT هم اعمال شود تا محدودیت نقش نماند
+      const token = await setUserSessionCookie(res, user, { rememberMe: true });
+
+      const message = autoApprove
+        ? result.created
+          ? "فروشگاه شما ساخته شد و فعال است."
+          : "شما از قبل فروشنده هستید."
+        : "فروشگاه ثبت شد و پس از تأیید مدیریت فعال می‌شود.";
+
+      return this.response(res, 200, true, message, {
+        ...this.serializeUser(user),
+        token,
+        profileSlug: account.profileSlug,
+        shopStatus: account.shopStatus,
+        accountNav,
+        awaitsApproval: !autoApprove,
+      });
     } catch (error) {
       console.error("becomeSeller error:", error);
       return this.response(res, 500, false, "خطا در فعال‌سازی عضویت فروشنده", null, error);

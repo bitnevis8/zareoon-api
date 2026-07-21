@@ -23,6 +23,8 @@ router.post("/verify-code", authController.verifyCode); // تایید کد
 router.post("/resend-code", authController.resendCode); // ارسال مجدد کد
 router.post("/send-code-for-registration", authController.sendCodeForRegistration); // ارسال کد برای ثبت‌نام
 router.post("/complete-registration", authController.completeRegistration); // تکمیل ثبت‌نام
+router.post("/forgot-password", authController.forgotPassword); // ارسال رمز موقت
+router.post("/set-new-password", authenticateUser, authController.setNewPassword); // رمز جدید پس از موقت
 router.post("/clear-sessions", authController.clearAllSessions); // پاک کردن تمام sessions
 
 module.exports = router;

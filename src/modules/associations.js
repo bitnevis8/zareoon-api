@@ -31,6 +31,7 @@ const Message = require('./messaging/message/model');
 const SupplierPost = require('./supplierProfile/post/model');
 const SupplierFollow = require('./supplierProfile/follow/model');
 const SupplierReview = require('./supplierProfile/review/model');
+const TradeProviderReview = require('./tradeServiceProvider/review/model');
 const Account = require('./account/model');
 const AccountProfileField = require('./account/profileField/model');
 const {
@@ -304,6 +305,11 @@ const defineAssociations = () => {
     User.hasMany(SupplierReview, { foreignKey: 'reviewerId', as: 'givenReviews', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
     SupplierReview.belongsTo(User, { foreignKey: 'supplierId', as: 'supplier', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
     SupplierReview.belongsTo(User, { foreignKey: 'reviewerId', as: 'reviewer', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+
+    TradeServiceProvider.hasMany(TradeProviderReview, { foreignKey: 'providerId', as: 'reviews', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    TradeProviderReview.belongsTo(TradeServiceProvider, { foreignKey: 'providerId', as: 'provider', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    User.hasMany(TradeProviderReview, { foreignKey: 'reviewerId', as: 'tradeProviderReviews', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    TradeProviderReview.belongsTo(User, { foreignKey: 'reviewerId', as: 'reviewer', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
     // Account (حساب + نوع هویت)
     User.hasOne(Account, { foreignKey: 'userId', as: 'account', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
