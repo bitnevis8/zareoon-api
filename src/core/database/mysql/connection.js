@@ -12,11 +12,17 @@ const sequelize = new Sequelize(
     logging: false, // غیرفعال کردن لاگ‌های اضافی
     timezone: "+03:30", // تنظیم timezone برای ایران
     pool: {
-      max: 5, // حداکثر تعداد connections
-      min: 0, // حداقل تعداد connections
-      acquire: 30000, // حداکثر زمان برای گرفتن connection (میلی‌ثانیه)
-      idle: 10000 // حداکثر زمان idle بودن connection (میلی‌ثانیه)
-    }
+      // هزاران کاربر همزمان: 5 خیلی کم بود؛ با ایندکس‌ها کوئری‌ها کوتاه‌تر می‌مانند
+      max: 25,
+      min: 2,
+      acquire: 30000,
+      idle: 10000,
+      evict: 10000,
+    },
+    dialectOptions: {
+      // اجازه به کوئری‌های سنگین‌تر بدون قطع زودهنگام
+      connectTimeout: 20000,
+    },
   }
 );
 

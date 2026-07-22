@@ -453,12 +453,14 @@ const searchUsers = async (req, res) => {
     };
 
     if (q) {
-      where[Op.or] = [
-        { firstName: { [Op.like]: `%${q}%` } },
-        { lastName: { [Op.like]: `%${q}%` } },
-        { username: { [Op.like]: `%${q}%` } },
-        { mobile: { [Op.like]: `%${q}%` } },
-      ];
+      const { fulltextWhere, likeOrWhere } = require("../../utils/mysqlFulltext");
+      const ft = q.length >= 2 ? fulltextWhere(["first_name", "last_name", "username"], q) : null;
+      const like = likeOrWhere(["firstName", "lastName", "username", "mobile"], q);
+      if (ft) {
+        where[Op.or] = [ft, ...(like?.[Op.or] || [])];
+      } else if (like) {
+        Object.assign(where, like);
+      }
     }
 
     const users = await User.findAll({

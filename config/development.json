@@ -32,5 +32,13 @@
     "API_KEY": "V3KigBgmlIOSkC8mLjBjEnkjppKCBhJvTRlQYtTEdhPWKqCS",
     "TEMPLATE_ID": "591475",
     "LINE_NUMBER": "30007487135395"
+  },
+  "REDIS": {
+    "ENABLED": false,
+    "HOST": "127.0.0.1",
+    "PORT": 6379,
+    "PASSWORD": "",
+    "DB": 0,
+    "KEY_PREFIX": "zareoon:dev:"
   }
 }

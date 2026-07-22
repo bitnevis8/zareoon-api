@@ -48,7 +48,11 @@ InventoryLot.init(
       { fields: ["farmer_id"] },
       { fields: ["product_id"] },
       { fields: ["status"] },
-      { fields: ["quality_grade"] }
+      { fields: ["quality_grade"] },
+      { name: "idx_lots_farmer_status_updated", fields: ["farmer_id", "status", "updated_at"] },
+      { name: "idx_lots_status_updated", fields: ["status", "updated_at"] },
+      { name: "idx_lots_status_product", fields: ["status", "product_id"] },
+      { name: "idx_lots_product_status", fields: ["product_id", "status"] },
     ]
   }
 );

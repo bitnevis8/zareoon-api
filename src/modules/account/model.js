@@ -56,6 +56,10 @@ Account.init(
     tableName: "accounts",
     timestamps: true,
     underscored: true,
+    indexes: [
+      { name: "idx_accounts_public_shop_created", fields: ["is_public", "shop_status", "created_at", "id"] },
+      { fields: ["entity_type"] },
+    ],
   }
 );
 

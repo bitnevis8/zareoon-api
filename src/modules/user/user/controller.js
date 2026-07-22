@@ -39,14 +39,17 @@ class UserController extends BaseController {
       
       // ساخت where clause برای جستجو
       const whereClause = {};
+      const { fulltextWhere, likeOrWhere } = require("../../../utils/mysqlFulltext");
       if (q) {
-        whereClause[Op.or] = [
-          { firstName: { [Op.like]: `%${q}%` } },
-          { lastName: { [Op.like]: `%${q}%` } },
-          { email: { [Op.like]: `%${q}%` } },
-          { mobile: { [Op.like]: `%${q}%` } },
-          { username: { [Op.like]: `%${q}%` } },
-        ];
+        const ft = String(q).trim().length >= 2
+          ? fulltextWhere(["first_name", "last_name", "username"], q)
+          : null;
+        const like = likeOrWhere(["firstName", "lastName", "email", "mobile", "username"], q);
+        if (ft) {
+          whereClause[Op.or] = [ft, ...(like?.[Op.or] || [])];
+        } else if (like) {
+          Object.assign(whereClause, like);
+        }
       }
 
       // اضافه کردن فیلترها
@@ -87,6 +90,26 @@ class UserController extends BaseController {
       console.log("✅ Users found successfully");
       return this.response(res, 200, true, "لیست کاربران دریافت شد.", users);
     } catch (error) {
+      // اگر FULLTEXT هنوز ساخته نشده، با LIKE خالص دوباره تلاش کن
+      if (req.query.q && /FULLTEXT|ER_FT_MATCHING/i.test(error.message || "")) {
+        try {
+          const q = req.query.q;
+          const { likeOrWhere } = require("../../../utils/mysqlFulltext");
+          const like = likeOrWhere(["firstName", "lastName", "email", "mobile", "username"], q);
+          const whereClause = { ...(like || {}) };
+          if (req.query.isActive !== undefined && req.query.isActive !== '') {
+            whereClause.isActive = req.query.isActive === 'true';
+          }
+          const users = await User.findAll({
+            where: whereClause,
+            include: [{ model: Role, as: "userRoles" }],
+            order: [['id', 'ASC']],
+          });
+          return this.response(res, 200, true, "لیست کاربران دریافت شد.", users);
+        } catch (e2) {
+          error = e2;
+        }
+      }
       console.error("❌ Error in getAll:", error);
       return this.response(
         res,

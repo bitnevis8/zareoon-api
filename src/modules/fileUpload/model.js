@@ -66,6 +66,11 @@ File.init(
     modelName: "File",
     tableName: "files",
     timestamps: true,
+    indexes: [
+      // جدول files بدون underscored است → ستون‌ها camelCase
+      { name: "idx_files_module_entity_created", fields: ["module", "entityId", "createdAt"] },
+      { name: "idx_files_uploader", fields: ["uploaderId"] },
+    ],
   }
 );
 

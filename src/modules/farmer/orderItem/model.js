@@ -40,7 +40,8 @@ OrderItem.init(
     underscored: true,
     indexes: [
       { fields: ["order_id"] },
-      { fields: ["inventory_lot_id"] }
+      { fields: ["inventory_lot_id"] },
+      { name: "idx_order_items_product_id", fields: ["product_id"] },
     ]
   }
 );

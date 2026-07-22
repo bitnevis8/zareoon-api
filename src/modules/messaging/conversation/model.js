@@ -37,6 +37,8 @@ Conversation.init(
         name: "conversations_participants_unique",
       },
       { fields: ["last_message_at"] },
+      { name: "idx_conversations_p1_updated", fields: ["participant_one_id", "updated_at"] },
+      { name: "idx_conversations_p2_updated", fields: ["participant_two_id", "updated_at"] },
     ],
   }
 );

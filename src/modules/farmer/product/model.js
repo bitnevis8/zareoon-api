@@ -70,6 +70,9 @@ Product.init(
       { fields: ["name"] },
       { fields: ["slug"] },
       { fields: ["status"] },
+      { name: "idx_products_homepage", fields: ["homepage_sort_order", "sort_order", "id"] },
+      { name: "idx_products_parent_orderable_active", fields: ["parent_id", "is_orderable", "is_active"] },
+      { name: "idx_products_status_leaf", fields: ["status", "is_leaf"] },
     ],
   }
 );

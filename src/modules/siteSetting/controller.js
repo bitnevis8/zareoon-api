@@ -11,8 +11,10 @@ const {
   importBlockedPageSlugsCatalog,
   getPublicPageSlugRules,
   setPublicPageSlugRules,
-  ALL_LANGUAGE_CODES,
+  getCacheConfig,
+  updateCacheConfig,
 } = require("./service");
+const cacheService = require("../../core/cache/cacheService");
 const { listReservedSlugs } = require("../../utils/publicPageSlug");
 const { loadCatalogFile } = require("../../utils/reservedUsernamesCatalog");
 
@@ -241,6 +243,78 @@ const resetBlockedSlugs = async (_req, res) => {
   }
 };
 
+const getCache = async (_req, res) => {
+  try {
+    const [status, config] = await Promise.all([cacheService.getStatus(), getCacheConfig()]);
+    res.json({ success: true, data: { ...status, cacheConfig: config } });
+  } catch (error) {
+    console.error("Site settings getCache error:", error);
+    res.status(500).json({ success: false, message: "خطا در دریافت وضعیت کش" });
+  }
+};
+
+const patchCache = async (req, res) => {
+  try {
+    const body = req.body || {};
+    const allowed = [
+      "enabled",
+      "ttlProducts",
+      "ttlInventory",
+      "ttlHomepage",
+      "ttlSearch",
+      "ttlSettings",
+    ];
+    const patch = {};
+    for (const k of allowed) {
+      if (body[k] !== undefined) patch[k] = body[k];
+    }
+    if (Object.keys(patch).length === 0) {
+      return res.status(400).json({ success: false, message: "هیچ تنظیمی ارسال نشده" });
+    }
+    const data = await updateCacheConfig(patch);
+    res.json({ success: true, data, message: "تنظیمات کش ذخیره شد" });
+  } catch (error) {
+    console.error("Site settings patchCache error:", error);
+    res.status(500).json({ success: false, message: "خطا در ذخیره تنظیمات کش" });
+  }
+};
+
+const flushCache = async (req, res) => {
+  try {
+    const ns = String(req.body?.namespace || req.query?.namespace || "all").toLowerCase();
+    const allowed = new Set(Object.values(cacheService.NAMESPACES));
+    if (!allowed.has(ns)) {
+      return res.status(400).json({
+        success: false,
+        message: `namespace نامعتبر. مجاز: ${[...allowed].join(", ")}`,
+      });
+    }
+    const result = await cacheService.flushNamespace(ns);
+    res.json({
+      success: true,
+      data: { namespace: ns, ...result },
+      message:
+        ns === "all"
+          ? "همهٔ کش‌ها پاک شد"
+          : `کش «${ns}» پاک شد${result.deleted != null ? ` (${result.deleted} کلید)` : ""}`,
+    });
+  } catch (error) {
+    console.error("Site settings flushCache error:", error);
+    res.status(500).json({ success: false, message: "خطا در پاک‌سازی کش" });
+  }
+};
+
+const pingCacheRedis = async (_req, res) => {
+  try {
+    const result = await cacheService.pingRedis();
+    const status = await cacheService.getStatus();
+    res.json({ success: result.ok, data: { ...result, status }, message: result.message });
+  } catch (error) {
+    console.error("Site settings pingCacheRedis error:", error);
+    res.status(500).json({ success: false, message: "خطا در تست Redis" });
+  }
+};
+
 module.exports = {
   getTrade,
   patchTrade,
@@ -254,4 +328,8 @@ module.exports = {
   importBlockedSlugs,
   resetBlockedSlugs,
   getSlugRulesPublic,
+  getCache,
+  patchCache,
+  flushCache,
+  pingCacheRedis,
 };

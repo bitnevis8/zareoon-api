@@ -38,6 +38,8 @@ Message.init(
     indexes: [
       { fields: ["conversation_id", "created_at"] },
       { fields: ["conversation_id", "read_at"] },
+      { name: "idx_messages_conv_unread", fields: ["conversation_id", "read_at", "sender_id"] },
+      { name: "idx_messages_created_at", fields: ["created_at"] },
     ],
   }
 );

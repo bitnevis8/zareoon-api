@@ -43,6 +43,13 @@ const startServer = async () => {
     });
     console.log("✅ Databases initialized successfully!");
 
+    try {
+      const { initRedis } = require("./src/core/cache/cacheService");
+      await initRedis();
+    } catch (e) {
+      console.warn("⚠️ Cache/Redis init skipped:", e.message);
+    }
+
     const app = express();
 
     // اعتماد به پراکسی برای Rate Limiting صحیح

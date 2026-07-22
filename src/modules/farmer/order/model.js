@@ -26,7 +26,9 @@ Order.init(
     underscored: true,
     indexes: [
       { fields: ["customer_id"] },
-      { fields: ["status"] }
+      { fields: ["status"] },
+      { name: "idx_orders_supplier_id", fields: ["supplier_id"] },
+      { name: "idx_orders_supplier_status", fields: ["supplier_id", "status"] },
     ]
   }
 );

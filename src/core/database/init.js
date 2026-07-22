@@ -110,6 +110,13 @@ const initializeDatabase = async (options = { force: false, seed: false, useMong
     }
 
     try {
+      const { ensurePerformanceIndexes } = require("./mysql/ensurePerformanceIndexes");
+      await ensurePerformanceIndexes(mysqlConnection);
+    } catch (e) {
+      console.warn("⚠️ Performance indexes skipped:", e.message);
+    }
+
+    try {
       const seedEscrowRules = require("../../modules/escrow/seeder");
       await seedEscrowRules();
     } catch (e) {

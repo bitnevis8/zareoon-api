@@ -28,6 +28,7 @@ const {
 const { ENTITY_NAV_BADGES } = require("../account/navLabels");
 const File = require("../fileUpload/model");
 const { formatHashtags } = require("../../utils/hashtags");
+const { attachDisplayContentToLot } = require("../../utils/inventoryDisplayContent");
 const { getPageDeletionGraceDays } = require("../siteSetting/service");
 const {
   isPubliclyVisible,
@@ -105,8 +106,10 @@ async function hasTradedWith(customerId, supplierId) {
 }
 
 async function getProfileStats(supplierId) {
-  const [followerCount, productCount, reviewStats, dealCount] = await Promise.all([
+  const [followerCount, followingCount, postsCount, productCount, reviewStats, dealCount] = await Promise.all([
     SupplierFollow.count({ where: { followingId: supplierId } }),
+    SupplierFollow.count({ where: { followerId: supplierId } }),
+    SupplierPost.count({ where: { userId: supplierId } }),
     (async () => {
       const lots = await InventoryLot.findAll({
         where: { farmerId: supplierId, status: "harvested" },
@@ -133,6 +136,8 @@ async function getProfileStats(supplierId) {
 
   return {
     followerCount,
+    followingCount,
+    postsCount,
     productCount,
     reviewAverage: reviewStats?.avg ? Math.round(Number(reviewStats.avg) * 10) / 10 : null,
     reviewCount: Number(reviewStats?.count) || 0,
@@ -177,25 +182,38 @@ async function attachLotCoverImages(lots) {
   }));
 }
 
+function resolveLotPublicTitle(lot) {
+  const dc = lot.displayContent && typeof lot.displayContent === "object" ? lot.displayContent : null;
+  if (dc) {
+    for (const code of ["fa", "en", "ar", "tr", "ru", "ur", "es", "nl", "fi"]) {
+      const title = dc[code]?.title;
+      if (title && String(title).trim()) return String(title).trim();
+    }
+  }
+  const product = lot.product || lot.Product || null;
+  return (
+    (lot.englishName && String(lot.englishName).trim()) ||
+    (lot.arabicName && String(lot.arabicName).trim()) ||
+    (product?.name && String(product.name).trim()) ||
+    null
+  );
+}
+
 function mapActivePublicProducts(lots, { includeEmpty = false } = {}) {
   return lots
     .map((lot) => {
       const total = parseFloat(lot.totalQuantity || 0);
       const reserved = parseFloat(lot.reservedQuantity || 0);
       const available = Math.max(0, total - reserved);
-      const dc = lot.displayContent && typeof lot.displayContent === "object" ? lot.displayContent : null;
-      const displayTitle =
-        (dc?.fa?.title && String(dc.fa.title).trim()) ||
-        (lot.englishName && String(lot.englishName).trim()) ||
-        lot.product?.name ||
-        null;
+      const normalized = attachDisplayContentToLot(lot);
+      const displayTitle = resolveLotPublicTitle(normalized);
       const inquiryListing = lot.price == null && !(Array.isArray(lot.tieredPricing) && lot.tieredPricing.length);
       return {
         id: lot.id,
         productId: lot.productId,
         name: displayTitle,
-        imageUrl: lot.product?.imageUrl,
-        coverImageUrl: lot.coverImageUrl,
+        imageUrl: lot.product?.imageUrl || lot.Product?.imageUrl,
+        coverImageUrl: lot.coverImageUrl || normalized.coverImageUrl,
         qualityGrade: lot.qualityGrade,
         unit: lot.unit,
         price: lot.price,
@@ -203,9 +221,9 @@ function mapActivePublicProducts(lots, { includeEmpty = false } = {}) {
         totalQuantity: lot.totalQuantity,
         reservedQuantity: lot.reservedQuantity,
         availableQuantity: available,
-        hashtags: formatHashtags(lot.hashtags),
+        hashtags: formatHashtags(normalized.hashtags || lot.hashtags),
         inquiryListing,
-        displayContent: dc,
+        displayContent: normalized.displayContent,
       };
     })
     .filter((p) => includeEmpty || p.availableQuantity > 0 || p.inquiryListing);
@@ -333,7 +351,11 @@ const listPublicPosts = async (req, res) => {
     const safe = q.replace(/[%_\\]/g, "").slice(0, 80);
     const where = {};
     if (safe) {
-      where.body = { [Op.like]: `%${safe}%` };
+      const { fulltextWhere, likeOrWhere } = require("../../utils/mysqlFulltext");
+      const ft = safe.length >= 2 ? fulltextWhere(["body"], safe) : null;
+      const like = likeOrWhere(["body"], safe);
+      if (ft) where[Op.and] = [ft];
+      else if (like) Object.assign(where, like);
     }
 
     const posts = await SupplierPost.findAll({
@@ -1041,9 +1063,10 @@ const getMySocialStats = async (req, res) => {
     const userId = currentUserId(req);
     if (!userId) return res.status(401).json({ success: false, message: "ورود لازم است" });
 
-    const [followingCount, followerCount] = await Promise.all([
+    const [followingCount, followerCount, postsCount] = await Promise.all([
       SupplierFollow.count({ where: { followerId: userId } }),
       SupplierFollow.count({ where: { followingId: userId } }),
+      SupplierPost.count({ where: { userId } }),
     ]);
 
     let productCount = 0;
@@ -1057,7 +1080,7 @@ const getMySocialStats = async (req, res) => {
 
     res.json({
       success: true,
-      data: { productCount, followerCount, followingCount },
+      data: { productCount, followerCount, followingCount, postsCount },
     });
   } catch (error) {
     console.error("getMySocialStats:", error);

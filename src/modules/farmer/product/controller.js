@@ -6,6 +6,11 @@ const InventoryLot = require("../inventoryLot/model");
 const Order = require("../order/model");
 const User = require("../../user/user/model");
 const { Cart, CartItem } = require("../cart/model");
+const {
+  cache,
+  stableQueryKey,
+  invalidateProductsCache,
+} = require("../../../utils/cacheInvalidate");
 
 async function attachUploadedImages(products) {
   const arr = Array.isArray(products) ? products : [products];
@@ -74,19 +79,41 @@ const list = async (req, res) => {
   const where = {};
   if (req.query.parentId !== undefined) where.parentId = req.query.parentId || null;
   if (req.query.isOrderable !== undefined) where.isOrderable = String(req.query.isOrderable) === 'true';
-
-  const q = (req.query.q || "").trim();
-  if (q) {
-    where[Op.or] = [
-      { name: { [Op.like]: `%${q}%` } },
-      { slug: { [Op.like]: `%${q}%` } },
-      { englishName: { [Op.like]: `%${q}%` } },
-      { arabicName: { [Op.like]: `%${q}%` } },
-      { russianName: { [Op.like]: `%${q}%` } },
-    ];
+  if (req.query.isActive !== undefined) where.isActive = String(req.query.isActive) === 'true';
+  if (req.query.status !== undefined && String(req.query.status).trim() !== "") {
+    where.status = String(req.query.status).trim();
   }
 
+  const q = (req.query.q || "").trim();
   const lite = String(req.query.lite || "") === "1" || String(req.query.lite || "").toLowerCase() === "true";
+
+  // کش برای lite و جستجو (پاسخ‌های عمومی پرتکرار)
+  const shouldCache = lite || Boolean(q);
+  const cacheKey = shouldCache
+    ? `${q ? "search" : "products"}:list:${stableQueryKey(req.query, [
+        "parentId",
+        "isOrderable",
+        "isActive",
+        "status",
+        "lite",
+        "q",
+        "limit",
+      ])}`
+    : null;
+
+  if (cacheKey) {
+    const hit = await cache.get(cacheKey);
+    if (hit) {
+      res.set("X-Cache", "HIT");
+      if (lite && !q) {
+        res.set("Cache-Control", "public, max-age=120, stale-while-revalidate=600");
+      } else if (q) {
+        res.set("Cache-Control", "public, max-age=30, stale-while-revalidate=60");
+      }
+      return res.json(hit);
+    }
+  }
+
   const options = { where, order: [["homepageSortOrder", "ASC"], ["sortOrder", "ASC"], ["id", "ASC"]] };
   if (lite) {
     options.attributes = [
@@ -122,21 +149,59 @@ const list = async (req, res) => {
       "metaDescription",
     ];
   }
-  if (q && req.query.limit !== undefined) {
-    const limit = parseInt(req.query.limit, 10);
-    if (Number.isFinite(limit) && limit > 0) options.limit = limit;
+
+  let limit = null;
+  if (req.query.limit !== undefined) {
+    const n = parseInt(req.query.limit, 10);
+    if (Number.isFinite(n) && n > 0) limit = Math.min(n, 200);
   }
-  const items = await Product.findAll(options);
+  // جستجو بدون limit → سقف پیش‌فرض
+  if (q && limit == null) limit = 40;
+  if (limit != null) options.limit = limit;
+
+  let items;
+  if (q) {
+    const { findWithFulltextFallback } = require("../../../utils/mysqlFulltext");
+    items = await findWithFulltextFallback({
+      model: Product,
+      fulltextColumns: [
+        "name",
+        "english_name",
+        "arabic_name",
+        "russian_name",
+        "turkish_name",
+        "finnish_name",
+        "urdu_name",
+        "slug",
+      ],
+      likeFields: ["name", "slug", "englishName", "arabicName", "russianName", "turkishName", "finnishName", "urduName"],
+      rawQuery: q,
+      findOptions: options,
+    });
+  } else {
+    items = await Product.findAll(options);
+  }
+
   // Lite catalog responses skip File/InventoryLot image joins (imageUrl column is enough for tiles).
   const data = lite ? items.map((p) => (p.toJSON ? p.toJSON() : p)) : await attachUploadedImages(items);
+
+  const payload = { success: true, data, meta: { count: data.length, limit: limit ?? null, q: q || null } };
+
+  if (cacheKey) {
+    const ttl = await cache.getTtl(q ? "search" : "products");
+    await cache.set(cacheKey, payload, ttl);
+    res.set("X-Cache", "MISS");
+  }
 
   // Browser/CDN can reuse public catalog briefly; invalidation is soft via short TTL.
   if (lite && !q) {
     res.set("Cache-Control", "public, max-age=120, stale-while-revalidate=600");
+  } else if (q) {
+    res.set("Cache-Control", "public, max-age=30, stale-while-revalidate=60");
   } else {
     res.set("Cache-Control", "no-store");
   }
-  res.json({ success: true, data });
+  res.json(payload);
 };
 
 const getById = async (req, res) => {
@@ -159,6 +224,7 @@ const create = async (req, res) => {
   if (!payload.supplyCountry) payload.supplyCountry = "IR";
   normalizeSupplyFields(payload);
   const created = await Product.create(payload);
+  await invalidateProductsCache();
   res.status(201).json({ success: true, data: created });
 };
 
@@ -172,6 +238,7 @@ const update = async (req, res) => {
   const [count] = await Product.update(payload, { where: { id } });
   if (!count) return res.status(404).json({ success: false, message: "Not found" });
   const updated = await Product.findByPk(id);
+  await invalidateProductsCache();
   res.json({ success: true, data: updated });
 };
 
@@ -179,6 +246,7 @@ const remove = async (req, res) => {
   const id = req.params.id;
   const count = await Product.destroy({ where: { id } });
   if (!count) return res.status(404).json({ success: false, message: "Not found" });
+  await invalidateProductsCache();
   res.json({ success: true });
 };
 

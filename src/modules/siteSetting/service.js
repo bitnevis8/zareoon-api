@@ -7,6 +7,7 @@ const VIP_TRADE_CATEGORIES = "vipTradeCategories";
 const ENABLED_LANGUAGES = "enabledLanguages";
 const BLOCKED_PAGE_SLUGS = "blockedPageSlugs";
 const PUBLIC_PAGE_SLUG_RULES = "publicPageSlugRules";
+const CACHE_CONFIG = "cacheConfig";
 
 const ALL_LANGUAGE_CODES = ["fa", "es", "en", "ar", "nl", "tr", "ru", "ur", "fi"];
 
@@ -14,6 +15,53 @@ const DEFAULT_PUBLIC_PAGE_SLUG_RULES = {
   minLength: 5,
   maxLength: 30,
 };
+
+const DEFAULT_CACHE_CONFIG = {
+  enabled: true,
+  ttlProducts: 120,
+  ttlInventory: 60,
+  ttlHomepage: 45,
+  ttlSearch: 30,
+  ttlSettings: 300,
+};
+
+function clampTtl(n, fallback) {
+  const v = Number(n);
+  if (!Number.isFinite(v) || v < 0) return fallback;
+  return Math.min(Math.floor(v), 86400);
+}
+
+async function getCacheConfig() {
+  const raw = await getJsonSetting(CACHE_CONFIG, {});
+  return {
+    enabled: raw.enabled !== false,
+    ttlProducts: clampTtl(raw.ttlProducts, DEFAULT_CACHE_CONFIG.ttlProducts),
+    ttlInventory: clampTtl(raw.ttlInventory, DEFAULT_CACHE_CONFIG.ttlInventory),
+    ttlHomepage: clampTtl(raw.ttlHomepage, DEFAULT_CACHE_CONFIG.ttlHomepage),
+    ttlSearch: clampTtl(raw.ttlSearch, DEFAULT_CACHE_CONFIG.ttlSearch),
+    ttlSettings: clampTtl(raw.ttlSettings, DEFAULT_CACHE_CONFIG.ttlSettings),
+  };
+}
+
+async function updateCacheConfig(patch = {}) {
+  const current = await getCacheConfig();
+  const next = {
+    enabled: patch.enabled !== undefined ? !!patch.enabled : current.enabled,
+    ttlProducts: patch.ttlProducts !== undefined ? clampTtl(patch.ttlProducts, current.ttlProducts) : current.ttlProducts,
+    ttlInventory: patch.ttlInventory !== undefined ? clampTtl(patch.ttlInventory, current.ttlInventory) : current.ttlInventory,
+    ttlHomepage: patch.ttlHomepage !== undefined ? clampTtl(patch.ttlHomepage, current.ttlHomepage) : current.ttlHomepage,
+    ttlSearch: patch.ttlSearch !== undefined ? clampTtl(patch.ttlSearch, current.ttlSearch) : current.ttlSearch,
+    ttlSettings: patch.ttlSettings !== undefined ? clampTtl(patch.ttlSettings, current.ttlSettings) : current.ttlSettings,
+  };
+  await setJsonSetting(CACHE_CONFIG, next);
+  try {
+    const cache = require("../../core/cache/cacheService");
+    cache.invalidateAdminConfigCache();
+  } catch {
+    /* ignore */
+  }
+  return next;
+}
 
 const DEFAULT_VIP_MESSAGE = {
   fa: "این بخش VIP است و عضویت در آن امکان‌پذیر نیست.",
@@ -392,4 +440,8 @@ module.exports = {
   getPublicPageSlugRules,
   setPublicPageSlugRules,
   clampSlugRules,
+  CACHE_CONFIG,
+  DEFAULT_CACHE_CONFIG,
+  getCacheConfig,
+  updateCacheConfig,
 };

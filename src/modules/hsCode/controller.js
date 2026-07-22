@@ -25,7 +25,12 @@ class HsCodeController extends BaseController {
       }
 
       const digits = q.replace(/\D/g, "");
-      const or = [{ descriptionFa: { [Op.like]: `%${q}%` } }];
+      const { fulltextWhere, likeOrWhere } = require("../../utils/mysqlFulltext");
+      const ft = q.length >= 2 ? fulltextWhere(["description_fa"], q) : null;
+      const likeDesc = likeOrWhere(["descriptionFa"], q);
+      const or = [];
+      if (ft) or.push(ft);
+      if (likeDesc?.[Op.or]) or.push(...likeDesc[Op.or]);
       if (digits.length >= 2) {
         or.unshift({ hsCode: { [Op.like]: `${digits}%` } });
         or.push({ hsCode: { [Op.like]: `%${digits}%` } });

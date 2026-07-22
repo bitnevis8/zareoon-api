@@ -13,6 +13,11 @@ const {
   applyDisplayContentToPayload,
   attachDisplayContentToLot,
 } = require("../../../utils/inventoryDisplayContent");
+const {
+  cache,
+  stableQueryKey,
+  invalidateInventoryCache,
+} = require("../../../utils/cacheInvalidate");
 
 const BLOCKED_LISTING = new Set(["category-navigation-only"]);
 const RESTRICTED_LISTING = new Set(["pre-approval-required", "manual-review-only"]);
@@ -134,19 +139,249 @@ async function attachLotCoverImages(lots) {
 }
 
 const list = async (req, res) => {
-  const items = await InventoryLot.findAll({
-    include: [
-      {
-        model: CustomAttributeValue,
-        as: "attributes",
-        include: [{ model: CustomAttributeDefinition, as: "definition", attributes: ["id", "name", "type", "options"] }]
-      },
-      supplierInclude
-    ],
-    order: [["id", "ASC"]]
+  const sequelize = InventoryLot.sequelize;
+  const where = {};
+
+  // فیلتر فروشنده
+  if (req.query.farmerId !== undefined && req.query.farmerId !== "") {
+    const fid = parseInt(req.query.farmerId, 10);
+    if (Number.isFinite(fid)) where.farmerId = fid;
+  }
+
+  // فیلتر محصول (یک یا چند id)
+  if (req.query.productId !== undefined && req.query.productId !== "") {
+    const ids = String(req.query.productId)
+      .split(",")
+      .map((x) => parseInt(x, 10))
+      .filter((n) => Number.isFinite(n));
+    if (ids.length === 1) where.productId = ids[0];
+    else if (ids.length > 1) where.productId = { [Op.in]: ids };
+  }
+
+  // وضعیت: harvested | harvested,reserved | ...
+  if (req.query.status !== undefined && String(req.query.status).trim() !== "") {
+    const statuses = String(req.query.status)
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    if (statuses.length === 1) where.status = statuses[0];
+    else if (statuses.length > 1) where.status = { [Op.in]: statuses };
+  }
+
+  // فقط موجودی قابل فروش
+  const availableOnly =
+    String(req.query.available || "") === "1" ||
+    String(req.query.available || "").toLowerCase() === "true";
+  if (availableOnly) {
+    where[Op.and] = [
+      ...(where[Op.and] || []),
+      sequelize.where(
+        sequelize.literal("(total_quantity - IFNULL(reserved_quantity, 0))"),
+        { [Op.gt]: 0 }
+      ),
+    ];
+  }
+
+  // جستجوی متنی روی نام/توضیح لات
+  const q = (req.query.q || "").trim();
+  let useLotFulltext = false;
+  if (q) {
+    const { fulltextWhere, likeOrWhere } = require("../../../utils/mysqlFulltext");
+    const ft = q.length >= 2
+      ? fulltextWhere(
+          ["english_name", "arabic_name", "russian_name", "description", "location_label"],
+          q
+        )
+      : null;
+    const like = likeOrWhere(
+      ["englishName", "arabicName", "russianName", "description", "locationLabel"],
+      q
+    );
+    if (ft) {
+      where[Op.and] = [...(where[Op.and] || []), ft];
+      useLotFulltext = true;
+    } else if (like) {
+      where[Op.and] = [...(where[Op.and] || []), like];
+    }
+  }
+
+  const lite =
+    String(req.query.lite || "") === "1" ||
+    String(req.query.lite || "").toLowerCase() === "true";
+
+  // صفحهٔ اصلی / فید عمومی: پیش‌فرض وضعیت harvested اگر فقط lite+limit آمده
+  const publicFeed =
+    String(req.query.public || "") === "1" ||
+    String(req.query.public || "").toLowerCase() === "true";
+  if (publicFeed && where.status === undefined) {
+    where.status = "harvested";
+  }
+
+  const shouldCache = lite || publicFeed || Boolean(q);
+  const cacheKey = shouldCache
+    ? `inventory:list:${stableQueryKey(req.query, [
+        "farmerId",
+        "productId",
+        "status",
+        "available",
+        "q",
+        "lite",
+        "public",
+        "limit",
+        "order",
+        "cursor",
+        "before",
+        "withSupplier",
+      ])}`
+    : null;
+
+  if (cacheKey) {
+    const hit = await cache.get(cacheKey);
+    if (hit) {
+      res.set("X-Cache", "HIT");
+      if (lite || publicFeed) {
+        res.set("Cache-Control", "public, max-age=30, stale-while-revalidate=120");
+      }
+      return res.json(hit);
+    }
+  }
+
+  // Cursor pagination (بهینه‌تر از OFFSET برای میلیون‌ها رکورد)
+  const cursor = req.query.cursor !== undefined ? parseInt(req.query.cursor, 10) : null;
+  const before = req.query.before !== undefined ? parseInt(req.query.before, 10) : null;
+  if (Number.isFinite(cursor)) {
+    where.id = { ...(where.id || {}), [Op.lt]: cursor };
+  } else if (Number.isFinite(before)) {
+    where.id = { ...(where.id || {}), [Op.lt]: before };
+  }
+
+  let limit = null;
+  if (req.query.limit !== undefined) {
+    const n = parseInt(req.query.limit, 10);
+    if (Number.isFinite(n) && n > 0) limit = Math.min(n, 500);
+  }
+  // فید عمومی بدون limit → سقف امن
+  if (publicFeed && limit == null) limit = 80;
+
+  const orderBy = String(req.query.order || "").toLowerCase();
+  let order;
+  if (orderBy === "updated_at" || orderBy === "updated" || publicFeed) {
+    order = [
+      ["updatedAt", "DESC"],
+      ["id", "DESC"],
+    ];
+  } else if (orderBy === "created_at" || orderBy === "created") {
+    order = [
+      ["createdAt", "DESC"],
+      ["id", "DESC"],
+    ];
+  } else {
+    order = [["id", "ASC"]];
+  }
+
+  const include = [];
+  if (!lite) {
+    include.push({
+      model: CustomAttributeValue,
+      as: "attributes",
+      include: [
+        {
+          model: CustomAttributeDefinition,
+          as: "definition",
+          attributes: ["id", "name", "type", "options"],
+        },
+      ],
+    });
+  }
+  include.push({
+    model: Product,
+    as: "product",
+    attributes: lite
+      ? ["id", "name", "imageUrl", "slug", "isOrderable", "parentId", "unit"]
+      : ["id", "name", "imageUrl", "slug"],
+    required: false,
   });
-  const data = sanitizeLotsForPublic(await attachLotCoverImages(items));
-  res.json({ success: true, data });
+  if (!lite || publicFeed || String(req.query.withSupplier || "") === "1") {
+    include.push(supplierInclude);
+  }
+
+  const findOpts = {
+    where,
+    include,
+    order,
+  };
+  if (limit != null) {
+    // یکی بیشتر بگیر تا hasMore معلوم شود
+    findOpts.limit = limit + (cursor != null || before != null || publicFeed || limit < 500 ? 1 : 0);
+  }
+
+  const fetchLimit = findOpts.limit;
+  let items;
+  try {
+    items = await InventoryLot.findAll(findOpts);
+  } catch (e) {
+    if (useLotFulltext) {
+      const { likeOrWhere } = require("../../../utils/mysqlFulltext");
+      const like = likeOrWhere(
+        ["englishName", "arabicName", "russianName", "description", "locationLabel"],
+        q
+      );
+      const whereFallback = { ...where };
+      delete whereFallback[Op.and];
+      const restAnd = [];
+      if (availableOnly) {
+        restAnd.push(
+          sequelize.where(
+            sequelize.literal("(total_quantity - IFNULL(reserved_quantity, 0))"),
+            { [Op.gt]: 0 }
+          )
+        );
+      }
+      if (like) restAnd.push(like);
+      if (restAnd.length) whereFallback[Op.and] = restAnd;
+      items = await InventoryLot.findAll({ ...findOpts, where: whereFallback });
+    } else {
+      throw e;
+    }
+  }
+
+  let hasMore = false;
+  let pageItems = items;
+  if (fetchLimit != null && items.length > limit) {
+    hasMore = true;
+    pageItems = items.slice(0, limit);
+  }
+
+  const withImages = await attachLotCoverImages(pageItems);
+  const data = sanitizeLotsForPublic(withImages);
+
+  const nextCursor = hasMore && pageItems.length ? pageItems[pageItems.length - 1].id : null;
+
+  const payload = {
+    success: true,
+    data,
+    meta: {
+      limit: limit ?? null,
+      hasMore,
+      nextCursor,
+      count: data.length,
+    },
+  };
+
+  if (cacheKey) {
+    const ttlKind = publicFeed ? "homepage" : q ? "search" : "inventory";
+    const ttl = await cache.getTtl(ttlKind);
+    await cache.set(cacheKey, payload, ttl);
+    res.set("X-Cache", "MISS");
+  }
+
+  if (lite || publicFeed) {
+    res.set("Cache-Control", "public, max-age=30, stale-while-revalidate=120");
+  } else {
+    res.set("Cache-Control", "no-store");
+  }
+
+  res.json(payload);
 };
 
 const getById = async (req, res) => {
@@ -252,6 +487,7 @@ const create = async (req, res) => {
     const { allowedUnits, allowedPackaging } = await assertProductListable(payload.productId, { isAdmin });
     validateUnitAndPackaging(payload, { allowedUnits, allowedPackaging });
     const created = await InventoryLot.create(payload);
+    await invalidateInventoryCache();
     res.status(201).json({ success: true, data: formatLotRecord(created) });
   } catch (error) {
     if (error.status === 400 || error.status === 403 || error.status === 404) {
@@ -296,6 +532,7 @@ const update = async (req, res) => {
       ],
     });
     const [data] = await attachLotCoverImages([updated]);
+    await invalidateInventoryCache();
     res.json({ success: true, data });
   } catch (error) {
     if (error.status === 400 || error.status === 403 || error.status === 404) {
@@ -309,6 +546,7 @@ const remove = async (req, res) => {
   const id = req.params.id;
   const count = await InventoryLot.destroy({ where: { id } });
   if (!count) return res.status(404).json({ success: false, message: "Not found" });
+  await invalidateInventoryCache();
   res.json({ success: true });
 };
 

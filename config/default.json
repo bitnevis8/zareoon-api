@@ -80,5 +80,13 @@
   "DB_PASS": "",
   "DB_NAME": "farmer",
   "JWT_SECRET": "your-secret-key",
-  "FRONTEND_URL": "http://localhost:3000"
+  "FRONTEND_URL": "http://localhost:3000",
+  "REDIS": {
+    "ENABLED": false,
+    "HOST": "127.0.0.1",
+    "PORT": 6379,
+    "PASSWORD": "",
+    "DB": 0,
+    "KEY_PREFIX": "zareoon:"
+  }
 }
