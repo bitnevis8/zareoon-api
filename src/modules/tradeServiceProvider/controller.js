@@ -595,7 +595,15 @@ const updateMine = async (req, res) => {
 
     const vipCheck = await validateRegistrationForServices(
       changes.selectedServices,
-      req.headers["accept-language"]?.slice(0, 2) || "fa"
+      req.headers["accept-language"]?.slice(0, 2) || "fa",
+      {
+        existingCategoryIds: [
+          item.categoryId,
+          ...(Array.isArray(item.selectedServices)
+            ? item.selectedServices.map((s) => s?.categoryId)
+            : []),
+        ].filter(Boolean),
+      }
     );
     if (!vipCheck.ok) {
       return res.status(403).json({ success: false, message: vipCheck.message, code: "VIP_CATEGORY" });

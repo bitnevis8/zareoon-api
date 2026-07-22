@@ -173,20 +173,30 @@ function resolveVipMessage(cfg, lang = "fa") {
   return DEFAULT_VIP_MESSAGE[lang] || DEFAULT_VIP_MESSAGE.fa;
 }
 
-async function validateRegistrationForServices(normalizedServices, lang = "fa") {
+async function validateRegistrationForServices(normalizedServices, lang = "fa", options = {}) {
   const vipConfig = await getVipTradeCategoriesConfig();
   const seen = new Set();
   /** بسته‌بندی و آماده‌سازی — خدمت اختصاصی زارعون؛ عضویت آزاد ندارد */
   const PLATFORM_OWNED = new Set(["packaging-prep"]);
+  /** دسته‌هایی که همین پروفایل از قبل داشته — برای ویرایش صفحهٔ اختصاصی مجاز است */
+  const alreadyOwned = new Set(
+    (Array.isArray(options.existingCategoryIds) ? options.existingCategoryIds : [])
+      .map((id) => String(id || "").trim())
+      .filter(Boolean)
+  );
 
   for (const svc of normalizedServices) {
     if (seen.has(svc.categoryId)) continue;
     seen.add(svc.categoryId);
+    const categoryId = String(svc.categoryId || "").trim();
+    if (!categoryId) continue;
 
-    if (PLATFORM_OWNED.has(svc.categoryId)) {
+    if (PLATFORM_OWNED.has(categoryId)) {
+      // ویرایش صفحهٔ رسمی زارعون (که از قبل بسته‌بندی دارد) مجاز است؛ ثبت‌نام جدید خیر
+      if (alreadyOwned.has(categoryId)) continue;
       return {
         ok: false,
-        categoryId: svc.categoryId,
+        categoryId,
         message:
           lang === "en"
             ? "This service is operated exclusively by Zareoon. Provider registration is not available."
@@ -194,11 +204,12 @@ async function validateRegistrationForServices(normalizedServices, lang = "fa") 
       };
     }
 
-    const cfg = vipConfig[svc.categoryId];
+    const cfg = vipConfig[categoryId];
     if (cfg?.enabled) {
+      if (alreadyOwned.has(categoryId)) continue;
       return {
         ok: false,
-        categoryId: svc.categoryId,
+        categoryId,
         message: resolveVipMessage(cfg, lang),
       };
     }

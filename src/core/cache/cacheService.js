@@ -30,11 +30,17 @@ let redisStatus = {
   host: null,
   port: null,
 };
+let initPromise = null;
 
 const memoryStore = new Map(); // key -> { value, expiresAt }
 
 function isProduction() {
   return String(process.env.NODE_ENV || "").toLowerCase() === "production";
+}
+
+function normalizePassword(raw) {
+  const s = String(raw ?? "").trim();
+  return s || "";
 }
 
 function getRedisConfig() {
@@ -46,7 +52,8 @@ function getRedisConfig() {
       ENABLED: config.get("REDIS.ENABLED") !== false && config.get("REDIS.ENABLED") !== "false",
       HOST: config.has("REDIS.HOST") ? config.get("REDIS.HOST") : "127.0.0.1",
       PORT: Number(config.has("REDIS.PORT") ? config.get("REDIS.PORT") : 6379) || 6379,
-      PASSWORD: config.has("REDIS.PASSWORD") ? String(config.get("REDIS.PASSWORD") || "") : "",
+      // فقط اگر مقدار غیرخالی باشد به ioredis داده می‌شود (بدون AUTH)
+      PASSWORD: config.has("REDIS.PASSWORD") ? normalizePassword(config.get("REDIS.PASSWORD")) : "",
       DB: Number(config.has("REDIS.DB") ? config.get("REDIS.DB") : 0) || 0,
       KEY_PREFIX: config.has("REDIS.KEY_PREFIX") ? String(config.get("REDIS.KEY_PREFIX") || "zareoon:") : "zareoon:",
     };
@@ -60,76 +67,118 @@ function prefixKey(key) {
   return `${KEY_PREFIX}${key}`;
 }
 
-async function initRedis() {
-  const cfg = getRedisConfig();
-  redisStatus.enabledByConfig = Boolean(cfg.ENABLED) && isProduction();
-  redisStatus.host = cfg.HOST;
-  redisStatus.port = cfg.PORT;
-  redisStatus.mode = redisStatus.enabledByConfig ? "redis" : "memory";
-
-  if (!redisStatus.enabledByConfig) {
-    console.log("ℹ️ Cache mode: in-memory (Redis فقط در production و ENABLED=true)");
-    return null;
-  }
-
+async function disposeRedisClient() {
+  const client = redisClient;
+  redisClient = null;
+  redisStatus.connected = false;
+  if (!client) return;
   try {
-    const Redis = require("ioredis");
-    const opts = {
-      host: cfg.HOST,
-      port: cfg.PORT,
-      db: cfg.DB,
-      lazyConnect: true,
-      maxRetriesPerRequest: 1,
-      enableReadyCheck: true,
-      connectTimeout: 5000,
-      retryStrategy(times) {
-        if (times > 8) return null;
-        return Math.min(times * 200, 2000);
-      },
-    };
-    if (cfg.PASSWORD) opts.password = cfg.PASSWORD;
-
-    redisClient = new Redis(opts);
-    redisClient.on("error", (err) => {
-      redisStatus.connected = false;
-      redisStatus.lastError = err.message || String(err);
-    });
-    redisClient.on("connect", () => {
-      redisStatus.connected = true;
-      redisStatus.lastError = null;
-    });
-    redisClient.on("ready", () => {
-      redisStatus.connected = true;
-      redisStatus.lastError = null;
-      redisStatus.mode = "redis";
-    });
-    redisClient.on("end", () => {
-      redisStatus.connected = false;
-    });
-
-    await redisClient.connect();
-    await redisClient.ping();
-    redisStatus.connected = true;
-    redisStatus.lastError = null;
-    console.log(`✅ Redis connected (${cfg.HOST}:${cfg.PORT} db=${cfg.DB})`);
-    return redisClient;
-  } catch (e) {
-    redisStatus.connected = false;
-    redisStatus.lastError = e.message || String(e);
-    redisStatus.mode = "memory";
-    console.warn("⚠️ Redis unavailable — falling back to memory cache:", redisStatus.lastError);
+    client.removeAllListeners();
+  } catch {
+    /* ignore */
+  }
+  try {
+    await client.quit();
+  } catch {
     try {
-      if (redisClient) await redisClient.quit();
+      client.disconnect();
     } catch {
       /* ignore */
     }
-    redisClient = null;
-    return null;
   }
 }
 
+function attachRedisEvents(client) {
+  client.on("error", (err) => {
+    redisStatus.connected = false;
+    redisStatus.lastError = err.message || String(err);
+  });
+  client.on("ready", () => {
+    redisStatus.connected = true;
+    redisStatus.lastError = null;
+    redisStatus.mode = "redis";
+  });
+  client.on("end", () => {
+    redisStatus.connected = false;
+  });
+  client.on("close", () => {
+    redisStatus.connected = false;
+  });
+}
+
+async function initRedis({ force = false } = {}) {
+  if (initPromise && !force) return initPromise;
+
+  const run = async () => {
+    const cfg = getRedisConfig();
+    redisStatus.enabledByConfig = Boolean(cfg.ENABLED) && isProduction();
+    redisStatus.host = cfg.HOST;
+    redisStatus.port = cfg.PORT;
+    redisStatus.mode = redisStatus.enabledByConfig ? "redis" : "memory";
+
+    if (!redisStatus.enabledByConfig) {
+      await disposeRedisClient();
+      console.log("ℹ️ Cache mode: in-memory (Redis فقط در production و ENABLED=true)");
+      return null;
+    }
+
+    await disposeRedisClient();
+
+    try {
+      const Redis = require("ioredis");
+      const opts = {
+        host: cfg.HOST,
+        port: cfg.PORT,
+        db: cfg.DB,
+        lazyConnect: true,
+        maxRetriesPerRequest: 1,
+        enableReadyCheck: true,
+        connectTimeout: 8000,
+        // اگر پسورد خالی است اصلاً فیلد را نفرست — از AUTH اشتباه جلوگیری می‌کند
+        retryStrategy(times) {
+          if (times > 8) return null;
+          return Math.min(times * 200, 2000);
+        },
+      };
+      if (cfg.PASSWORD) {
+        opts.password = cfg.PASSWORD;
+      }
+
+      const client = new Redis(opts);
+      attachRedisEvents(client);
+      redisClient = client;
+
+      await client.connect();
+      const pong = await client.ping();
+      if (pong !== "PONG") {
+        throw new Error(`Unexpected PING response: ${pong}`);
+      }
+
+      redisStatus.connected = true;
+      redisStatus.lastError = null;
+      redisStatus.mode = "redis";
+      console.log(
+        `✅ Redis connected (${cfg.HOST}:${cfg.PORT} db=${cfg.DB}${cfg.PASSWORD ? " auth=yes" : " auth=no"})`
+      );
+      return client;
+    } catch (e) {
+      redisStatus.connected = false;
+      redisStatus.lastError = e.message || String(e);
+      redisStatus.mode = "memory";
+      console.warn("⚠️ Redis unavailable — falling back to memory cache:", redisStatus.lastError);
+      await disposeRedisClient();
+      return null;
+    }
+  };
+
+  initPromise = run().finally(() => {
+    initPromise = null;
+  });
+  return initPromise;
+}
+
 function useRedis() {
-  return Boolean(redisClient && redisStatus.connected);
+  return Boolean(redisClient && redisStatus.connected && redisClient.status === "ready");
 }
 
 /** تنظیمات TTL از site_settings (با کش کوتاه در حافظه) */
@@ -316,9 +365,11 @@ async function getStatus() {
       db: cfg.DB,
       keyPrefix: cfg.KEY_PREFIX,
       hasPassword: Boolean(cfg.PASSWORD),
+      authMode: cfg.PASSWORD ? "password" : "none",
       connected: redisStatus.connected,
       lastError: redisStatus.lastError,
       info: redisInfo,
+      clientStatus: redisClient ? redisClient.status : null,
     },
     cacheConfig: admin,
     memoryKeys: memoryStore.size,
@@ -327,14 +378,73 @@ async function getStatus() {
 }
 
 async function pingRedis() {
-  if (!redisClient) return { ok: false, message: "Redis client not initialized (non-production or disabled)" };
+  const cfg = getRedisConfig();
+  if (!(Boolean(cfg.ENABLED) && isProduction())) {
+    return {
+      ok: false,
+      message: "Redis فقط در production و با ENABLED=true فعال است",
+    };
+  }
+
+  // اگر کلاینت مرده/بسته است، دوباره وصل شو (مثلاً بعد از ریستارت Redis یا حذف پسورد)
+  const needsReconnect =
+    !redisClient ||
+    !redisStatus.connected ||
+    redisClient.status === "end" ||
+    redisClient.status === "close" ||
+    redisClient.status === "wait";
+
+  if (needsReconnect) {
+    await initRedis({ force: true });
+  }
+
+  if (!redisClient) {
+    return {
+      ok: false,
+      message: redisStatus.lastError || "Redis client not initialized",
+    };
+  }
+
   try {
+    if (redisClient.status !== "ready") {
+      if (redisClient.status === "wait" || redisClient.status === "end" || redisClient.status === "close") {
+        await initRedis({ force: true });
+      } else if (typeof redisClient.connect === "function" && redisClient.status !== "connecting") {
+        try {
+          await redisClient.connect();
+        } catch (e) {
+          if (!/already connecting|already connected/i.test(String(e.message || e))) {
+            throw e;
+          }
+        }
+      }
+    }
+
     const pong = await redisClient.ping();
     redisStatus.connected = pong === "PONG";
-    return { ok: redisStatus.connected, message: pong };
+    redisStatus.lastError = redisStatus.connected ? null : `Unexpected: ${pong}`;
+    return {
+      ok: redisStatus.connected,
+      message: redisStatus.connected ? "PONG" : redisStatus.lastError,
+      auth: cfg.PASSWORD ? "password" : "none",
+    };
   } catch (e) {
     redisStatus.connected = false;
     redisStatus.lastError = e.message || String(e);
+
+    // یک بار دیگر از صفر تلاش کن
+    try {
+      await initRedis({ force: true });
+      if (redisClient) {
+        const pong = await redisClient.ping();
+        redisStatus.connected = pong === "PONG";
+        redisStatus.lastError = null;
+        return { ok: true, message: "PONG", auth: cfg.PASSWORD ? "password" : "none", reconnected: true };
+      }
+    } catch (e2) {
+      redisStatus.lastError = e2.message || String(e2);
+    }
+
     return { ok: false, message: redisStatus.lastError };
   }
 }
