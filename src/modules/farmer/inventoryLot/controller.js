@@ -78,7 +78,7 @@ function validateUnitAndPackaging(payload, { allowedUnits, allowedPackaging }) {
 const supplierInclude = {
   model: User,
   as: "supplier",
-  attributes: ["id", "firstName", "lastName", "username", "mobile"],
+  attributes: ["id", "firstName", "lastName", "username", "mobile", "avatar"],
   include: [
     {
       model: Account,

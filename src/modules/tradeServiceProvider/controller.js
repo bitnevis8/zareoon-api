@@ -602,26 +602,30 @@ const updateMine = async (req, res) => {
     }
 
     if (item.status === "approved") {
-      item.pendingChanges = changes;
+      applyChangesToProvider(item, changes);
+      item.pendingChanges = null;
       await item.save();
       return res.json({
         success: true,
         data: item,
-        message: "تغییرات ثبت شد و پس از تأیید مدیر روی صفحه عمومی اعمال می‌شود",
-        pendingReview: true,
+        message: "تغییرات ذخیره و روی صفحه عمومی اعمال شد",
+        pendingReview: false,
       });
     }
 
     applyChangesToProvider(item, changes);
     item.pendingChanges = null;
-    item.status = "pending";
+    // اگر هنوز تأیید نشده، در صف تأیید اولیه می‌ماند ولی فیلدها به‌روز می‌شوند
+    if (item.status !== "rejected") {
+      item.status = item.status === "pending" ? "pending" : item.status;
+    }
     await item.save();
 
     res.json({
       success: true,
       data: item,
-      message: "تغییرات ثبت شد و پس از تأیید مدیر منتشر می‌شود",
-      pendingReview: true,
+      message: "تغییرات ذخیره شد",
+      pendingReview: item.status === "pending",
     });
   } catch (error) {
     console.error("Trade service provider updateMine error:", error);
