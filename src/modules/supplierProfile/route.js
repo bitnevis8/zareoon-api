@@ -9,6 +9,7 @@ router.get("/recent-shops", controller.listRecentPublicShops);
 router.get("/public/:slug", controller.optionalAuth, controller.getPublicProfile);
 router.get("/public/:slug/posts", controller.getPosts);
 router.get("/public/:slug/reviews", controller.getReviews);
+router.get("/posts/public", controller.listPublicPosts);
 
 router.use(authenticateUser);
 

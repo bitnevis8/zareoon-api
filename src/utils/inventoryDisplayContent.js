@@ -1,6 +1,6 @@
 const { formatHashtags } = require("./hashtags");
 
-const LOCALE_CODES = ["fa", "en", "ru", "ar", "tr", "fi"];
+const LOCALE_CODES = ["fa", "en", "es", "ar", "nl", "tr", "ru", "ur", "fi"];
 
 const EMPTY_LOCALE = () => ({ title: "", description: "", hashtags: [] });
 

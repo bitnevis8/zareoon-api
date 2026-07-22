@@ -348,7 +348,37 @@ const listPublic = async (req, res) => {
     const limit = Math.min(Math.max(Number(req.query.limit) || items.length, 1), 500);
     if (items.length > limit) items = items.slice(0, limit);
 
-    res.json({ success: true, data: items });
+    const userIds = [...new Set(items.map((row) => row.userId).filter(Boolean))];
+    const shopUserIds = new Set();
+    if (userIds.length) {
+      const Account = require("../account/model");
+      const accounts = await Account.findAll({
+        where: {
+          userId: { [Op.in]: userIds },
+          profileSlug: { [Op.ne]: null },
+          isPublic: true,
+          shopStatus: { [Op.in]: ["ACTIVE", "PENDING_DELETION", "CLOSED", "SUSPENDED"] },
+        },
+        attributes: ["userId", "shopStatus"],
+      });
+      for (const a of accounts) {
+        if (isPubliclyVisible(a.shopStatus || "ACTIVE")) {
+          shopUserIds.add(Number(a.userId));
+        }
+      }
+    }
+
+    const data = items.map((row) => {
+      const plain = typeof row.toJSON === "function" ? row.toJSON() : { ...row };
+      const slug = plain.profileSlug;
+      if (!plain.logoUrl && String(slug || "").toLowerCase() === "zareoon") {
+        plain.logoUrl = "/images/logo.png";
+      }
+      plain.hasShop = shopUserIds.has(Number(plain.userId));
+      return plain;
+    });
+
+    res.json({ success: true, data });
   } catch (error) {
     console.error("Trade service provider listPublic error:", error);
     res.status(500).json({ success: false, message: "خطا در دریافت ارائه‌دهندگان" });

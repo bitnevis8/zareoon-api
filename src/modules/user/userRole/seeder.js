@@ -5,7 +5,6 @@ const rawData = require("./seederData.json");
 const { Op } = require("sequelize");
 
 const SEED_EMAILS = [
-  "bitnevis@yahoo.com",
   "rahimi@zareoon.ir",
   "palizvan@zareoon.ir",
   "khatina@zareoon.ir",

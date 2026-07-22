@@ -25,7 +25,6 @@ const FALLBACK_RESERVED = new Set([
   "trade-services",
   "www",
   "support",
-  "zareoon",
   "null",
   "undefined",
 ]);

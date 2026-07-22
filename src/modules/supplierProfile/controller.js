@@ -110,11 +110,12 @@ async function getProfileStats(supplierId) {
     (async () => {
       const lots = await InventoryLot.findAll({
         where: { farmerId: supplierId, status: "harvested" },
-        attributes: ["totalQuantity", "reservedQuantity"],
+        attributes: ["totalQuantity", "reservedQuantity", "price", "tieredPricing"],
       });
       return lots.filter((l) => {
         const avail = parseFloat(l.totalQuantity || 0) - parseFloat(l.reservedQuantity || 0);
-        return avail > 0;
+        const inquiry = l.price == null && !(Array.isArray(l.tieredPricing) && l.tieredPricing.length);
+        return avail > 0 || inquiry;
       }).length;
     })(),
     SupplierReview.findOne({
@@ -182,10 +183,17 @@ function mapActivePublicProducts(lots, { includeEmpty = false } = {}) {
       const total = parseFloat(lot.totalQuantity || 0);
       const reserved = parseFloat(lot.reservedQuantity || 0);
       const available = Math.max(0, total - reserved);
+      const dc = lot.displayContent && typeof lot.displayContent === "object" ? lot.displayContent : null;
+      const displayTitle =
+        (dc?.fa?.title && String(dc.fa.title).trim()) ||
+        (lot.englishName && String(lot.englishName).trim()) ||
+        lot.product?.name ||
+        null;
+      const inquiryListing = lot.price == null && !(Array.isArray(lot.tieredPricing) && lot.tieredPricing.length);
       return {
         id: lot.id,
         productId: lot.productId,
-        name: lot.product?.name,
+        name: displayTitle,
         imageUrl: lot.product?.imageUrl,
         coverImageUrl: lot.coverImageUrl,
         qualityGrade: lot.qualityGrade,
@@ -196,9 +204,11 @@ function mapActivePublicProducts(lots, { includeEmpty = false } = {}) {
         reservedQuantity: lot.reservedQuantity,
         availableQuantity: available,
         hashtags: formatHashtags(lot.hashtags),
+        inquiryListing,
+        displayContent: dc,
       };
     })
-    .filter((p) => includeEmpty || p.availableQuantity > 0);
+    .filter((p) => includeEmpty || p.availableQuantity > 0 || p.inquiryListing);
 }
 
 const getPublicProfile = async (req, res) => {
@@ -315,6 +325,89 @@ const getPosts = async (req, res) => {
   }
 };
 
+/** فهرست/جستجوی عمومی پست‌های فروشگاه‌های عمومی */
+const listPublicPosts = async (req, res) => {
+  try {
+    const q = String(req.query.q || "").trim();
+    const limit = Math.min(Math.max(Number(req.query.limit) || 40, 1), 60);
+    const safe = q.replace(/[%_\\]/g, "").slice(0, 80);
+    const where = {};
+    if (safe) {
+      where.body = { [Op.like]: `%${safe}%` };
+    }
+
+    const posts = await SupplierPost.findAll({
+      where,
+      order: [["createdAt", "DESC"]],
+      limit: Math.min(limit * 3, 120),
+    });
+
+    const userIds = [...new Set(posts.map((p) => p.userId).filter(Boolean))];
+    if (!userIds.length) {
+      return res.json({ success: true, data: [] });
+    }
+
+    const accounts = await Account.findAll({
+      where: {
+        userId: { [Op.in]: userIds },
+        profileSlug: { [Op.ne]: null },
+        isPublic: true,
+      },
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "firstName", "lastName", "username", "avatar"],
+          required: true,
+        },
+      ],
+    });
+
+    const byUserId = new Map();
+    for (const acc of accounts) {
+      if (!isPubliclyVisible(acc.shopStatus || "ACTIVE")) continue;
+      byUserId.set(acc.userId, acc);
+    }
+
+    const needle = safe.toLowerCase();
+    const data = [];
+    for (const post of posts) {
+      const acc = byUserId.get(post.userId);
+      if (!acc) continue;
+      const formatted = formatPostRecord(post);
+      if (needle) {
+        const bodyOk = String(formatted.body || "").toLowerCase().includes(needle);
+        const tags = Array.isArray(formatted.hashtags) ? formatted.hashtags : [];
+        const tagOk = tags.some((tag) =>
+          String(tag || "")
+            .replace(/^#/, "")
+            .toLowerCase()
+            .includes(needle)
+        );
+        if (!bodyOk && !tagOk) continue;
+      }
+      const u = acc.user;
+      const authorName =
+        [u?.firstName, u?.lastName].filter(Boolean).join(" ").trim() ||
+        u?.username ||
+        acc.profileSlug;
+      data.push({
+        ...formatted,
+        profileSlug: acc.profileSlug,
+        authorName,
+        authorAvatar: u?.avatar || null,
+        href: `/${acc.profileSlug}?tab=posts`,
+      });
+      if (data.length >= limit) break;
+    }
+
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error("listPublicPosts:", error);
+    res.status(500).json({ success: false, message: "خطا در دریافت پست‌ها" });
+  }
+};
+
 const getReviews = async (req, res) => {
   try {
     const found = await findPublicAccountBySlugOrId(req.params.slug);
@@ -384,6 +477,9 @@ const updateMyProfile = async (req, res) => {
     const accountUpdates = {};
     if (body.entityType && Account.rawAttributes.entityType.values.includes(body.entityType)) {
       accountUpdates.entityType = body.entityType;
+    }
+    if (body.displayName !== undefined) {
+      accountUpdates.displayName = String(body.displayName || "").trim().slice(0, 120) || null;
     }
     if (body.headline !== undefined) accountUpdates.headline = String(body.headline).slice(0, 200);
     if (body.bio !== undefined) accountUpdates.bio = String(body.bio).slice(0, 5000);
@@ -743,26 +839,56 @@ const listRecentPublicShops = async (req, res) => {
       limit: Math.min(limit * 3, 60),
     });
 
-    const data = [];
+    const candidates = [];
     for (const a of rows) {
       if (!isPubliclyVisible(a.shopStatus || "ACTIVE")) continue;
+      candidates.push(a);
+      if (candidates.length >= limit) break;
+    }
+
+    const userIds = candidates.map((a) => a.user?.id).filter(Boolean);
+    const serviceUserIds = new Set();
+    if (userIds.length) {
+      const TradeServiceProvider = require("../tradeServiceProvider/model");
+      const providers = await TradeServiceProvider.findAll({
+        where: {
+          userId: { [Op.in]: userIds },
+          status: "approved",
+          isPublic: true,
+          pageStatus: { [Op.in]: ["ACTIVE", "PENDING_DELETION", "CLOSED", "SUSPENDED"] },
+        },
+        attributes: ["userId", "pageStatus"],
+      });
+      for (const p of providers) {
+        if (isPubliclyVisible(p.pageStatus || "ACTIVE")) {
+          serviceUserIds.add(Number(p.userId));
+        }
+      }
+    }
+
+    const data = candidates.map((a) => {
       const u = a.user;
       const displayName =
+        String(a.displayName || "").trim() ||
         [u?.firstName, u?.lastName].filter(Boolean).join(" ").trim() ||
         u?.username ||
         a.profileSlug;
-      data.push({
+      const slug = a.profileSlug;
+      const avatar =
+        u?.avatar ||
+        (String(slug || "").toLowerCase() === "zareoon" ? "/images/logo.png" : null);
+      return {
         id: a.id,
         userId: u?.id,
-        profileSlug: a.profileSlug,
+        profileSlug: slug,
         displayName,
         headline: a.headline || null,
-        avatar: u?.avatar || null,
-        profileUrl: `/${a.profileSlug}`,
+        avatar,
+        hasServices: serviceUserIds.has(Number(u?.id)),
+        profileUrl: `/${slug}`,
         createdAt: a.createdAt,
-      });
-      if (data.length >= limit) break;
-    }
+      };
+    });
 
     res.json({ success: true, data });
   } catch (error) {
@@ -944,6 +1070,7 @@ module.exports = {
   getEntitySchemas,
   getPublicProfile,
   getPosts,
+  listPublicPosts,
   getReviews,
   createPost,
   deletePost,

@@ -20,6 +20,8 @@ Account.init(
       defaultValue: "individual",
     },
     profileSlug: { type: DataTypes.STRING(120), allowNull: true, unique: true },
+    /** نام نمایشی فروشگاه/صفحه — جدا از اسلاگ و نام شخصی کاربر */
+    displayName: { type: DataTypes.STRING(120), allowNull: true },
     headline: { type: DataTypes.STRING(200), allowNull: true },
     bio: { type: DataTypes.TEXT, allowNull: true },
     publicPhone: { type: DataTypes.STRING(30), allowNull: true },

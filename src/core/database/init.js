@@ -16,6 +16,7 @@ require("../../modules/user/userRole/model");
 
 // Import Location module models
 require("../../modules/location/model");
+require("../../modules/hsCode/model");
 // Import Farmer module models (categories merged into Product)
 require("../../modules/farmer/product/model");
 require("../../modules/farmer/customAttributeDefinition/model");
@@ -95,6 +96,7 @@ const initializeDatabase = async (options = { force: false, seed: false, useMong
         "ALTER TABLE accounts ADD COLUMN public_landline VARCHAR(30) NULL",
         "ALTER TABLE accounts ADD COLUMN public_email VARCHAR(120) NULL",
         "ALTER TABLE accounts ADD COLUMN shop_contacts JSON NULL",
+        "ALTER TABLE accounts ADD COLUMN display_name VARCHAR(120) NULL",
       ];
       for (const sql of alters) {
         try {

@@ -9,6 +9,7 @@ const seedUserRoles = require("../../../modules/user/userRole/seeder");
 
 // Import location module seeders
 const seedLocations = require("../../../modules/location/seeder");
+const seedHsCodes = require("../../../modules/hsCode/seeder");
 // Import farmer module seeders
 // Product categories merged into products
 const seedProducts = require("../../../modules/farmer/product/seeder");
@@ -16,6 +17,7 @@ const seedAttributeDefinitions = require("../../../modules/farmer/customAttribut
 const seedInventoryLots = require("../../../modules/farmer/inventoryLot/seeder");
 const seedTradeServiceProviders = require("../../../modules/tradeServiceProvider/seeder");
 const seedClearDefaultShops = require("../../../modules/account/clearDefaultShopsSeeder");
+const seedZareoonOfficial = require("../../../modules/zareoonOfficial/seeder");
 
 // Group seeders by module for better organization and control
 const userSeeders = [seedRoles, seedUsers, seedUserRoles];
@@ -44,13 +46,16 @@ async function runSeeders() {
     // 2. Run Locations (independent entities)
     // await runSeederGroup([seedLocations], "Location Data");
 
+    // 2b. HS customs tariffs 1405
+    await runSeederGroup([seedHsCodes], "HS Code Tariffs");
+
   // 3. Run Farmer module (Products only; categories merged)
   await runSeederGroup([seedProducts, seedAttributeDefinitions], "Farmer Product Data");
 
-    // 4. Clear demo shops / inventory / trade providers (no defaults)
+    // 4. Clear demo shops / inventory / trade providers, then seed official Zareoon page
     await runSeederGroup(
-      [seedInventoryLots, seedClearDefaultShops, seedTradeServiceProviders],
-      "Clear Default Shops & Stock"
+      [seedInventoryLots, seedClearDefaultShops, seedTradeServiceProviders, seedZareoonOfficial],
+      "Clear Defaults + Official Zareoon"
     );
 
     console.log("\n✅ All database seeding completed successfully!");

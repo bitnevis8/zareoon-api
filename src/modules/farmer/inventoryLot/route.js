@@ -4,6 +4,7 @@ const controller = require("./controller");
 
 router.get("/", controller.list);
 router.post("/", controller.create);
+router.get("/:id/supplier-contact", controller.getSupplierContact);
 router.get("/:id", controller.getById);
 router.put("/:id", controller.update);
 router.delete("/:id", controller.remove);

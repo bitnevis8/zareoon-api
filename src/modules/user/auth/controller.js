@@ -1295,6 +1295,8 @@ class AuthController extends BaseController {
       const {
         profileSlug,
         shopName,
+        displayName,
+        shopDisplayName,
         publicPhone,
         publicLandline,
         publicEmail,
@@ -1305,6 +1307,7 @@ class AuthController extends BaseController {
         headline,
       } = req.body || {};
       const rawSlug = profileSlug || shopName;
+      const pageDisplayName = String(displayName || shopDisplayName || "").trim();
 
       const { assertPublicSlugAvailable } = require("../../../utils/publicPageSlug");
       const { getOrCreateAccountForUser } = require("../../account/profileService");
@@ -1332,6 +1335,9 @@ class AuthController extends BaseController {
         shopStatus,
         deletionRequestedAt: null,
       };
+      if (pageDisplayName) {
+        accountPatch.displayName = pageDisplayName.slice(0, 120);
+      }
       if (headline !== undefined) accountPatch.headline = String(headline || "").slice(0, 200) || null;
       if (publicPhone !== undefined) accountPatch.publicPhone = String(publicPhone || "").slice(0, 30) || null;
       if (publicLandline !== undefined) {
@@ -1365,11 +1371,14 @@ class AuthController extends BaseController {
       // اگر قبلاً برای خدمات/فروشگاه اسلاگ دارد، دوباره نپرس
       if (!rawSlug || !String(rawSlug).trim()) {
         if (!account.profileSlug) {
-          return this.response(res, 400, false, "ابتدا نام صفحه فروشگاه را انتخاب کنید");
+          return this.response(res, 400, false, "ابتدا آدرس صفحه فروشگاه را انتخاب کنید");
         }
       } else {
         try {
           if (!account.profileSlug) {
+            if (!pageDisplayName) {
+              return this.response(res, 400, false, "نام نمایشی فروشگاه را وارد کنید");
+            }
             const slug = await assertPublicSlugAvailable(rawSlug, {
               excludeAccountId: account.id,
               excludeUserId: userId,

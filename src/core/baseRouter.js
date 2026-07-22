@@ -7,6 +7,7 @@ const authRouter = require('../modules/user/auth/route');
 const roleRouter = require('../modules/user/role/route');
 const fileUploadRouter = require('../modules/fileUpload/route');
 const locationRouter = require('../modules/location/route');
+const hsCodeRouter = require('../modules/hsCode/route');
 const supplierRouter = require('../modules/farmer/route');
 const lcRequestRouter = require('../modules/lcRequest/route');
 const serviceRequestRouter = require('../modules/serviceRequest/route');
@@ -26,6 +27,7 @@ baseRouter.use('/user/auth', authRouter);
 baseRouter.use('/user/role', roleRouter);
 baseRouter.use('/file-upload', fileUploadRouter);
 baseRouter.use('/location', locationRouter);
+baseRouter.use('/hs-code', hsCodeRouter);
 baseRouter.use('/supplier', supplierRouter);
 baseRouter.use('/farmer', supplierRouter); // alias قدیمی
 baseRouter.use('/lc-request', lcRequestRouter);

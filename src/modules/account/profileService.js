@@ -164,7 +164,9 @@ async function findAccountBySlugOrId(slugOrId, includeUser = true) {
   });
 }
 
-function resolveDisplayName(user, entityType, profileFields) {
+function resolveDisplayName(user, entityType, profileFields, extras = {}) {
+  const pageName = String(extras.displayName || "").trim();
+  if (pageName) return pageName;
   if (entityType === "company" || entityType === "distributor") {
     return profileFields.companyName || [user.firstName, user.lastName].filter(Boolean).join(" ");
   }
@@ -176,7 +178,9 @@ function resolveDisplayName(user, entityType, profileFields) {
 
 async function formatAccountPublic(account, user) {
   const profileFields = await getProfileFieldsMap(account.id);
-  const displayName = resolveDisplayName(user, account.entityType, profileFields);
+  const displayName = resolveDisplayName(user, account.entityType, profileFields, {
+    displayName: account.displayName,
+  });
 
   return {
     id: user.id,
@@ -187,7 +191,9 @@ async function formatAccountPublic(account, user) {
     lastName: user.lastName,
     displayName,
     username: user.username,
-    avatar: user.avatar,
+    avatar:
+      user.avatar ||
+      (String(account.profileSlug || "").toLowerCase() === "zareoon" ? "/images/logo.png" : null),
     profileSlug: account.profileSlug,
     headline: account.headline,
     bio: account.bio,

@@ -38,7 +38,9 @@ async function buildAccountNav(user) {
   }
 
   const profileFields = await getProfileFieldsMap(account.id);
-  const displayName = resolveDisplayName(user, account.entityType, profileFields);
+  const displayName = resolveDisplayName(user, account.entityType, profileFields, {
+    displayName: account.displayName,
+  });
   const navTitle = displayName || account.profileSlug || fallbackName;
 
   return {

@@ -42,11 +42,9 @@ async function assertProductListable(productId, { isAdmin = false } = {}) {
     err.status = 400;
     throw err;
   }
-  if (RESTRICTED_LISTING.has(policy) && !isAdmin) {
-    const err = new Error("ثبت موجودی برای این محصول نیاز به تأیید ادمین دارد");
-    err.status = 403;
-    throw err;
-  }
+  // pre-approval / manual-review: ثبت مجاز است؛ ممکن است بعداً بررسی شود
+  const listingWarning =
+    policy === "moderated" || (RESTRICTED_LISTING.has(policy) && !isAdmin);
 
   const allowedUnits = Array.isArray(product.allowedMeasurementUnits)
     ? product.allowedMeasurementUnits
@@ -57,7 +55,7 @@ async function assertProductListable(productId, { isAdmin = false } = {}) {
     ? product.allowedPackagingTypes
     : [];
 
-  return { product, allowedUnits, allowedPackaging, policy };
+  return { product, allowedUnits, allowedPackaging, policy, listingWarning };
 }
 
 function validateUnitAndPackaging(payload, { allowedUnits, allowedPackaging }) {
@@ -76,8 +74,38 @@ const supplierInclude = {
   model: User,
   as: "supplier",
   attributes: ["id", "firstName", "lastName", "username", "mobile"],
-  include: [{ model: Account, as: "account", attributes: ["profileSlug"], required: false }],
+  include: [
+    {
+      model: Account,
+      as: "account",
+      attributes: ["profileSlug", "displayName"],
+      required: false,
+    },
+  ],
 };
+
+/** شماره را از پاسخ عمومی حذف می‌کند تا اسکرپینگ سخت‌تر شود */
+function sanitizeSupplierForPublic(supplier) {
+  if (!supplier) return null;
+  const plain = supplier.toJSON ? supplier.toJSON() : { ...supplier };
+  const hasPhone = Boolean(plain.mobile || plain.phone);
+  delete plain.mobile;
+  delete plain.phone;
+  return { ...plain, hasPhone };
+}
+
+function sanitizeLotsForPublic(lots) {
+  return (Array.isArray(lots) ? lots : [lots]).map((lot) => {
+    const plain = lot && typeof lot === "object" ? { ...lot } : lot;
+    if (plain?.supplier) {
+      plain.supplier = sanitizeSupplierForPublic(plain.supplier);
+    }
+    if (plain?.farmer) {
+      plain.farmer = sanitizeSupplierForPublic(plain.farmer);
+    }
+    return plain;
+  });
+}
 
 async function attachLotCoverImages(lots) {
   const arr = Array.isArray(lots) ? lots : [lots];
@@ -117,7 +145,7 @@ const list = async (req, res) => {
     ],
     order: [["id", "ASC"]]
   });
-  const data = await attachLotCoverImages(items);
+  const data = sanitizeLotsForPublic(await attachLotCoverImages(items));
   res.json({ success: true, data });
 };
 
@@ -133,8 +161,46 @@ const getById = async (req, res) => {
     ]
   });
   if (!item) return res.status(404).json({ success: false, message: "Not found" });
-  const [data] = await attachLotCoverImages([item]);
+  const [data] = sanitizeLotsForPublic(await attachLotCoverImages([item]));
   res.json({ success: true, data });
+};
+
+/** شماره تماس تامین‌کننده — فقط پس از درخواست صریح (ضد اسکرپینگ) */
+const getSupplierContact = async (req, res) => {
+  try {
+    const item = await InventoryLot.findByPk(req.params.id, {
+      attributes: ["id", "farmerId"],
+      include: [supplierInclude],
+    });
+    if (!item) {
+      return res.status(404).json({ success: false, message: "Not found" });
+    }
+    const supplier = item.supplier || item.farmer;
+    if (!supplier) {
+      return res.status(404).json({ success: false, message: "تامین‌کننده یافت نشد" });
+    }
+    const phone = supplier.mobile || supplier.phone || null;
+    if (!phone) {
+      return res.status(404).json({ success: false, message: "شماره تماس ثبت نشده است" });
+    }
+    const account = supplier.account || {};
+    const displayName =
+      String(account.displayName || "").trim() ||
+      [supplier.firstName, supplier.lastName].filter(Boolean).join(" ").trim() ||
+      supplier.username ||
+      null;
+    return res.json({
+      success: true,
+      data: {
+        phone: String(phone),
+        displayName,
+        profileSlug: account.profileSlug || null,
+      },
+    });
+  } catch (error) {
+    console.error("getSupplierContact:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
 };
 
 function formatLotRecord(lot) {
@@ -417,5 +483,16 @@ const setTieredPricing = async (req, res) => {
   }
 };
 
-module.exports = { list, getById, create, update, remove, reserve, release, calculatePrice, setTieredPricing };
+module.exports = {
+  list,
+  getById,
+  getSupplierContact,
+  create,
+  update,
+  remove,
+  reserve,
+  release,
+  calculatePrice,
+  setTieredPricing,
+};
 

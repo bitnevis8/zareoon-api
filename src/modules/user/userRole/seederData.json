@@ -1,5 +1,7 @@
 [
   { "email": "bitnevis@yahoo.com", "role": "super_admin" },
+  { "email": "bitnevis@yahoo.com", "role": "seller" },
+  { "email": "bitnevis@yahoo.com", "role": "service_provider" },
   { "email": "rahimi@zareoon.ir", "role": "super_admin" },
   { "email": "palizvan@zareoon.ir", "role": "admin" }
 ]
