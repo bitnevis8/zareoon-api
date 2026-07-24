@@ -284,7 +284,8 @@ const getPublicProfile = async (req, res) => {
         where: { followerId: viewerId, followingId: user.id },
       }));
       if (viewerId !== user.id && canAcceptOrders(shopStatus)) {
-        canReview = !!(await hasTradedWith(viewerId, user.id));
+        // هر کاربر واردشده (به‌جز صاحب صفحه) می‌تواند امتیاز ۵ستاره‌ای بدهد
+        canReview = true;
         myReview = await SupplierReview.findOne({
           where: { supplierId: user.id, reviewerId: viewerId },
           attributes: ["id", "rating", "comment", "createdAt"],
@@ -738,21 +739,20 @@ const createReview = async (req, res) => {
       return res.status(400).json({ success: false, message: "امتیاز به خود ممنوع است" });
     }
 
-    const orderId = await hasTradedWith(reviewerId, supplierId);
-    if (!orderId) {
-      return res.status(403).json({
-        success: false,
-        message: "فقط پس از معامله موفق می‌توانید امتیاز دهید",
-      });
-    }
+    // هر کاربر واردشده می‌تواند به صفحه اختصاصی امتیاز دهد؛ orderId اختیاری است
+    const orderId = (await hasTradedWith(reviewerId, supplierId)) || null;
 
     const [review, created] = await SupplierReview.findOrCreate({
       where: { supplierId, reviewerId },
-      defaults: { rating, comment, orderId },
+      defaults: { rating, comment: comment || null, orderId },
     });
 
     if (!created) {
-      await review.update({ rating, comment, orderId });
+      await review.update({
+        rating,
+        comment: comment || null,
+        ...(orderId ? { orderId } : {}),
+      });
     }
 
     const stats = await getProfileStats(supplierId);

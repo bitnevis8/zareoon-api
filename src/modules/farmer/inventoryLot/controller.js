@@ -83,7 +83,7 @@ const supplierInclude = {
     {
       model: Account,
       as: "account",
-      attributes: ["profileSlug", "displayName"],
+      attributes: ["profileSlug", "displayName", "coverImage"],
       required: false,
     },
   ],

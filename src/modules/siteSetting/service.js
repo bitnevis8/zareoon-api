@@ -112,7 +112,7 @@ async function isShopsAutoApprove() {
 }
 
 async function isShowFooterBreakpoint() {
-  return getBoolSetting(SHOW_FOOTER_BREAKPOINT, false);
+  return getBoolSetting(SHOW_FOOTER_BREAKPOINT, true);
 }
 
 async function getPageDeletionGraceDays() {

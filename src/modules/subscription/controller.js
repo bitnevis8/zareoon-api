@@ -1,6 +1,6 @@
 const { UserSubscription } = require("./model");
 const { PLANS, getPlanById, planTotalMonths } = require("./plans");
-const zarinpal = require("./zarinpal");
+const zibal = require("./zibal");
 
 function addMonths(date, months) {
   const d = new Date(date);
@@ -19,6 +19,7 @@ function publicPlan(plan) {
     badge: plan.badge,
     highlight: plan.highlight,
     features: plan.features,
+    limits: plan.limits || null,
     isFree: plan.priceToman === 0,
   };
 }
@@ -28,9 +29,9 @@ exports.listPlans = async (_req, res) => {
     success: true,
     data: PLANS.map(publicPlan),
     gateway: {
-      provider: "zarinpal",
-      sandbox: zarinpal.isSandbox(),
-      configured: Boolean(zarinpal.merchantId()),
+      provider: "zibal",
+      sandbox: zibal.isSandbox(),
+      configured: Boolean(zibal.merchantId()),
     },
   });
 };
@@ -90,26 +91,26 @@ exports.startCheckout = async (req, res) => {
       planId: plan.id,
       status: "pending",
       amountToman: plan.priceToman,
-      gateway: "zarinpal",
+      gateway: "zibal",
       meta: { planName: plan.name },
     });
 
-    const { authority, paymentUrl } = await zarinpal.requestPayment({
+    const { trackId, paymentUrl } = await zibal.requestPayment({
       amountToman: plan.priceToman,
       description: `اشتراک ${plan.name} — زارعون`,
-      email: req.user.email,
       mobile: req.user.mobile,
-      metadata: { subscription_id: String(pending.id), user_id: String(userId) },
+      orderId: String(pending.id),
     });
 
-    pending.authority = authority;
+    pending.authority = trackId;
     await pending.save();
 
     return res.json({
       success: true,
       data: {
         subscriptionId: pending.id,
-        authority,
+        trackId,
+        authority: trackId,
         paymentUrl,
         amountToman: plan.priceToman,
       },
@@ -117,10 +118,10 @@ exports.startCheckout = async (req, res) => {
   } catch (error) {
     console.error("startCheckout:", error);
     const message =
-      error.code === "ZARINPAL_NOT_CONFIGURED"
-        ? "درگاه پرداخت هنوز پیکربندی نشده است. Merchant ID زرین‌پال را در سرور تنظیم کنید."
+      error.code === "ZIBAL_NOT_CONFIGURED"
+        ? "درگاه پرداخت هنوز پیکربندی نشده است. کد پذیرنده زیبال را در api/config تنظیم کنید."
         : error.message || "خطا در شروع پرداخت";
-    return res.status(error.code === "ZARINPAL_NOT_CONFIGURED" ? 503 : 500).json({
+    return res.status(error.code === "ZIBAL_NOT_CONFIGURED" ? 503 : 500).json({
       success: false,
       message,
     });
@@ -129,14 +130,22 @@ exports.startCheckout = async (req, res) => {
 
 exports.verifyCheckout = async (req, res) => {
   try {
-    const authority = String(req.body?.authority || req.query?.Authority || "");
-    const status = String(req.body?.status || req.query?.Status || "");
+    const trackId = String(
+      req.body?.trackId ||
+        req.query?.trackId ||
+        req.body?.authority ||
+        req.query?.Authority ||
+        req.query?.authority ||
+        ""
+    ).trim();
+    const success = String(req.body?.success ?? req.query?.success ?? "").trim();
+    const status = String(req.body?.status || req.query?.status || req.query?.Status || "").trim();
 
-    if (!authority) {
+    if (!trackId) {
       return res.status(400).json({ success: false, message: "کد پیگیری پرداخت یافت نشد" });
     }
 
-    const sub = await UserSubscription.findOne({ where: { authority } });
+    const sub = await UserSubscription.findOne({ where: { authority: trackId } });
     if (!sub) {
       return res.status(404).json({ success: false, message: "سفارش اشتراک یافت نشد" });
     }
@@ -148,23 +157,23 @@ exports.verifyCheckout = async (req, res) => {
       });
     }
 
-    if (status && status.toUpperCase() !== "OK") {
+    // Zibal: success=1 means paid; also accept legacy Zarinpal Status=OK during transition
+    const canceled =
+      (success !== "" && success !== "1") ||
+      (success === "" && status !== "" && status.toUpperCase() !== "OK" && status !== "1");
+    if (canceled) {
       sub.status = "canceled";
       await sub.save();
       return res.status(400).json({ success: false, message: "پرداخت توسط کاربر لغو شد" });
     }
 
-    const verified = await zarinpal.verifyPayment({
-      authority,
-      amountToman: sub.amountToman,
-    });
+    const verified = await zibal.verifyPayment({ trackId });
 
     const plan = getPlanById(sub.planId);
     const months = planTotalMonths(plan);
     const startsAt = new Date();
     const endsAt = addMonths(startsAt, months || 1);
 
-    // expire previous active
     await UserSubscription.update(
       { status: "expired" },
       { where: { userId: sub.userId, status: "active" } }

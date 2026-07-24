@@ -40,5 +40,10 @@
     "PASSWORD": "",
     "DB": 0,
     "KEY_PREFIX": "zareoon:dev:"
+  },
+  "ZIBAL": {
+    "MERCHANT": "6a5acfa1188878a8f75c7013",
+    "SANDBOX": true,
+    "CALLBACK_URL": "http://localhost:3001/pricing/callback"
   }
 }

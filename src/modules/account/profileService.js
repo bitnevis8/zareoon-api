@@ -192,6 +192,7 @@ async function formatAccountPublic(account, user) {
     displayName,
     username: user.username,
     avatar:
+      account.coverImage ||
       user.avatar ||
       (String(account.profileSlug || "").toLowerCase() === "zareoon" ? "/images/logo.png" : null),
     profileSlug: account.profileSlug,

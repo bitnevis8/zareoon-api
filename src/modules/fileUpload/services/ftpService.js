@@ -79,6 +79,7 @@ class FTPService {
 
       const structure = {
         users: ["avatars", "documents", "temp"],
+        accounts: ["images", "covers"],
         products: ["images", "videos", "documents", "icons"],
         inventory: ["images", "videos", "documents", "certificates"],
         orders: ["invoices", "receipts", "contracts", "shipping"],

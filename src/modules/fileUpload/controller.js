@@ -1,9 +1,45 @@
 const BaseController = require("../../core/baseController");
 const File = require("./model");
-const config = require("config");
 const ftpService = require("./services/ftpService");
+const { isProcessableImage, processUploadImage } = require("./services/imageProcessor");
 const path = require("path");
 const fs = require("fs");
+
+function safeUnlink(filePath) {
+  try {
+    if (filePath && fs.existsSync(filePath)) fs.unlinkSync(filePath);
+  } catch {
+    /* ignore */
+  }
+}
+
+/**
+ * تصویر → WebP فشرده + واترمارک؛ غیرتصویر بدون تغییر
+ */
+async function resolveUploadAsset(reqFile, { watermark = true } = {}) {
+  const originalPath = reqFile.path;
+  if (!isProcessableImage(reqFile.mimetype)) {
+    return {
+      localPath: originalPath,
+      fileName: reqFile.filename,
+      mimeType: reqFile.mimetype,
+      size: reqFile.size,
+      originalName: reqFile.originalname,
+      processedPath: null,
+    };
+  }
+
+  const processed = await processUploadImage(originalPath, { watermark });
+  const baseOriginal = path.basename(reqFile.originalname, path.extname(reqFile.originalname));
+  return {
+    localPath: processed.outputPath,
+    fileName: processed.fileName,
+    mimeType: processed.mimeType,
+    size: processed.size,
+    originalName: `${baseOriginal || "image"}.webp`,
+    processedPath: processed.outputPath,
+  };
+}
 
 class FileController extends BaseController {
   async initializeDirectories(req, res) {
@@ -17,6 +53,7 @@ class FileController extends BaseController {
   }
 
   async upload(req, res) {
+    let processedPath = null;
     try {
       console.log('=== Upload Debug ===');
       console.log('Request user:', req.user);
@@ -38,24 +75,32 @@ class FileController extends BaseController {
       const fileType = req.body.fileType || (req.file.mimetype.startsWith('video/') ? 'videos' : 'images');
       const entityId = req.body.entityId ? parseInt(req.body.entityId, 10) : null;
       console.log('Upload module:', module, 'fileType:', fileType, 'entityId:', entityId);
-      
-      // آپلود به FTP و دریافت مسیرها
+
+      const asset = await resolveUploadAsset(req.file, {
+        // آواتار / لوگوی فروشگاه بدون واترمارک
+        watermark: !(
+          (module === "users" && fileType === "avatars") ||
+          module === "accounts"
+        ),
+      });
+      processedPath = asset.processedPath;
+
       const { relativePath } = await ftpService.uploadFile(
-        req.file.path,
+        asset.localPath,
         module,
-        req.file.filename,
+        asset.fileName,
         fileType
       );
 
-      // حذف فایل موقت
-      fs.unlinkSync(req.file.path);
+      safeUnlink(req.file.path);
+      if (processedPath && processedPath !== req.file.path) safeUnlink(processedPath);
 
       const file = await File.create({
-        fileName: req.file.filename,
-        originalName: req.file.originalname,
+        fileName: asset.fileName,
+        originalName: asset.originalName,
         path: relativePath,
-        mimeType: req.file.mimetype,
-        size: req.file.size,
+        mimeType: asset.mimeType,
+        size: asset.size,
         module: module,
         fileType: fileType,
         entityId: entityId,
@@ -71,7 +116,7 @@ class FileController extends BaseController {
         }
       }
 
-      console.log("✅ File uploaded successfully:", file.fileName);
+      console.log("✅ File uploaded successfully:", file.fileName, `(${Math.round(file.size / 1024)}KB)`);
       return this.response(res, 201, true, "فایل با موفقیت آپلود شد", {
         id: file.id,
         fileName: file.fileName,
@@ -86,10 +131,8 @@ class FileController extends BaseController {
       });
 
     } catch (error) {
-      // در صورت خطا، فایل موقت را حذف می‌کنیم
-      if (req.file && fs.existsSync(req.file.path)) {
-        fs.unlinkSync(req.file.path);
-      }
+      if (req.file) safeUnlink(req.file.path);
+      if (processedPath) safeUnlink(processedPath);
       console.error("❌ File upload failed:", error.message);
       return this.response(res, 500, false, "خطا در آپلود فایل", null, error);
     }
@@ -141,29 +184,85 @@ class FileController extends BaseController {
 
   async deleteFileByUrl(req, res) {
     try {
-      const { fileUrl } = req.body;
+      const { fileUrl, clearAvatar } = req.body || {};
       if (!fileUrl) {
         return this.response(res, 400, false, "URL فایل الزامی است");
       }
 
-      // پیدا کردن فایل بر اساس URL
-      const file = await File.findOne({
-        where: {
-          downloadUrl: fileUrl
-        }
-      });
+      const User = require("../user/user/model");
+      const userId = req.user?.userId || req.user?.id;
 
-      if (!file) {
-        return this.response(res, 404, false, "فایل یافت نشد");
+      // downloadUrl مجازی است و در WHERE قابل جستجو نیست — از path استفاده می‌کنیم
+      const normalizePath = (raw) => {
+        let s = String(raw || "").trim();
+        if (!s) return "";
+        try {
+          if (/^https?:\/\//i.test(s)) {
+            const u = new URL(s);
+            s = u.pathname || "";
+          }
+        } catch {
+          /* ignore */
+        }
+        s = s.replace(/^\/dl-media\//i, "/");
+        s = s.replace(/^\//, "");
+        // query/hash را حذف کن
+        s = s.split("?")[0].split("#")[0];
+        return s;
+      };
+
+      const targetPath = normalizePath(fileUrl);
+      let file = null;
+
+      if (targetPath) {
+        file = await File.findOne({ where: { path: targetPath } });
+        if (!file) {
+          // تطبیق با پسوند مسیر (اگر هاست/پیشوند فرق داشته باشد)
+          const baseName = targetPath.split("/").pop();
+          if (baseName) {
+            const { Op } = require("sequelize");
+            file = await File.findOne({
+              where: {
+                path: { [Op.like]: `%/${baseName}` },
+              },
+              order: [["id", "DESC"]],
+            });
+          }
+        }
       }
 
-      // حذف فایل از FTP
-      await ftpService.deleteFile(file.path);
+      if (file) {
+        try {
+          await ftpService.deleteFile(file.path);
+        } catch (ftpErr) {
+          console.warn("FTP delete skipped:", ftpErr.message);
+        }
+        await file.destroy();
+      }
 
-      await file.destroy();
+      // همیشه آواتار کاربر را خالی کن اگر درخواست حذف آواتار باشد یا URL با آواتار فعلی یکی باشد
+      if (userId) {
+        const user = await User.findByPk(userId);
+        if (user) {
+          const userAvatarPath = normalizePath(user.avatar);
+          const shouldClear =
+            clearAvatar === true ||
+            clearAvatar === "true" ||
+            (userAvatarPath && targetPath && userAvatarPath === targetPath) ||
+            (user.avatar && String(user.avatar) === String(fileUrl));
+          if (shouldClear && user.avatar) {
+            await user.update({ avatar: null });
+          }
+        }
+      }
+
+      if (!file) {
+        // فایل در جدول نبود، ولی آواتار پاک شده — موفقیت نرم
+        return this.response(res, 200, true, "تصویر از نمایه حذف شد", { cleared: true, fileMissing: true });
+      }
+
       console.log("✅ File deleted successfully by URL:", file.fileName);
-      return this.response(res, 200, true, "فایل با موفقیت حذف شد");
-
+      return this.response(res, 200, true, "فایل با موفقیت حذف شد", { cleared: true });
     } catch (error) {
       console.error("❌ Delete file by URL failed:", error.message);
       return this.response(res, 500, false, "خطا در حذف فایل", null, error);
@@ -284,6 +383,7 @@ class FileController extends BaseController {
   }
 
   async uploadAvatar(req, res) {
+    let processedPath = null;
     try {
       console.log('=== Avatar Upload Debug ===');
       console.log('Request user:', req.user);
@@ -308,24 +408,25 @@ class FileController extends BaseController {
       // تعیین کاربر هدف (اگر userId ارسال شده باشد، از آن استفاده می‌کنیم)
       const targetUserId = req.body.userId ? parseInt(req.body.userId) : req.user.userId;
 
-      // آپلود به FTP
+      const asset = await resolveUploadAsset(req.file, { watermark: false });
+      processedPath = asset.processedPath;
+
       const { relativePath } = await ftpService.uploadFile(
-        req.file.path,
+        asset.localPath,
         'users',
-        req.file.filename,
+        asset.fileName,
         'avatars'
       );
 
-      // حذف فایل موقت
-      fs.unlinkSync(req.file.path);
+      safeUnlink(req.file.path);
+      if (processedPath && processedPath !== req.file.path) safeUnlink(processedPath);
 
-      // ذخیره در دیتابیس
       const file = await File.create({
-        fileName: req.file.filename,
-        originalName: req.file.originalname,
+        fileName: asset.fileName,
+        originalName: asset.originalName,
         path: relativePath,
-        mimeType: req.file.mimetype,
-        size: req.file.size,
+        mimeType: asset.mimeType,
+        size: asset.size,
         module: 'users',
         fileType: 'avatars',
         entityId: targetUserId,
@@ -351,9 +452,8 @@ class FileController extends BaseController {
       });
 
     } catch (error) {
-      if (req.file && fs.existsSync(req.file.path)) {
-        fs.unlinkSync(req.file.path);
-      }
+      if (req.file) safeUnlink(req.file.path);
+      if (processedPath) safeUnlink(processedPath);
       console.error("❌ Avatar upload failed:", error.message);
       return this.response(res, 500, false, "خطا در آپلود آواتار", null, error);
     }

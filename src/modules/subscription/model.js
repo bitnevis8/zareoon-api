@@ -16,7 +16,7 @@ UserSubscription.init(
     amountToman: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
     authority: { type: DataTypes.STRING(64), allowNull: true },
     refId: { type: DataTypes.STRING(64), allowNull: true },
-    gateway: { type: DataTypes.STRING(32), allowNull: false, defaultValue: "zarinpal" },
+    gateway: { type: DataTypes.STRING(32), allowNull: false, defaultValue: "zibal" },
     startsAt: { type: DataTypes.DATE, allowNull: true },
     endsAt: { type: DataTypes.DATE, allowNull: true },
     meta: { type: DataTypes.JSON, allowNull: true },
