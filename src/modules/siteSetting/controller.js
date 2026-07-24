@@ -1,6 +1,7 @@
 const {
   getTradeSettings,
   updateTradeSettings,
+  getUiPublicSettings,
   getPublicVipCategories,
   getEnabledLanguages,
   updateEnabledLanguages,
@@ -30,8 +31,13 @@ const getTrade = async (req, res) => {
 
 const patchTrade = async (req, res) => {
   try {
-    const { tradeProvidersAutoApprove, shopsAutoApprove, pageDeletionGraceDays, vipTradeCategories } =
-      req.body;
+    const {
+      tradeProvidersAutoApprove,
+      shopsAutoApprove,
+      pageDeletionGraceDays,
+      vipTradeCategories,
+      showFooterBreakpoint,
+    } = req.body;
 
     if (
       tradeProvidersAutoApprove !== undefined &&
@@ -40,6 +46,9 @@ const patchTrade = async (req, res) => {
       return res.status(400).json({ success: false, message: "مقدار نامعتبر است" });
     }
     if (shopsAutoApprove !== undefined && typeof shopsAutoApprove !== "boolean") {
+      return res.status(400).json({ success: false, message: "مقدار نامعتبر است" });
+    }
+    if (showFooterBreakpoint !== undefined && typeof showFooterBreakpoint !== "boolean") {
       return res.status(400).json({ success: false, message: "مقدار نامعتبر است" });
     }
     if (
@@ -60,11 +69,22 @@ const patchTrade = async (req, res) => {
       shopsAutoApprove,
       pageDeletionGraceDays,
       vipTradeCategories,
+      showFooterBreakpoint,
     });
     res.json({ success: true, data, message: "تنظیمات ذخیره شد" });
   } catch (error) {
     console.error("Site settings patchTrade error:", error);
     res.status(500).json({ success: false, message: "خطا در ذخیره تنظیمات" });
+  }
+};
+
+const getUiPublic = async (_req, res) => {
+  try {
+    const data = await getUiPublicSettings();
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error("Site settings getUiPublic error:", error);
+    res.status(500).json({ success: false, message: "خطا در دریافت تنظیمات نمایش" });
   }
 };
 
@@ -318,6 +338,7 @@ const pingCacheRedis = async (_req, res) => {
 module.exports = {
   getTrade,
   patchTrade,
+  getUiPublic,
   getVipPublic,
   getLanguages,
   patchLanguages,

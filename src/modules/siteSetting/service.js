@@ -4,6 +4,7 @@ const TRADE_PROVIDERS_AUTO_APPROVE = "tradeProvidersAutoApprove";
 const SHOPS_AUTO_APPROVE = "shopsAutoApprove";
 const PAGE_DELETION_GRACE_DAYS = "pageDeletionGraceDays";
 const VIP_TRADE_CATEGORIES = "vipTradeCategories";
+const SHOW_FOOTER_BREAKPOINT = "showFooterBreakpoint";
 const ENABLED_LANGUAGES = "enabledLanguages";
 const BLOCKED_PAGE_SLUGS = "blockedPageSlugs";
 const PUBLIC_PAGE_SLUG_RULES = "publicPageSlugRules";
@@ -108,6 +109,10 @@ async function isTradeProvidersAutoApprove() {
 
 async function isShopsAutoApprove() {
   return getBoolSetting(SHOPS_AUTO_APPROVE, true);
+}
+
+async function isShowFooterBreakpoint() {
+  return getBoolSetting(SHOW_FOOTER_BREAKPOINT, false);
 }
 
 async function getPageDeletionGraceDays() {
@@ -234,6 +239,7 @@ async function getTradeSettings() {
     shopsAutoApprove: await isShopsAutoApprove(),
     pageDeletionGraceDays: await getPageDeletionGraceDays(),
     vipTradeCategories: await getVipTradeCategoriesConfig(),
+    showFooterBreakpoint: await isShowFooterBreakpoint(),
   };
 }
 
@@ -242,6 +248,7 @@ async function updateTradeSettings({
   shopsAutoApprove,
   pageDeletionGraceDays,
   vipTradeCategories,
+  showFooterBreakpoint,
 }) {
   if (tradeProvidersAutoApprove !== undefined) {
     await setBoolSetting(TRADE_PROVIDERS_AUTO_APPROVE, tradeProvidersAutoApprove);
@@ -255,7 +262,16 @@ async function updateTradeSettings({
   if (vipTradeCategories !== undefined) {
     await updateVipTradeCategoriesConfig(vipTradeCategories);
   }
+  if (showFooterBreakpoint !== undefined) {
+    await setBoolSetting(SHOW_FOOTER_BREAKPOINT, showFooterBreakpoint);
+  }
   return getTradeSettings();
+}
+
+async function getUiPublicSettings() {
+  return {
+    showFooterBreakpoint: await isShowFooterBreakpoint(),
+  };
 }
 
 async function getPublicVipCategories() {
@@ -416,6 +432,7 @@ module.exports = {
   SHOPS_AUTO_APPROVE,
   PAGE_DELETION_GRACE_DAYS,
   VIP_TRADE_CATEGORIES,
+  SHOW_FOOTER_BREAKPOINT,
   ENABLED_LANGUAGES,
   BLOCKED_PAGE_SLUGS,
   PUBLIC_PAGE_SLUG_RULES,
@@ -424,6 +441,7 @@ module.exports = {
   DEFAULT_PUBLIC_PAGE_SLUG_RULES,
   isTradeProvidersAutoApprove,
   isShopsAutoApprove,
+  isShowFooterBreakpoint,
   getPageDeletionGraceDays,
   setPageDeletionGraceDays,
   getVipTradeCategoriesConfig,
@@ -437,6 +455,7 @@ module.exports = {
   resolveVipMessage,
   getTradeSettings,
   updateTradeSettings,
+  getUiPublicSettings,
   getPublicVipCategories,
   getEnabledLanguages,
   updateEnabledLanguages,

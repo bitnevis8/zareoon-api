@@ -4,6 +4,7 @@ const controller = require("./controller");
 const { authenticateUser, authorizeRole } = require("../user/auth/middleware");
 
 router.get("/vip/public", controller.getVipPublic);
+router.get("/ui/public", controller.getUiPublic);
 router.get("/languages/public", controller.getLanguagesPublic);
 router.get("/public-page-slug-rules/public", controller.getSlugRulesPublic);
 
