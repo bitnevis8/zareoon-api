@@ -1,3 +1,32 @@
+const path = require("path");
+const fs = require("fs");
+
+/** بارگذاری .env پنل میزبانی (مثلاً Pachim) قبل از config */
+(function loadDotEnv() {
+  const envPath = path.join(__dirname, ".env");
+  try {
+    if (!fs.existsSync(envPath)) return;
+    const raw = fs.readFileSync(envPath, "utf8");
+    for (const line of raw.split(/\r?\n/)) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("#")) continue;
+      const eq = trimmed.indexOf("=");
+      if (eq <= 0) continue;
+      const key = trimmed.slice(0, eq).trim();
+      let val = trimmed.slice(eq + 1).trim();
+      if (
+        (val.startsWith('"') && val.endsWith('"')) ||
+        (val.startsWith("'") && val.endsWith("'"))
+      ) {
+        val = val.slice(1, -1);
+      }
+      if (key && process.env[key] === undefined) process.env[key] = val;
+    }
+  } catch (e) {
+    console.warn("⚠️ .env load skipped:", e.message);
+  }
+})();
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const config = require("config");

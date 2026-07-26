@@ -29,7 +29,7 @@ function getResendApiKey() {
 
 function getFromAddress(optsFrom) {
   if (optsFrom) return optsFrom;
-  const configured = safeGet("EMAIL.FROM", null);
+  const configured = safeGet("EMAIL.FROM", null) || process.env.EMAIL_FROM || null;
   if (configured) return configured;
   return getMailFrom();
 }
@@ -53,7 +53,7 @@ async function sendViaResend({ to, subject, text, html, from }) {
   const apiKey = String(getResendApiKey() || "").trim();
   if (!apiKey) {
     throw new Error(
-      "RESEND_API_KEY تنظیم نشده است. روی سرور config/local.json یا متغیر محیطی را ست کنید."
+      "RESEND_API_KEY تنظیم نشده است. روی سرور در مدیریت متغیرها (.env) مقدار RESEND_API_KEY را بگذارید یا config/local.json بسازید."
     );
   }
 
