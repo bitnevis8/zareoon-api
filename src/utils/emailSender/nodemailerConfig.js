@@ -50,20 +50,31 @@ function getSmtpTransporter() {
 }
 
 async function sendViaResend({ to, subject, text, html, from }) {
-  const apiKey = getResendApiKey();
+  const apiKey = String(getResendApiKey() || "").trim();
   if (!apiKey) {
-    throw new Error("RESEND_API_KEY تنظیم نشده است");
+    throw new Error(
+      "RESEND_API_KEY تنظیم نشده است. روی سرور config/local.json یا متغیر محیطی را ست کنید."
+    );
+  }
+
+  // Resend: از آدرس ساده استفاده کن؛ نام نمایشی با کاراکترهای خاص گاهی 422 می‌دهد
+  let fromAddr = String(from || "").trim();
+  const angle = fromAddr.match(/<([^>]+)>/);
+  if (angle) {
+    const emailOnly = angle[1].trim();
+    const nameMatch = fromAddr.replace(/<[^>]+>/, "").trim().replace(/^"|"$/g, "");
+    fromAddr = nameMatch ? `${JSON.stringify(nameMatch)} <${emailOnly}>` : emailOnly;
   }
 
   const payload = {
-    from,
+    from: fromAddr,
     to: [to],
     subject,
     html,
   };
   if (text) payload.text = text;
 
-  const { data } = await axios.post("https://api.resend.com/emails", payload, {
+  const res = await axios.post("https://api.resend.com/emails", payload, {
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
@@ -72,13 +83,19 @@ async function sendViaResend({ to, subject, text, html, from }) {
     validateStatus: () => true,
   });
 
-  if (!data?.id) {
-    const msg = data?.message || data?.error || JSON.stringify(data);
-    throw new Error(`Resend failed: ${msg}`);
+  const data = res.data || {};
+  if (res.status >= 200 && res.status < 300 && data.id) {
+    console.log("Message sent via Resend: %s", data.id);
+    return { messageId: data.id, provider: "resend" };
   }
 
-  console.log("Message sent via Resend: %s", data.id);
-  return { messageId: data.id, provider: "resend" };
+  const detail =
+    (typeof data.message === "string" && data.message) ||
+    (typeof data.error === "string" && data.error) ||
+    (data.error && data.error.message) ||
+    JSON.stringify(data);
+  console.error("❌ Resend HTTP", res.status, detail);
+  throw new Error(`Resend: ${detail}`);
 }
 
 async function sendViaSmtp({ to, subject, text, html, from }) {

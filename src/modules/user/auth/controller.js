@@ -1170,7 +1170,13 @@ class AuthController extends BaseController {
           await main(addr, mail.subject, mail.text, mail.html, { from: mail.from });
         } catch (mailErr) {
           console.error("❌ Email sending failed:", mailErr.message || mailErr);
-          return this.response(res, 500, false, "خطا در ارسال ایمیل");
+          const detail = String(mailErr.message || "").slice(0, 220);
+          return this.response(
+            res,
+            500,
+            false,
+            detail ? `خطا در ارسال ایمیل: ${detail}` : "خطا در ارسال ایمیل"
+          );
         }
 
         return this.response(res, 200, true, "کد تأیید به ایمیل ارسال شد", {
