@@ -205,7 +205,11 @@ const list = async (req, res) => {
 };
 
 const getById = async (req, res) => {
-  const item = await Product.findByPk(req.params.id);
+  const key = String(req.params.id || "").trim();
+  if (!key) return res.status(404).json({ success: false, message: "Not found" });
+  const item = /^\d+$/.test(key)
+    ? await Product.findByPk(key)
+    : await Product.findOne({ where: { slug: decodeURIComponent(key) } });
   if (!item) return res.status(404).json({ success: false, message: "Not found" });
   const [data] = await attachUploadedImages([item]);
   res.json({ success: true, data });

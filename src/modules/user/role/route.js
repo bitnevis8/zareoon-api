@@ -1,13 +1,14 @@
 const express = require("express");
 const RoleController = require("./controller");
+const { authenticateUser, authorizeRole } = require("../auth/middleware");
 
 const router = express.Router();
+const adminOnly = [authenticateUser, authorizeRole("Administrator")];
 
-// روت‌های مربوط به نقش‌ها
-router.get("/getAll", RoleController.getAll); // دریافت تمام نقش‌ها
-router.get("/getOne/:id", RoleController.getOne); // دریافت یک نقش بر اساس ID
-router.post("/create", RoleController.create); // ایجاد نقش جدید
-router.put("/update/:id", RoleController.update); // ویرایش نقش بر اساس ID
-router.delete("/delete/:id", RoleController.delete); // حذف نقش بر اساس ID
+router.get("/getAll", ...adminOnly, RoleController.getAll);
+router.get("/getOne/:id", ...adminOnly, RoleController.getOne);
+router.post("/create", ...adminOnly, RoleController.create);
+router.put("/update/:id", ...adminOnly, RoleController.update);
+router.delete("/delete/:id", ...adminOnly, RoleController.delete);
 
-module.exports = router; 
+module.exports = router;

@@ -232,8 +232,16 @@ const create = async (req, res) => {
     const initialStatus = autoApprove ? "approved" : "pending";
     const pageStatus = initialStatusFromAutoApprove(autoApprove);
 
+    const { ensurePersonalWorkspaceFromReq } = require("../workspace/service");
+    const { assertCanCreateService } = require("../workspace/limits");
+    const ensured = await ensurePersonalWorkspaceFromReq(req);
+    if (ensured?.workspace?.id) {
+      await assertCanCreateService(ensured.workspace.id);
+    }
+
     const record = await TradeServiceProvider.create({
       userId: authUserId,
+      workspaceId: ensured?.workspace?.id || null,
       entityType: validEntity,
       displayName: displayName.trim(),
       contactName: contactName.trim(),
@@ -267,6 +275,10 @@ const create = async (req, res) => {
           ? Number(req.body.longitude)
           : null,
     });
+
+    if (ensured?.workspace?.id && !ensured.workspace.activityServices) {
+      await ensured.workspace.update({ activityServices: true });
+    }
 
     let sessionUser = null;
     if (authUserId) {

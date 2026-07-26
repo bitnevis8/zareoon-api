@@ -9,8 +9,18 @@ const ENABLED_LANGUAGES = "enabledLanguages";
 const BLOCKED_PAGE_SLUGS = "blockedPageSlugs";
 const PUBLIC_PAGE_SLUG_RULES = "publicPageSlugRules";
 const CACHE_CONFIG = "cacheConfig";
+const AUTH_SIGNUP_CONFIG = "authSignupConfig";
 
 const ALL_LANGUAGE_CODES = ["fa", "es", "en", "ar", "nl", "tr", "ru", "ur", "fi"];
+
+const { ALL_PHONE_COUNTRY_CODES } = require("../../utils/phoneCountries");
+
+const DEFAULT_AUTH_SIGNUP_CONFIG = {
+  emailEnabled: true,
+  phoneEnabled: true,
+  allowedPhoneCountries: ["IR"],
+  defaultPhoneCountry: "IR",
+};
 
 const DEFAULT_PUBLIC_PAGE_SLUG_RULES = {
   minLength: 5,
@@ -427,6 +437,58 @@ async function setPublicPageSlugRules(rules) {
   return next;
 }
 
+function normalizeAuthSignupConfig(raw = {}) {
+  const emailEnabled = raw.emailEnabled !== false;
+  const phoneEnabled = raw.phoneEnabled !== false;
+  let allowed = Array.isArray(raw.allowedPhoneCountries)
+    ? raw.allowedPhoneCountries.map((c) => String(c).toUpperCase()).filter((c) => ALL_PHONE_COUNTRY_CODES.includes(c))
+    : [...DEFAULT_AUTH_SIGNUP_CONFIG.allowedPhoneCountries];
+  if (!allowed.length) allowed = ["IR"];
+  let defaultPhoneCountry = String(raw.defaultPhoneCountry || "IR").toUpperCase();
+  if (!allowed.includes(defaultPhoneCountry)) defaultPhoneCountry = allowed[0];
+  return {
+    emailEnabled,
+    phoneEnabled,
+    allowedPhoneCountries: allowed,
+    defaultPhoneCountry,
+    allPhoneCountryCodes: ALL_PHONE_COUNTRY_CODES,
+  };
+}
+
+async function getAuthSignupConfig() {
+  const stored = await getJsonSetting(AUTH_SIGNUP_CONFIG, null);
+  return normalizeAuthSignupConfig(stored && typeof stored === "object" ? stored : {});
+}
+
+async function updateAuthSignupConfig(patch = {}) {
+  const current = await getAuthSignupConfig();
+  const next = normalizeAuthSignupConfig({
+    emailEnabled: patch.emailEnabled !== undefined ? !!patch.emailEnabled : current.emailEnabled,
+    phoneEnabled: patch.phoneEnabled !== undefined ? !!patch.phoneEnabled : current.phoneEnabled,
+    allowedPhoneCountries:
+      patch.allowedPhoneCountries !== undefined ? patch.allowedPhoneCountries : current.allowedPhoneCountries,
+    defaultPhoneCountry:
+      patch.defaultPhoneCountry !== undefined ? patch.defaultPhoneCountry : current.defaultPhoneCountry,
+  });
+  await setJsonSetting(AUTH_SIGNUP_CONFIG, {
+    emailEnabled: next.emailEnabled,
+    phoneEnabled: next.phoneEnabled,
+    allowedPhoneCountries: next.allowedPhoneCountries,
+    defaultPhoneCountry: next.defaultPhoneCountry,
+  });
+  return next;
+}
+
+async function getAuthSignupPublic() {
+  const cfg = await getAuthSignupConfig();
+  return {
+    emailEnabled: cfg.emailEnabled,
+    phoneEnabled: cfg.phoneEnabled,
+    allowedPhoneCountries: cfg.allowedPhoneCountries,
+    defaultPhoneCountry: cfg.defaultPhoneCountry,
+  };
+}
+
 module.exports = {
   TRADE_PROVIDERS_AUTO_APPROVE,
   SHOPS_AUTO_APPROVE,
@@ -474,4 +536,10 @@ module.exports = {
   DEFAULT_CACHE_CONFIG,
   getCacheConfig,
   updateCacheConfig,
+  AUTH_SIGNUP_CONFIG,
+  DEFAULT_AUTH_SIGNUP_CONFIG,
+  getAuthSignupConfig,
+  updateAuthSignupConfig,
+  getAuthSignupPublic,
+  normalizeAuthSignupConfig,
 };

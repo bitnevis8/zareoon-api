@@ -1,21 +1,22 @@
 const express = require("express");
 const router = express.Router();
 const controller = require("./controller");
+const { authenticateUser } = require("../../user/auth/middleware");
+
+const auth = authenticateUser;
 
 router.get("/", controller.list);
-router.post("/", controller.create);
-router.get("/:id/supplier-contact", controller.getSupplierContact);
-router.get("/:id", controller.getById);
-router.put("/:id", controller.update);
-router.delete("/:id", controller.remove);
-
-// Reservation and release endpoints
-router.post("/:id/reserve", controller.reserve);
-router.post("/:id/release", controller.release);
-
-// Pricing endpoints
 router.get("/:id/calculate-price", controller.calculatePrice);
-router.put("/:id/set-tiered-pricing", controller.setTieredPricing);
+router.get("/:id", controller.getById);
+
+router.get("/:id/supplier-contact", auth, controller.getSupplierContact);
+
+router.post("/", auth, controller.create);
+router.put("/:id", auth, controller.update);
+router.delete("/:id", auth, controller.remove);
+
+router.post("/:id/reserve", auth, controller.reserve);
+router.post("/:id/release", auth, controller.release);
+router.put("/:id/set-tiered-pricing", auth, controller.setTieredPricing);
 
 module.exports = router;
-

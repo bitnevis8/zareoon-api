@@ -12,8 +12,12 @@
     "country": "Iran",
     "publicEmail": "bitnevis@yahoo.com",
     "shopContacts": {
-      "phones": ["09025189007"],
-      "emails": ["bitnevis@yahoo.com"],
+      "phones": [
+        "09025189007"
+      ],
+      "emails": [
+        "bitnevis@yahoo.com"
+      ],
       "messengers": {}
     },
     "profileFields": {
@@ -38,15 +42,42 @@
     "countriesRoutes": "ایران، خاورمیانه، اروپا، آسیا",
     "notes": "خدمات بسته‌بندی و آماده‌سازی کالا به‌صورت اختصاصی توسط زارعون ارائه می‌شود.",
     "selectedServices": [
-      { "categoryId": "packaging-prep", "subcategoryId": "export-packaging" },
-      { "categoryId": "packaging-prep", "subcategoryId": "commercial-labeling" },
-      { "categoryId": "packaging-prep", "subcategoryId": "palletizing" },
-      { "categoryId": "packaging-prep", "subcategoryId": "packaging-standards" },
-      { "categoryId": "customs-clearance", "subcategoryId": "customs-brokerage" },
-      { "categoryId": "customs-clearance", "subcategoryId": "customs-agent" },
-      { "categoryId": "customs-clearance", "subcategoryId": "order-registration" },
-      { "categoryId": "customs-clearance", "subcategoryId": "import-export-permits" },
-      { "categoryId": "customs-clearance", "subcategoryId": "customs-consulting" }
+      {
+        "categoryId": "packaging-prep",
+        "subcategoryId": "export-packaging"
+      },
+      {
+        "categoryId": "packaging-prep",
+        "subcategoryId": "commercial-labeling"
+      },
+      {
+        "categoryId": "packaging-prep",
+        "subcategoryId": "palletizing"
+      },
+      {
+        "categoryId": "packaging-prep",
+        "subcategoryId": "packaging-standards"
+      },
+      {
+        "categoryId": "customs-clearance",
+        "subcategoryId": "customs-brokerage"
+      },
+      {
+        "categoryId": "customs-clearance",
+        "subcategoryId": "customs-agent"
+      },
+      {
+        "categoryId": "customs-clearance",
+        "subcategoryId": "order-registration"
+      },
+      {
+        "categoryId": "customs-clearance",
+        "subcategoryId": "import-export-permits"
+      },
+      {
+        "categoryId": "customs-clearance",
+        "subcategoryId": "customs-consulting"
+      }
     ]
   },
   "inventoryLots": [
@@ -58,49 +89,110 @@
         "fa": {
           "title": "خرمای کلوته",
           "description": "خرمای کلوته با کیفیت صادراتی؛ مناسب عمده‌فروشی، بسته‌بندی و بازارهای داخلی و بین‌المللی.",
-          "hashtags": ["خرما", "کلوته", "صادرات", "عمده", "زارعون"]
+          "hashtags": [
+            "خرما",
+            "کلوته",
+            "صادرات",
+            "عمده",
+            "زارعون"
+          ]
         },
         "en": {
           "title": "Klooteh Dates",
           "description": "Premium Klooteh dates for wholesale, packaging and domestic or export markets.",
-          "hashtags": ["dates", "klooteh", "wholesale", "export", "zareoon"]
+          "hashtags": [
+            "dates",
+            "klooteh",
+            "wholesale",
+            "export",
+            "zareoon"
+          ]
         },
         "es": {
           "title": "Dátiles Klooteh",
           "description": "Dátiles Klooteh premium para mayoreo, empaque y mercados nacionales o de exportación.",
-          "hashtags": ["datiles", "klooteh", "mayoreo", "exportacion", "zareoon"]
+          "hashtags": [
+            "datiles",
+            "klooteh",
+            "mayoreo",
+            "exportacion",
+            "zareoon"
+          ]
         },
         "ar": {
           "title": "تمر كلوته",
           "description": "تمر كلوته فاخر مناسب للجملة والتعبئة والأسواق المحلية والدولية.",
-          "hashtags": ["تمر", "كلوته", "جملة", "تصدير", "زارعون"]
+          "hashtags": [
+            "تمر",
+            "كلوته",
+            "جملة",
+            "تصدير",
+            "زارعون"
+          ]
         },
         "nl": {
           "title": "Klooteh Dadels",
           "description": "Premium Klooteh-dadels voor groothandel, verpakking en binnenlandse of exportmarkten.",
-          "hashtags": ["dadels", "klooteh", "groothandel", "export", "zareoon"]
+          "hashtags": [
+            "dadels",
+            "klooteh",
+            "groothandel",
+            "export",
+            "zareoon"
+          ]
         },
         "tr": {
           "title": "Klooteh Hurması",
           "description": "Toptan, paketleme ve iç/dış pazarlar için premium Klooteh hurması.",
-          "hashtags": ["hurma", "klooteh", "toptan", "ihracat", "zareoon"]
+          "hashtags": [
+            "hurma",
+            "klooteh",
+            "toptan",
+            "ihracat",
+            "zareoon"
+          ]
         },
         "ru": {
           "title": "Финики Клуте",
           "description": "Финики Клуте премиум-качества для оптовой продажи, упаковки и внутреннего или экспортного рынка.",
-          "hashtags": ["финики", "клуте", "опт", "экспорт", "zareoon"]
+          "hashtags": [
+            "финики",
+            "клуте",
+            "опт",
+            "экспорт",
+            "zareoon"
+          ]
         },
         "ur": {
           "title": "کلوته کھجور",
           "description": "تھوک فروخت، پیکجنگ اور ملکی یا برآمدی منڈیوں کے لیے پریمیم کلوته کھجور۔",
-          "hashtags": ["کھجور", "کلوته", "تھوک", "برآمد", "زارعون"]
+          "hashtags": [
+            "کھجور",
+            "کلوته",
+            "تھوک",
+            "برآمد",
+            "زارعون"
+          ]
         },
         "fi": {
           "title": "Klooteh-taatelit",
           "description": "Premium Klooteh-taatelit tukkukauppaan, pakkaamiseen sekä kotimaan- ja vientimarkkinoille.",
-          "hashtags": ["taatelit", "klooteh", "tukkukauppa", "vienti", "zareoon"]
+          "hashtags": [
+            "taatelit",
+            "klooteh",
+            "tukkukauppa",
+            "vienti",
+            "zareoon"
+          ]
         }
-      }
+      },
+      "originCountry": "IR",
+      "originProvince": "کرمان",
+      "originCity": "بم",
+      "totalQuantity": 40000,
+      "price": 145000,
+      "listingVerified": true,
+      "locationLabel": "بم، کرمان"
     },
     {
       "productSlug": "date-mazafati-rutab",
@@ -108,51 +200,112 @@
       "unit": "kg",
       "displayContent": {
         "fa": {
-          "title": "رطب مضافتی",
+          "title": "خرمای رطب مضافتی",
           "description": "رطب مضافتی نرم و شیرین؛ مناسب تازه‌خوری، عمده‌فروشی و صادرات تحت برند زارعون.",
-          "hashtags": ["رطب", "مضافتی", "خرما", "صادرات", "زارعون"]
+          "hashtags": [
+            "رطب",
+            "مضافتی",
+            "خرما",
+            "صادرات",
+            "زارعون"
+          ]
         },
         "en": {
           "title": "Mazafati Rutab Dates",
           "description": "Soft sweet Mazafati rutab dates for fresh consumption, wholesale and export.",
-          "hashtags": ["mazafati", "rutab", "dates", "wholesale", "zareoon"]
+          "hashtags": [
+            "mazafati",
+            "rutab",
+            "dates",
+            "wholesale",
+            "zareoon"
+          ]
         },
         "es": {
           "title": "Dátiles Mazafati Rutab",
           "description": "Dátiles Mazafati rutab suaves y dulces para consumo fresco, mayoreo y exportación.",
-          "hashtags": ["mazafati", "rutab", "datiles", "mayoreo", "zareoon"]
+          "hashtags": [
+            "mazafati",
+            "rutab",
+            "datiles",
+            "mayoreo",
+            "zareoon"
+          ]
         },
         "ar": {
           "title": "رطب مضافتي",
           "description": "رطب مضافتي طري وحلو مناسب للاستهلاك الطازج والجملة والتصدير.",
-          "hashtags": ["رطب", "مضافتي", "تمر", "تصدير", "زارعون"]
+          "hashtags": [
+            "رطب",
+            "مضافتي",
+            "تمر",
+            "تصدير",
+            "زارعون"
+          ]
         },
         "nl": {
           "title": "Mazafati Rutab Dadels",
           "description": "Zachte zoete Mazafati-rutab-dadels voor verse consumptie, groothandel en export.",
-          "hashtags": ["mazafati", "rutab", "dadels", "groothandel", "zareoon"]
+          "hashtags": [
+            "mazafati",
+            "rutab",
+            "dadels",
+            "groothandel",
+            "zareoon"
+          ]
         },
         "tr": {
           "title": "Mazafati Rutab Hurması",
           "description": "Taze tüketim, toptan ve ihracat için yumuşak tatlı Mazafati rutab hurması.",
-          "hashtags": ["mazafati", "rutab", "hurma", "toptan", "zareoon"]
+          "hashtags": [
+            "mazafati",
+            "rutab",
+            "hurma",
+            "toptan",
+            "zareoon"
+          ]
         },
         "ru": {
           "title": "Финик Мазафати (рутаб)",
           "description": "Мягкий сладкий финик Мазафати (рутаб) для свежего потребления, опта и экспорта.",
-          "hashtags": ["мазафати", "рутаб", "финики", "опт", "zareoon"]
+          "hashtags": [
+            "мазафати",
+            "рутаб",
+            "финики",
+            "опт",
+            "zareoon"
+          ]
         },
         "ur": {
           "title": "رطب مضافتی",
           "description": "تازہ استعمال، تھوک اور برآمد کے لیے نرم میٹھی رطب مضافتی کھجور۔",
-          "hashtags": ["رطب", "مضافتی", "کھجور", "تھوک", "زارعون"]
+          "hashtags": [
+            "رطب",
+            "مضافتی",
+            "کھجور",
+            "تھوک",
+            "زارعون"
+          ]
         },
         "fi": {
           "title": "Mazafati-rutab-taatelit",
           "description": "Pehmeät makeat Mazafati-rutab-taatelit tuorekäyttöön, tukkukauppaan ja vientiin.",
-          "hashtags": ["mazafati", "rutab", "taatelit", "tukkukauppa", "zareoon"]
+          "hashtags": [
+            "mazafati",
+            "rutab",
+            "taatelit",
+            "tukkukauppa",
+            "zareoon"
+          ]
         }
-      }
+      },
+      "originCountry": "IR",
+      "originProvince": "کرمان",
+      "originCity": "بم",
+      "totalQuantity": 35000,
+      "price": 160000,
+      "listingVerified": true,
+      "locationLabel": "بم، کرمان"
     },
     {
       "productSlug": "date-estamaran",
@@ -162,49 +315,110 @@
         "fa": {
           "title": "خرمای استعمران",
           "description": "خرمای استعمران با بافت و طعم متمایز؛ مناسب عمده‌فروشی و صادرات.",
-          "hashtags": ["استعمران", "خرما", "عمده", "صادرات", "زارعون"]
+          "hashtags": [
+            "استعمران",
+            "خرما",
+            "عمده",
+            "صادرات",
+            "زارعون"
+          ]
         },
         "en": {
           "title": "Estamaran Dates",
           "description": "Estamaran dates with distinctive texture and taste for wholesale and export.",
-          "hashtags": ["estamaran", "dates", "wholesale", "export", "zareoon"]
+          "hashtags": [
+            "estamaran",
+            "dates",
+            "wholesale",
+            "export",
+            "zareoon"
+          ]
         },
         "es": {
           "title": "Dátiles Estamaran",
           "description": "Dátiles Estamaran con textura y sabor distintivos para mayoreo y exportación.",
-          "hashtags": ["estamaran", "datiles", "mayoreo", "exportacion", "zareoon"]
+          "hashtags": [
+            "estamaran",
+            "datiles",
+            "mayoreo",
+            "exportacion",
+            "zareoon"
+          ]
         },
         "ar": {
           "title": "تمر استعمران",
           "description": "تمر استعمران بقوام ونكهة مميزة مناسب للجملة والتصدير.",
-          "hashtags": ["استعمران", "تمر", "جملة", "تصدير", "زارعون"]
+          "hashtags": [
+            "استعمران",
+            "تمر",
+            "جملة",
+            "تصدير",
+            "زارعون"
+          ]
         },
         "nl": {
           "title": "Estamaran Dadels",
           "description": "Estamaran-dadels met kenmerkende textuur en smaak voor groothandel en export.",
-          "hashtags": ["estamaran", "dadels", "groothandel", "export", "zareoon"]
+          "hashtags": [
+            "estamaran",
+            "dadels",
+            "groothandel",
+            "export",
+            "zareoon"
+          ]
         },
         "tr": {
           "title": "Estamaran Hurması",
           "description": "Toptan ve ihracat için belirgin doku ve tada sahip Estamaran hurması.",
-          "hashtags": ["estamaran", "hurma", "toptan", "ihracat", "zareoon"]
+          "hashtags": [
+            "estamaran",
+            "hurma",
+            "toptan",
+            "ihracat",
+            "zareoon"
+          ]
         },
         "ru": {
           "title": "Финики Эстамаран",
           "description": "Финики Эстамаран с характерной текстурой и вкусом для опта и экспорта.",
-          "hashtags": ["эстамаран", "финики", "опт", "экспорт", "zareoon"]
+          "hashtags": [
+            "эстамаран",
+            "финики",
+            "опт",
+            "экспорт",
+            "zareoon"
+          ]
         },
         "ur": {
           "title": "استعمران کھجور",
           "description": "تھوک اور برآمد کے لیے منفرد ساخت اور ذائقے والی استعمران کھجور۔",
-          "hashtags": ["استعمران", "کھجور", "تھوک", "برآمد", "زارعون"]
+          "hashtags": [
+            "استعمران",
+            "کھجور",
+            "تھوک",
+            "برآمد",
+            "زارعون"
+          ]
         },
         "fi": {
           "title": "Estamaran-taatelit",
           "description": "Estamaran-taatelit erottuvalla rakenteella ja maulla tukkukauppaan ja vientiin.",
-          "hashtags": ["estamaran", "taatelit", "tukkukauppa", "vienti", "zareoon"]
+          "hashtags": [
+            "estamaran",
+            "taatelit",
+            "tukkukauppa",
+            "vienti",
+            "zareoon"
+          ]
         }
-      }
+      },
+      "originCountry": "IR",
+      "originProvince": "خوزستان",
+      "originCity": "اهواز",
+      "totalQuantity": 50000,
+      "price": 120000,
+      "listingVerified": true,
+      "locationLabel": "اهواز، خوزستان"
     },
     {
       "productSlug": "date-zahidi-iraq",
@@ -214,49 +428,110 @@
         "fa": {
           "title": "خرمای زهدی عراق",
           "description": "خرمای زهدی عراق؛ خشک‌تر و مناسب انبارداری، بسته‌بندی و صادرات.",
-          "hashtags": ["زهدی", "عراق", "خرما", "صادرات", "زارعون"]
+          "hashtags": [
+            "زهدی",
+            "عراق",
+            "خرما",
+            "صادرات",
+            "زارعون"
+          ]
         },
         "en": {
           "title": "Zahidi Iraq Dates",
           "description": "Iraqi Zahidi dates; drier style suited for storage, packaging and export.",
-          "hashtags": ["zahidi", "iraq", "dates", "export", "zareoon"]
+          "hashtags": [
+            "zahidi",
+            "iraq",
+            "dates",
+            "export",
+            "zareoon"
+          ]
         },
         "es": {
           "title": "Dátiles Zahidi de Irak",
           "description": "Dátiles Zahidi iraquíes; estilo más seco ideal para almacenamiento, empaque y exportación.",
-          "hashtags": ["zahidi", "irak", "datiles", "exportacion", "zareoon"]
+          "hashtags": [
+            "zahidi",
+            "irak",
+            "datiles",
+            "exportacion",
+            "zareoon"
+          ]
         },
         "ar": {
           "title": "تمر زهدي عراقي",
           "description": "تمر زهدي عراقي أكثر جفافاً ومناسب للتخزين والتعبئة والتصدير.",
-          "hashtags": ["زهدي", "عراق", "تمر", "تصدير", "زارعون"]
+          "hashtags": [
+            "زهدي",
+            "عراق",
+            "تمر",
+            "تصدير",
+            "زارعون"
+          ]
         },
         "nl": {
           "title": "Zahidi Irak Dadels",
           "description": "Iraakse Zahidi-dadels; droger type geschikt voor opslag, verpakking en export.",
-          "hashtags": ["zahidi", "irak", "dadels", "export", "zareoon"]
+          "hashtags": [
+            "zahidi",
+            "irak",
+            "dadels",
+            "export",
+            "zareoon"
+          ]
         },
         "tr": {
           "title": "Irak Zahidi Hurması",
           "description": "Irak Zahidi hurması; depolama, paketleme ve ihracat için daha kuru tip.",
-          "hashtags": ["zahidi", "irak", "hurma", "ihracat", "zareoon"]
+          "hashtags": [
+            "zahidi",
+            "irak",
+            "hurma",
+            "ihracat",
+            "zareoon"
+          ]
         },
         "ru": {
           "title": "Финики Захиди (Ирак)",
           "description": "Иракские финики Захиди; более сухой тип для хранения, упаковки и экспорта.",
-          "hashtags": ["захиди", "ирак", "финики", "экспорт", "zareoon"]
+          "hashtags": [
+            "захиди",
+            "ирак",
+            "финики",
+            "экспорт",
+            "zareoon"
+          ]
         },
         "ur": {
           "title": "زہدی عراق کھجور",
           "description": "عراقی زہدی کھجور؛ ذخیرہ، پیکجنگ اور برآمد کے لیے زیادہ خشک قسم۔",
-          "hashtags": ["زہدی", "عراق", "کھجور", "برآمد", "زارعون"]
+          "hashtags": [
+            "زہدی",
+            "عراق",
+            "کھجور",
+            "برآمد",
+            "زارعون"
+          ]
         },
         "fi": {
           "title": "Zahidi Irak -taatelit",
           "description": "Irakilaiset Zahidi-taatelit; kuivempi tyyppi varastointiin, pakkaamiseen ja vientiin.",
-          "hashtags": ["zahidi", "irak", "taatelit", "vienti", "zareoon"]
+          "hashtags": [
+            "zahidi",
+            "irak",
+            "taatelit",
+            "vienti",
+            "zareoon"
+          ]
         }
-      }
+      },
+      "originCountry": "IQ",
+      "originProvince": "بصره",
+      "originCity": "بصره",
+      "totalQuantity": 30000,
+      "price": 110000,
+      "listingVerified": true,
+      "locationLabel": "بصره، بصره"
     },
     {
       "productSlug": "date-estamaran",
@@ -266,49 +541,110 @@
         "fa": {
           "title": "خرمای استعمران درجه یک",
           "description": "خرمای استعمران درجه یک با گزینش کیفی بالاتر؛ مناسب بازارهای حساس و صادراتی.",
-          "hashtags": ["استعمران", "درجه_یک", "خرما", "صادرات", "زارعون"]
+          "hashtags": [
+            "استعمران",
+            "درجه_یک",
+            "خرما",
+            "صادرات",
+            "زارعون"
+          ]
         },
         "en": {
           "title": "Estamaran Dates Grade 1",
           "description": "Grade 1 Estamaran dates with higher quality selection for premium and export markets.",
-          "hashtags": ["estamaran", "grade1", "dates", "export", "zareoon"]
+          "hashtags": [
+            "estamaran",
+            "grade1",
+            "dates",
+            "export",
+            "zareoon"
+          ]
         },
         "es": {
           "title": "Dátiles Estamaran Grado 1",
           "description": "Dátiles Estamaran grado 1 con selección de mayor calidad para mercados premium y exportación.",
-          "hashtags": ["estamaran", "grado1", "datiles", "exportacion", "zareoon"]
+          "hashtags": [
+            "estamaran",
+            "grado1",
+            "datiles",
+            "exportacion",
+            "zareoon"
+          ]
         },
         "ar": {
           "title": "تمر استعمران درجة أولى",
           "description": "تمر استعمران درجة أولى بانتقاء جودة أعلى للأسواق الراقية والتصدير.",
-          "hashtags": ["استعمران", "درجة_اولى", "تمر", "تصدير", "زارعون"]
+          "hashtags": [
+            "استعمران",
+            "درجة_اولى",
+            "تمر",
+            "تصدير",
+            "زارعون"
+          ]
         },
         "nl": {
           "title": "Estamaran Dadels Graad 1",
           "description": "Estamaran-dadels graad 1 met hogere kwaliteitsselectie voor premium- en exportmarkten.",
-          "hashtags": ["estamaran", "graad1", "dadels", "export", "zareoon"]
+          "hashtags": [
+            "estamaran",
+            "graad1",
+            "dadels",
+            "export",
+            "zareoon"
+          ]
         },
         "tr": {
           "title": "Estamaran Hurması 1. Kalite",
           "description": "Premium ve ihracat pazarları için daha yüksek kalite seçimli 1. kalite Estamaran hurması.",
-          "hashtags": ["estamaran", "kalite1", "hurma", "ihracat", "zareoon"]
+          "hashtags": [
+            "estamaran",
+            "kalite1",
+            "hurma",
+            "ihracat",
+            "zareoon"
+          ]
         },
         "ru": {
           "title": "Финики Эстамаран 1 сорт",
           "description": "Финики Эстамаран 1 сорта с более строгим отбором для премиальных и экспортных рынков.",
-          "hashtags": ["эстамаран", "сорт1", "финики", "экспорт", "zareoon"]
+          "hashtags": [
+            "эстамаран",
+            "сорт1",
+            "финики",
+            "экспорт",
+            "zareoon"
+          ]
         },
         "ur": {
           "title": "استعمران کھجور درجہ یکم",
           "description": "پریمیم اور برآمدی منڈیوں کے لیے اعلیٰ انتخاب والی استعمران کھجور درجہ یکم۔",
-          "hashtags": ["استعمران", "درجہ۱", "کھجور", "برآمد", "زارعون"]
+          "hashtags": [
+            "استعمران",
+            "درجہ۱",
+            "کھجور",
+            "برآمد",
+            "زارعون"
+          ]
         },
         "fi": {
           "title": "Estamaran-taatelit luokka 1",
           "description": "Luokan 1 Estamaran-taatelit tiukemmalla laatuvalinnalla premium- ja vientimarkkinoille.",
-          "hashtags": ["estamaran", "luokka1", "taatelit", "vienti", "zareoon"]
+          "hashtags": [
+            "estamaran",
+            "luokka1",
+            "taatelit",
+            "vienti",
+            "zareoon"
+          ]
         }
-      }
+      },
+      "originCountry": "IR",
+      "originProvince": "خوزستان",
+      "originCity": "اهواز",
+      "totalQuantity": 50000,
+      "price": 120000,
+      "listingVerified": true,
+      "locationLabel": "اهواز، خوزستان"
     },
     {
       "productSlug": "date-piarom",
@@ -318,49 +654,110 @@
         "fa": {
           "title": "خرمای پیارم درجه جامبو",
           "description": "خرمای پیارم درجه جامبو با اندازه درشت؛ مناسب بازارهای صادراتی و بسته‌بندی لوکس.",
-          "hashtags": ["پیارم", "جامبو", "خرما", "صادرات", "زارعون"]
+          "hashtags": [
+            "پیارم",
+            "جامبو",
+            "خرما",
+            "صادرات",
+            "زارعون"
+          ]
         },
         "en": {
           "title": "Piarom Dates Jumbo Grade",
           "description": "Jumbo-grade Piarom dates with large size for export and premium packaging.",
-          "hashtags": ["piarom", "jumbo", "dates", "export", "zareoon"]
+          "hashtags": [
+            "piarom",
+            "jumbo",
+            "dates",
+            "export",
+            "zareoon"
+          ]
         },
         "es": {
           "title": "Dátiles Piarom Grado Jumbo",
           "description": "Dátiles Piarom grado jumbo de gran tamaño para exportación y empaque premium.",
-          "hashtags": ["piarom", "jumbo", "datiles", "exportacion", "zareoon"]
+          "hashtags": [
+            "piarom",
+            "jumbo",
+            "datiles",
+            "exportacion",
+            "zareoon"
+          ]
         },
         "ar": {
           "title": "تمر بيارم درجة جامبو",
           "description": "تمر بيارم درجة جامبو بحجم كبير مناسب للتصدير والتعبئة الفاخرة.",
-          "hashtags": ["بيارم", "جامبو", "تمر", "تصدير", "زارعون"]
+          "hashtags": [
+            "بيارم",
+            "جامبو",
+            "تمر",
+            "تصدير",
+            "زارعون"
+          ]
         },
         "nl": {
           "title": "Piarom Dadels Jumbo",
           "description": "Piarom-dadels jumbo-kwaliteit met groot formaat voor export en premium verpakking.",
-          "hashtags": ["piarom", "jumbo", "dadels", "export", "zareoon"]
+          "hashtags": [
+            "piarom",
+            "jumbo",
+            "dadels",
+            "export",
+            "zareoon"
+          ]
         },
         "tr": {
           "title": "Piarom Hurması Jumbo",
           "description": "İhracat ve premium paketleme için iri boy jumbo kalite Piarom hurması.",
-          "hashtags": ["piarom", "jumbo", "hurma", "ihracat", "zareoon"]
+          "hashtags": [
+            "piarom",
+            "jumbo",
+            "hurma",
+            "ihracat",
+            "zareoon"
+          ]
         },
         "ru": {
           "title": "Финики Пиаром Jumbo",
           "description": "Финики Пиаром сорта Jumbo крупного размера для экспорта и премиальной упаковки.",
-          "hashtags": ["пиаром", "jumbo", "финики", "экспорт", "zareoon"]
+          "hashtags": [
+            "пиаром",
+            "jumbo",
+            "финики",
+            "экспорт",
+            "zareoon"
+          ]
         },
         "ur": {
           "title": "پیارم کھجور جمبو",
           "description": "برآمد اور پریمیم پیکجنگ کے لیے بڑے سائز کی پیارم کھجور جمبو۔",
-          "hashtags": ["پیارم", "جمبو", "کھجور", "برآمد", "زارعون"]
+          "hashtags": [
+            "پیارم",
+            "جمبو",
+            "کھجور",
+            "برآمد",
+            "زارعون"
+          ]
         },
         "fi": {
           "title": "Piarom-taatelit Jumbo",
           "description": "Suurikokoiset Jumbo-luokan Piarom-taatelit vientiin ja premium-pakkauksiin.",
-          "hashtags": ["piarom", "jumbo", "taatelit", "vienti", "zareoon"]
+          "hashtags": [
+            "piarom",
+            "jumbo",
+            "taatelit",
+            "vienti",
+            "zareoon"
+          ]
         }
-      }
+      },
+      "originCountry": "IR",
+      "originProvince": "هرمزگان",
+      "originCity": "حاجی‌آباد",
+      "totalQuantity": 25000,
+      "price": 280000,
+      "listingVerified": true,
+      "locationLabel": "حاجی‌آباد، هرمزگان"
     },
     {
       "productSlug": "date-piarom",
@@ -370,49 +767,110 @@
         "fa": {
           "title": "خرمای پیارم درجه یک",
           "description": "خرمای پیارم درجه یک با کیفیت ممتاز؛ مناسب عمده‌فروشی و مشتریان صادراتی.",
-          "hashtags": ["پیارم", "درجه_یک", "خرما", "عمده", "زارعون"]
+          "hashtags": [
+            "پیارم",
+            "درجه_یک",
+            "خرما",
+            "عمده",
+            "زارعون"
+          ]
         },
         "en": {
           "title": "Piarom Dates Grade 1",
           "description": "Grade 1 Piarom dates of premium quality for wholesale and export buyers.",
-          "hashtags": ["piarom", "grade1", "dates", "wholesale", "zareoon"]
+          "hashtags": [
+            "piarom",
+            "grade1",
+            "dates",
+            "wholesale",
+            "zareoon"
+          ]
         },
         "es": {
           "title": "Dátiles Piarom Grado 1",
           "description": "Dátiles Piarom grado 1 de calidad premium para mayoreo y compradores de exportación.",
-          "hashtags": ["piarom", "grado1", "datiles", "mayoreo", "zareoon"]
+          "hashtags": [
+            "piarom",
+            "grado1",
+            "datiles",
+            "mayoreo",
+            "zareoon"
+          ]
         },
         "ar": {
           "title": "تمر بيارم درجة أولى",
           "description": "تمر بيارم درجة أولى بجودة ممتازة مناسب للجملة والمشترين التصديريين.",
-          "hashtags": ["بيارم", "درجة_اولى", "تمر", "جملة", "زارعون"]
+          "hashtags": [
+            "بيارم",
+            "درجة_اولى",
+            "تمر",
+            "جملة",
+            "زارعون"
+          ]
         },
         "nl": {
           "title": "Piarom Dadels Graad 1",
           "description": "Piarom-dadels graad 1 van premium kwaliteit voor groothandel en exportkopers.",
-          "hashtags": ["piarom", "graad1", "dadels", "groothandel", "zareoon"]
+          "hashtags": [
+            "piarom",
+            "graad1",
+            "dadels",
+            "groothandel",
+            "zareoon"
+          ]
         },
         "tr": {
           "title": "Piarom Hurması 1. Kalite",
           "description": "Toptan ve ihracat alıcıları için üstün kaliteli 1. kalite Piarom hurması.",
-          "hashtags": ["piarom", "kalite1", "hurma", "toptan", "zareoon"]
+          "hashtags": [
+            "piarom",
+            "kalite1",
+            "hurma",
+            "toptan",
+            "zareoon"
+          ]
         },
         "ru": {
           "title": "Финики Пиаром 1 сорт",
           "description": "Финики Пиаром 1 сорта премиум-качества для опта и экспортных покупателей.",
-          "hashtags": ["пиаром", "сорт1", "финики", "опт", "zareoon"]
+          "hashtags": [
+            "пиаром",
+            "сорт1",
+            "финики",
+            "опт",
+            "zareoon"
+          ]
         },
         "ur": {
           "title": "پیارم کھجور درجہ یکم",
           "description": "تھوک اور برآمدی خریداروں کے لیے اعلیٰ معیار کی پیارم کھجور درجہ یکم۔",
-          "hashtags": ["پیارم", "درجہ۱", "کھجور", "تھوک", "زارعون"]
+          "hashtags": [
+            "پیارم",
+            "درجہ۱",
+            "کھجور",
+            "تھوک",
+            "زارعون"
+          ]
         },
         "fi": {
           "title": "Piarom-taatelit luokka 1",
           "description": "Premium-laatuiset luokan 1 Piarom-taatelit tukkukauppaan ja vientiasiakkaille.",
-          "hashtags": ["piarom", "luokka1", "taatelit", "tukkukauppa", "zareoon"]
+          "hashtags": [
+            "piarom",
+            "luokka1",
+            "taatelit",
+            "tukkukauppa",
+            "zareoon"
+          ]
         }
-      }
+      },
+      "originCountry": "IR",
+      "originProvince": "هرمزگان",
+      "originCity": "حاجی‌آباد",
+      "totalQuantity": 25000,
+      "price": 280000,
+      "listingVerified": true,
+      "locationLabel": "حاجی‌آباد، هرمزگان"
     },
     {
       "productSlug": "date-rabbi-iranshahr",
@@ -421,51 +879,112 @@
       "supplyCity": "ایرانشهر",
       "displayContent": {
         "fa": {
-          "title": "خرمای ربی ایرانشهر سیستان و بلوچستان",
+          "title": "خرمای ربی ایرانشهر",
           "description": "خرمای ربی از ایرانشهر، سیستان و بلوچستان؛ مناسب عمده‌فروشی و صادرات با منشأ مشخص منطقه‌ای.",
-          "hashtags": ["ربی", "ایرانشهر", "سیستان_و_بلوچستان", "خرما", "زارعون"]
+          "hashtags": [
+            "ربی",
+            "ایرانشهر",
+            "سیستان_و_بلوچستان",
+            "خرما",
+            "زارعون"
+          ]
         },
         "en": {
           "title": "Rabbi Iranshahr Dates (Sistan and Baluchestan)",
           "description": "Rabbi dates from Iranshahr, Sistan and Baluchestan — wholesale and export with clear regional origin.",
-          "hashtags": ["rabbi", "iranshahr", "baluchestan", "dates", "zareoon"]
+          "hashtags": [
+            "rabbi",
+            "iranshahr",
+            "baluchestan",
+            "dates",
+            "zareoon"
+          ]
         },
         "es": {
           "title": "Dátiles Rabbi Iranshahr (Sistán y Baluchistán)",
           "description": "Dátiles Rabbi de Iranshahr, Sistán y Baluchistán; mayoreo y exportación con origen regional claro.",
-          "hashtags": ["rabbi", "iranshahr", "baluchistan", "datiles", "zareoon"]
+          "hashtags": [
+            "rabbi",
+            "iranshahr",
+            "baluchistan",
+            "datiles",
+            "zareoon"
+          ]
         },
         "ar": {
           "title": "تمر ربي إيرانشهر سيستان وبلوشستان",
           "description": "تمر ربي من إيرانشهر في سيستان وبلوشستان؛ مناسب للجملة والتصدير بمنشأ إقليمي واضح.",
-          "hashtags": ["ربي", "إيرانشهر", "بلوشستان", "تمر", "زارعون"]
+          "hashtags": [
+            "ربي",
+            "إيرانشهر",
+            "بلوشستان",
+            "تمر",
+            "زارعون"
+          ]
         },
         "nl": {
           "title": "Rabbi Iranshahr Dadels (Sistan en Beloetsjistan)",
           "description": "Rabbi-dadels uit Iranshahr, Sistan en Beloetsjistan — groothandel en export met duidelijke regionale herkomst.",
-          "hashtags": ["rabbi", "iranshahr", "beloetsjistan", "dadels", "zareoon"]
+          "hashtags": [
+            "rabbi",
+            "iranshahr",
+            "beloetsjistan",
+            "dadels",
+            "zareoon"
+          ]
         },
         "tr": {
           "title": "Iranshahr Rabbi Hurması (Sistan ve Belucistan)",
           "description": "Sistan ve Belucistan, Iranshahr menşeli Rabbi hurması; net bölgesel kökenle toptan ve ihracat.",
-          "hashtags": ["rabbi", "iranshahr", "belucistan", "hurma", "zareoon"]
+          "hashtags": [
+            "rabbi",
+            "iranshahr",
+            "belucistan",
+            "hurma",
+            "zareoon"
+          ]
         },
         "ru": {
           "title": "Финики Рабби Ираншахр (Систан и Белуджистан)",
           "description": "Финики Рабби из Ираншахра, Систан и Белуджистан — опт и экспорт с понятным региональным происхождением.",
-          "hashtags": ["рабби", "ираншахр", "белуджистан", "финики", "zareoon"]
+          "hashtags": [
+            "рабби",
+            "ираншахр",
+            "белуджистан",
+            "финики",
+            "zareoon"
+          ]
         },
         "ur": {
           "title": "ربی ایرانشہر کھجور (سیستان و بلوچستان)",
           "description": "ایرانشہر، سیستان و بلوچستان کی ربی کھجور؛ واضح علاقائی ماخذ کے ساتھ تھوک اور برآمد۔",
-          "hashtags": ["ربی", "ایرانشہر", "بلوچستان", "کھجور", "زارعون"]
+          "hashtags": [
+            "ربی",
+            "ایرانشہر",
+            "بلوچستان",
+            "کھجور",
+            "زارعون"
+          ]
         },
         "fi": {
           "title": "Rabbi Iranshahr -taatelit (Sistan ja Baluchistan)",
           "description": "Rabbi-taatelit Iranshahrissa, Sistanissa ja Baluchistanissa — tukkukauppa ja vienti selkeällä alueellisella alkuperällä.",
-          "hashtags": ["rabbi", "iranshahr", "baluchistan", "taatelit", "zareoon"]
+          "hashtags": [
+            "rabbi",
+            "iranshahr",
+            "baluchistan",
+            "taatelit",
+            "zareoon"
+          ]
         }
-      }
+      },
+      "originCountry": "IR",
+      "originProvince": "سیستان و بلوچستان",
+      "originCity": "ایرانشهر",
+      "totalQuantity": 40000,
+      "price": 140000,
+      "listingVerified": true,
+      "locationLabel": "ایرانشهر، سیستان و بلوچستان"
     },
     {
       "productSlug": "urea-fertilizer",
@@ -476,49 +995,110 @@
         "fa": {
           "title": "کود اوره UREA",
           "description": "کود اوره گرانوله با ۴۶٪ نیتروژن (GRANULAR FERTILIZER 46% NITROGEN). ابعاد هر بسته ۵۰ کیلوگرمی حدود ۶۶ میلی‌متر در ۴۵۰ میلی‌متر. مناسب کشاورزی و عمده‌فروشی.",
-          "hashtags": ["اوره", "کود", "نیتروژن", "کشاورزی", "زارعون"]
+          "hashtags": [
+            "اوره",
+            "کود",
+            "نیتروژن",
+            "کشاورزی",
+            "زارعون"
+          ]
         },
         "en": {
           "title": "Urea Fertilizer (UREA)",
           "description": "Granular urea fertilizer with 46% nitrogen (GRANULAR FERTILIZER 46% NITROGEN). Each 50 kg bag is approximately 66 mm × 450 mm. Suitable for agriculture and wholesale.",
-          "hashtags": ["urea", "fertilizer", "nitrogen", "agriculture", "zareoon"]
+          "hashtags": [
+            "urea",
+            "fertilizer",
+            "nitrogen",
+            "agriculture",
+            "zareoon"
+          ]
         },
         "es": {
           "title": "Fertilizante de Urea (UREA)",
           "description": "Fertilizante granular de urea con 46% de nitrógeno (GRANULAR FERTILIZER 46% NITROGEN). Cada saco de 50 kg mide aproximadamente 66 mm × 450 mm. Ideal para agricultura y mayoreo.",
-          "hashtags": ["urea", "fertilizante", "nitrogeno", "agricultura", "zareoon"]
+          "hashtags": [
+            "urea",
+            "fertilizante",
+            "nitrogeno",
+            "agricultura",
+            "zareoon"
+          ]
         },
         "ar": {
           "title": "سماد اليوريا UREA",
           "description": "سماد يوريا حبيبي بنسبة ٤٦٪ نيتروجين (GRANULAR FERTILIZER 46% NITROGEN). أبعاد كيس ٥٠ كغ تقريباً ٦٦ مم × ٤٥٠ مم. مناسب للزراعة والجملة.",
-          "hashtags": ["يوريا", "سماد", "نيتروجين", "زراعة", "زارعون"]
+          "hashtags": [
+            "يوريا",
+            "سماد",
+            "نيتروجين",
+            "زراعة",
+            "زارعون"
+          ]
         },
         "nl": {
           "title": "Ureum Meststof (UREA)",
           "description": "Granulaire ureummeststof met 46% stikstof (GRANULAR FERTILIZER 46% NITROGEN). Elke zak van 50 kg is ongeveer 66 mm × 450 mm. Geschikt voor landbouw en groothandel.",
-          "hashtags": ["ureum", "meststof", "stikstof", "landbouw", "zareoon"]
+          "hashtags": [
+            "ureum",
+            "meststof",
+            "stikstof",
+            "landbouw",
+            "zareoon"
+          ]
         },
         "tr": {
           "title": "Üre Gübre (UREA)",
           "description": "%46 azotlu granül üre gübre (GRANULAR FERTILIZER 46% NITROGEN). Her 50 kg torba yaklaşık 66 mm × 450 mm. Tarım ve toptan satış için uygundur.",
-          "hashtags": ["ure", "gubre", "azot", "tarim", "zareoon"]
+          "hashtags": [
+            "ure",
+            "gubre",
+            "azot",
+            "tarim",
+            "zareoon"
+          ]
         },
         "ru": {
           "title": "Карбамид / мочевина (UREA)",
           "description": "Гранулированный карбамид с 46% азота (GRANULAR FERTILIZER 46% NITROGEN). Размер мешка 50 кг примерно 66 мм × 450 мм. Для сельского хозяйства и оптовой продажи.",
-          "hashtags": ["карбамид", "мочевина", "азот", "удобрение", "zareoon"]
+          "hashtags": [
+            "карбамид",
+            "мочевина",
+            "азот",
+            "удобрение",
+            "zareoon"
+          ]
         },
         "ur": {
           "title": "یوریا کھاد UREA",
           "description": "۴۶٪ نائٹروجن والی دانے دار یوریا کھاد (GRANULAR FERTILIZER 46% NITROGEN)۔ ہر ۵۰ کلو تھیلا تقریباً ۶۶ × ۴۵۰ ملی میٹر۔ زراعت اور تھوک کے لیے موزوں۔",
-          "hashtags": ["یوریا", "کھاد", "نائٹروجن", "زراعت", "زارعون"]
+          "hashtags": [
+            "یوریا",
+            "کھاد",
+            "نائٹروجن",
+            "زراعت",
+            "زارعون"
+          ]
         },
         "fi": {
           "title": "Urea-lannoite (UREA)",
           "description": "Rakeinen urea-lannoite 46 % typpeä (GRANULAR FERTILIZER 46% NITROGEN). Jokainen 50 kg säkki on noin 66 mm × 450 mm. Sopii maatalouteen ja tukkukauppaan.",
-          "hashtags": ["urea", "lannoite", "typpi", "maatalous", "zareoon"]
+          "hashtags": [
+            "urea",
+            "lannoite",
+            "typpi",
+            "maatalous",
+            "zareoon"
+          ]
         }
-      }
+      },
+      "originCountry": "IR",
+      "originProvince": "تهران",
+      "originCity": "تهران",
+      "totalQuantity": 100000,
+      "price": 18500,
+      "listingVerified": true,
+      "locationLabel": "تهران، تهران"
     }
   ]
 }

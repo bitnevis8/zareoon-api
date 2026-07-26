@@ -1,14 +1,15 @@
 const express = require("express");
 const UserController = require("./controller");
+const { authenticateUser, authorizeRole } = require("../auth/middleware");
 
 const router = express.Router();
+const adminOnly = [authenticateUser, authorizeRole("Administrator")];
 
-// روت‌های مربوط به کاربران
-router.get("/getAll", UserController.getAll); // دریافت تمام کاربران
-router.get("/search", UserController.search); // جستجوی کاربران
-router.get("/getOne/:id", UserController.getOne); // دریافت یک کاربر بر اساس ID
-router.post("/create", UserController.create); // ایجاد کاربر جدید
-router.put("/update/:id", UserController.update); // ویرایش کاربر بر اساس ID
-router.delete("/delete/:id", UserController.delete); // حذف کاربر بر اساس ID
+router.get("/getAll", ...adminOnly, UserController.getAll);
+router.get("/search", ...adminOnly, UserController.search);
+router.get("/getOne/:id", ...adminOnly, UserController.getOne);
+router.post("/create", ...adminOnly, UserController.create);
+router.put("/update/:id", ...adminOnly, UserController.update);
+router.delete("/delete/:id", ...adminOnly, UserController.delete);
 
-module.exports = router; 
+module.exports = router;

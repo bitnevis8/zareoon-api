@@ -1,6 +1,7 @@
-/** وضعیت قرارداد بیعانه */
+/** وضعیت قرارداد حساب امانی */
 const AGREEMENT_STATUSES = [
   "draft",
+  "awaiting_signatures",
   "awaiting_payment",
   "funds_locked",
   "in_progress",
@@ -16,7 +17,8 @@ const AGREEMENT_STATUSES = [
 const TERMINAL_STATUSES = new Set(["completed", "cancelled", "expired"]);
 
 const ALLOWED_TRANSITIONS = {
-  draft: ["awaiting_payment", "cancelled"],
+  draft: ["awaiting_signatures", "cancelled"],
+  awaiting_signatures: ["awaiting_payment", "cancelled"],
   awaiting_payment: ["funds_locked", "cancelled", "expired"],
   funds_locked: ["in_progress", "disputed", "refunded", "cancelled"],
   in_progress: ["partially_released", "fully_released", "disputed", "refunded"],

@@ -49,6 +49,12 @@ Account.init(
     deletionRequestedAt: { type: DataTypes.DATE, allowNull: true },
     /** آخرین باری که اسلاگ واقعاً عوض شده (برای محدودیت ۲۰ روزه) */
     lastSlugChangedAt: { type: DataTypes.DATE, allowNull: true },
+    /** لینک به Workspace (مالکیت کسب‌وکار) */
+    workspaceId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      unique: true,
+    },
   },
   {
     sequelize,

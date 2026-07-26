@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const config = require("config");
+const { getJwtSecret } = require("../utils/jwtSecret");
 
 // Middleware برای احراز هویت
 const authenticateToken = (req, res, next) => {
@@ -24,7 +24,7 @@ const authenticateToken = (req, res, next) => {
   }
 
   try {
-    const secretKey = config.get("JWT_SECRET");
+    const secretKey = getJwtSecret();
     const decoded = jwt.verify(token, secretKey);
     
     // اضافه کردن اطلاعات کاربر به request

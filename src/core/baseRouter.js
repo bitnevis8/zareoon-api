@@ -20,6 +20,7 @@ const escrowRouter = require('../modules/escrow/route');
 const subscriptionRouter = require('../modules/subscription/route');
 const backupRouter = require('../modules/backup/route');
 const publicSlugRouter = require('../modules/publicSlug/route');
+const workspaceRouter = require('../modules/workspace/route');
 
 // Use routers
 baseRouter.use('/user', userRouter);
@@ -41,5 +42,6 @@ baseRouter.use('/escrow', escrowRouter);
 baseRouter.use('/subscription', subscriptionRouter);
 baseRouter.use('/backup', backupRouter);
 baseRouter.use('/public-slug', publicSlugRouter);
+baseRouter.use('/workspace', workspaceRouter);
 
 module.exports = baseRouter;

@@ -42,6 +42,7 @@ require("../../modules/account/model");
 require("../../modules/account/profileField/model");
 require("../../modules/escrow/model");
 require("../../modules/subscription/model");
+require("../../modules/workspace/model");
 
 // Import and define all associations
 const defineAssociations = require("../../modules/associations");
@@ -97,6 +98,12 @@ const initializeDatabase = async (options = { force: false, seed: false, useMong
         "ALTER TABLE accounts ADD COLUMN public_email VARCHAR(120) NULL",
         "ALTER TABLE accounts ADD COLUMN shop_contacts JSON NULL",
         "ALTER TABLE accounts ADD COLUMN display_name VARCHAR(120) NULL",
+        "ALTER TABLE users ADD COLUMN active_workspace_id INT NULL",
+        "ALTER TABLE workspaces ADD COLUMN address_text TEXT NULL",
+        "ALTER TABLE workspaces ADD COLUMN address_label VARCHAR(300) NULL",
+        "ALTER TABLE workspaces ADD COLUMN latitude DECIMAL(10,7) NULL",
+        "ALTER TABLE workspaces ADD COLUMN longitude DECIMAL(10,7) NULL",
+        "ALTER TABLE workspaces ADD COLUMN business_hours JSON NULL",
       ];
       for (const sql of alters) {
         try {

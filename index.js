@@ -20,26 +20,48 @@ const ALLOWED_ORIGINS = {
   production: [
     "https://zareoon.ir",
     "https://www.zareoon.ir",
-    "https://api.zareoon.ir",
-    "https://zareoon.ir:3000",
-    "https://www.zareoon.ir:3000"
+    "https://api.zareoon.ir"
   ],
   development: [
     "http://localhost:3003",
     "http://localhost:3001",
     "http://localhost:3002",
+    "http://localhost:3000",
+    "http://127.0.0.1:3003",
+    "http://127.0.0.1:3001",
+    "http://127.0.0.1:3002",
+    "http://127.0.0.1:3000",
     "http://192.168.43.80:3001"
   ]
 };
 
+function isDevLocalOrigin(origin) {
+  try {
+    const u = new URL(origin);
+    const host = u.hostname;
+    return host === "localhost" || host === "127.0.0.1" || /^192\.168\./.test(host);
+  } catch {
+    return false;
+  }
+}
+
 //------------------------------------------------------------------------------------startServer
 const startServer = async () => {
   try {
-    // اتصال به دیتابیس‌ها
-    await initializeDatabase({ 
-      force: true,
-      seed: true,
-      useMongoDB: false
+    // پیش‌فرض: force + seed فعال (مثل قبل). برای غیرفعال‌کردن دائمی داده:
+    //   DB_FORCE_SYNC=false
+    //   DB_SEED=false
+    const forceDb = process.env.DB_FORCE_SYNC !== "false";
+    const seedDb = process.env.DB_SEED !== "false";
+    if (forceDb || seedDb) {
+      console.warn(
+        `⚠️ DB sync: force=${forceDb}, seed=${seedDb} — برای حفظ داده روی استارت بعدی: DB_FORCE_SYNC=false DB_SEED=false`
+      );
+    }
+    await initializeDatabase({
+      force: forceDb,
+      seed: seedDb,
+      useMongoDB: false,
     });
     console.log("✅ Databases initialized successfully!");
 
@@ -55,44 +77,25 @@ const startServer = async () => {
     // اعتماد به پراکسی برای Rate Limiting صحیح
     app.set('trust proxy', 1); 
 
-    // تنظیمات Rate Limiting
-    // const limiter = rateLimit({
-    //   windowMs: 15 * 60 * 100000, // 15 minutes
-    //   max: 5000, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-    //   message: {
-    //     status: 429,
-    //     success: false,
-    //     message: "تعداد درخواست‌های شما بیش از حد مجاز است. لطفاً کمی صبر کنید."
-    //   },
-    //   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-    //   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-    // });
+    const limiter = rateLimit({
+      windowMs: 15 * 60 * 1000,
+      max: SERVER_CONFIG.NODE_ENV === "production" ? 1500 : 5000,
+      message: {
+        status: 429,
+        success: false,
+        message: "تعداد درخواست‌های شما بیش از حد مجاز است. لطفاً کمی صبر کنید.",
+      },
+      standardHeaders: true,
+      legacyHeaders: false,
+    });
+    app.use(limiter);
 
-    // app.use(limiter);
-
-    // تنظیمات امنیتی
-    // app.use(helmet({
-    //   contentSecurityPolicy: {
-    //     directives: {
-    //       defaultSrc: ["'self'"],
-    //       scriptSrc: ["'self'", "'unsafe-inline'"],
-    //       styleSrc: ["'self'", "'unsafe-inline'"],
-    //       imgSrc: ["'self'", "data:", "https:"],
-    //       connectSrc: ["'self'"],
-    //       fontSrc: ["'self'", "https:", "data:"],
-    //       objectSrc: ["'none'"],
-    //       mediaSrc: ["'self'"],
-    //       frameSrc: ["'none'"],
-    //     },
-    //   },
-    //   xssFilter: true,
-    //   noSniff: true,
-    //   frameguard: { action: 'deny' },
-    //   hsts: {
-    //     maxAge: 31536000,
-    //     includeSubDomains: true,
-    //   },
-    // }));
+    app.use(
+      helmet({
+        contentSecurityPolicy: false,
+        crossOriginResourcePolicy: { policy: "cross-origin" },
+      })
+    );
     
     // تنظیمات CORS
     app.use(
@@ -102,20 +105,27 @@ const startServer = async () => {
             return callback(null, true);
           }
 
-          const allowedOrigins = ALLOWED_ORIGINS[SERVER_CONFIG.NODE_ENV];
+          const allowedOrigins = ALLOWED_ORIGINS[SERVER_CONFIG.NODE_ENV] || ALLOWED_ORIGINS.development;
           if (allowedOrigins.includes(origin)) {
-            callback(null, true);
-          } else {
-            callback(new Error(`Origin ${origin} not allowed by CORS`));
+            return callback(null, true);
           }
+          // توسعه: هر origin لوکال (localhost / 127.0.0.1 / LAN) مجاز
+          if (SERVER_CONFIG.NODE_ENV !== "production" && isDevLocalOrigin(origin)) {
+            return callback(null, true);
+          }
+          console.warn(`CORS blocked origin: ${origin}`);
+          return callback(null, false);
         },
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
         allowedHeaders: [
-          "Content-Type", 
-          "Authorization", 
+          "Content-Type",
+          "Authorization",
           "X-Guest-Access",
+          "X-Workspace-Id",
           "Accept",
-          "Origin"
+          "Origin",
+          "Cache-Control",
+          "Pragma",
         ],
         exposedHeaders: ["Set-Cookie"],
         credentials: true,
@@ -125,8 +135,8 @@ const startServer = async () => {
 
     // میدلورهای پردازش داده
     app.use(cookieParser());
-    app.use(bodyParser.json({ limit: '200mb' }));
-    app.use(bodyParser.urlencoded({ extended: true, limit: '200mb' }));
+    app.use(bodyParser.json({ limit: "5mb" }));
+    app.use(bodyParser.urlencoded({ extended: true, limit: "5mb" }));
 
     // مسیرهای API
     app.use("/", baseRouter);

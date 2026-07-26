@@ -6,8 +6,21 @@ const AccountProfileField = require("../account/profileField/model");
 const TradeServiceProvider = require("../tradeServiceProvider/model");
 const Product = require("../farmer/product/model");
 const InventoryLot = require("../farmer/inventoryLot/model");
+const { Workspace, WorkspaceMember } = require("../workspace/model");
+const { WORKSPACE_ROLES } = require("../workspace/constants");
 const { displayContentToLegacyFields } = require("../../utils/inventoryDisplayContent");
 const data = require("./seederData.json");
+
+/** نام کاتالوگ: نوع محصول قبل از نام واریته */
+const PRODUCT_NAME_FIXES = {
+  "date-klooteh": { fa: "خرمای کلوته", en: "Klooteh Date" },
+  "date-estamaran": { fa: "خرمای استعمران", en: "Estamaran Date" },
+  "date-zahidi-iraq": { fa: "خرمای زهدی عراق", en: "Zahidi Iraq Date" },
+  "date-piarom": { fa: "خرمای پیارم", en: "Piarom Date" },
+  "date-rabbi-iranshahr": { fa: "خرمای ربی ایرانشهر", en: "Rabbi Iranshahr Date" },
+  "date-mazafati-rutab": { fa: "خرمای رطب مضافتی", en: "Mazafati Rutab Date" },
+  "urea-fertilizer": { fa: "کود اوره", en: "Urea Fertilizer" },
+};
 
 async function ensureRole(userId, roleName) {
   const role = await Role.findOne({ where: { name: roleName } });
@@ -62,11 +75,12 @@ async function upsertAccount(user, accountCfg) {
   return account;
 }
 
-async function upsertTradeProvider(user, cfg) {
+async function upsertTradeProvider(user, cfg, workspaceId = null) {
   const selectedServices = Array.isArray(cfg.selectedServices) ? cfg.selectedServices : [];
   const primaryCategoryId = selectedServices[0]?.categoryId || "packaging-prep";
   const payload = {
     userId: user.id,
+    workspaceId: workspaceId || null,
     entityType: cfg.entityType || "company",
     displayName: cfg.displayName,
     contactName: cfg.contactName,
@@ -100,11 +114,108 @@ async function upsertTradeProvider(user, cfg) {
   return row;
 }
 
-async function seedInventoryLots(user, lotsCfg) {
+async function ensureZareoonWorkspace(user, account) {
+  let workspace =
+    (account?.profileSlug
+      ? await Workspace.findOne({ where: { profileSlug: account.profileSlug } })
+      : null) ||
+    (account?.id ? await Workspace.findOne({ where: { accountId: account.id } }) : null);
+
+  if (!workspace) {
+    workspace = await Workspace.create({
+      name: account?.displayName || account?.profileSlug || "زارعون",
+      displayName: account?.displayName || "زارعون",
+      profileSlug: account?.profileSlug || "zareoon",
+      entityType: account?.entityType || "company",
+      activityBuyer: true,
+      activitySeller: true,
+      activityServices: true,
+      isPublic: true,
+      createdByUserId: user.id,
+      accountId: account?.id || null,
+      addressLabel: "تهران، تهران",
+      addressText: "تهران",
+    });
+  } else {
+    await workspace.update({
+      displayName: account?.displayName || workspace.displayName || "زارعون",
+      profileSlug: account?.profileSlug || workspace.profileSlug || "zareoon",
+      activitySeller: true,
+      activityServices: true,
+      isPublic: true,
+      accountId: account?.id || workspace.accountId,
+    });
+  }
+
+  if (account && Number(account.workspaceId) !== Number(workspace.id)) {
+    await account.update({ workspaceId: workspace.id });
+  }
+
+  await WorkspaceMember.findOrCreate({
+    where: { workspaceId: workspace.id, userId: user.id },
+    defaults: {
+      workspaceId: workspace.id,
+      userId: user.id,
+      role: WORKSPACE_ROLES.OWNER,
+      status: "active",
+      joinedAt: new Date(),
+    },
+  });
+
+  if (Number(user.activeWorkspaceId) !== Number(workspace.id)) {
+    await user.update({ activeWorkspaceId: workspace.id });
+  }
+
+  return workspace;
+}
+
+async function fixProductDisplayNames() {
+  let n = 0;
+  for (const [slug, names] of Object.entries(PRODUCT_NAME_FIXES)) {
+    const product = await Product.findOne({ where: { slug } });
+    if (!product) continue;
+    const patch = {};
+    if (names.fa && product.name !== names.fa) patch.name = names.fa;
+    if (names.en && product.englishName !== names.en) patch.englishName = names.en;
+    if (Object.keys(patch).length) {
+      await product.update(patch);
+      n += 1;
+    }
+  }
+  return n;
+}
+
+function buildOriginFilter(item, index = 0) {
+  const country = String(item.originCountry || item.supplyCountry || "IR").toUpperCase();
+  const province = item.originProvince || item.supplyProvince || null;
+  const city = item.originCity || item.supplyCity || null;
+  const verified = item.listingVerified !== false;
+  const levels = ["basic", "standard", "enhanced", "full"];
+  return {
+    originCountry: country,
+    originProvince: province,
+    originCity: city,
+    listingVerified: verified,
+    verificationLevel: verified
+      ? item.verificationLevel || levels[index % levels.length]
+      : "none",
+  };
+}
+
+function buildLocationLabel(item, filterValues) {
+  if (item.locationLabel) return item.locationLabel;
+  const city = filterValues.originCity;
+  const province = filterValues.originProvince;
+  if (city && province) return `${city}، ${province}`;
+  return city || province || null;
+}
+
+async function seedInventoryLots(user, workspace, lotsCfg) {
   let created = 0;
   let updated = 0;
 
-  for (const item of lotsCfg) {
+  for (let i = 0; i < lotsCfg.length; i += 1) {
+    const item = lotsCfg[i];
     const product = await Product.findOne({ where: { slug: item.productSlug } });
     if (!product) {
       console.warn(`⚠️ Product slug not found: ${item.productSlug}`);
@@ -114,6 +225,8 @@ async function seedInventoryLots(user, lotsCfg) {
     const legacy = displayContentToLegacyFields(item.displayContent || {});
     const titleFa = item.displayContent?.fa?.title || product.name;
     const grade = item.qualityGrade || "Premium";
+    const filterValues = buildOriginFilter(item, i);
+    const locationLabel = buildLocationLabel(item, filterValues);
 
     const existing = await InventoryLot.findOne({
       where: {
@@ -125,20 +238,21 @@ async function seedInventoryLots(user, lotsCfg) {
 
     const payload = {
       farmerId: user.id,
+      workspaceId: workspace?.id || null,
       productId: product.id,
       qualityGrade: grade,
       status: "harvested",
       unit: item.unit || product.defaultMeasurementUnit || product.unit || "kg",
       packagingType: item.packagingType || null,
-      filterValues: null,
+      filterValues,
       hsCode: null,
-      totalQuantity: item.totalQuantity != null ? Number(item.totalQuantity) : 10000,
+      totalQuantity: item.totalQuantity != null ? Number(item.totalQuantity) : 40000,
       reservedQuantity: 0,
-      price: item.price != null ? item.price : null,
-      priceCurrency: "TOMAN",
+      price: item.price != null ? Number(item.price) : 140000,
+      priceCurrency: item.priceCurrency || "TOMAN",
       tieredPricing: null,
       minimumOrderQuantity: null,
-      locationLabel: item.supplyCity || null,
+      locationLabel,
       ...legacy,
       description: legacy.description || `${titleFa} — عرضه زارعون`,
     };
@@ -174,6 +288,12 @@ async function seedZareoonOfficial() {
   const account = await upsertAccount(user, data.account || {});
   console.log(`✅ Account ready id=${account.id} slug=${account.profileSlug}`);
 
+  const workspace = await ensureZareoonWorkspace(user, account);
+  console.log(`✅ Workspace ready id=${workspace.id} slug=${workspace.profileSlug}`);
+
+  const renamed = await fixProductDisplayNames();
+  if (renamed) console.log(`✅ Product display names fixed: ${renamed}`);
+
   const officialAvatar = data.avatarUrl || "/images/logo.png";
   if (user.avatar !== officialAvatar) {
     await user.update({ avatar: officialAvatar });
@@ -184,12 +304,12 @@ async function seedZareoonOfficial() {
     ...(data.tradeProvider || {}),
     logoUrl: data.tradeProvider?.logoUrl || officialAvatar,
   };
-  const provider = await upsertTradeProvider(user, providerCfg);
+  const provider = await upsertTradeProvider(user, providerCfg, workspace.id);
   console.log(`✅ Trade provider ready id=${provider.id} slug=${provider.profileSlug}`);
 
-  const lotStats = await seedInventoryLots(user, data.inventoryLots || []);
+  const lotStats = await seedInventoryLots(user, workspace, data.inventoryLots || []);
   console.log(
-    `✅ Inventory lots ready created=${lotStats.created} updated=${lotStats.updated}`
+    `✅ Inventory lots ready created=${lotStats.created} updated=${lotStats.updated} workspaceId=${workspace.id}`
   );
 
   console.log("✅ Official Zareoon page seeding completed! → /zareoon");

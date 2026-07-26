@@ -10,7 +10,7 @@ const ftpService = require("../fileUpload/services/ftpService");
 const { optimizeMessageImage } = require("./services/imageOptimizer");
 const sequelize = require("../../core/database/mysql/connection");
 
-const USER_ATTRS = ["id", "firstName", "lastName", "username", "mobile", "avatar"];
+const USER_ATTRS = ["id", "firstName", "lastName", "username", "mobile", "nationalId", "avatar"];
 
 function currentUserId(req) {
   return req.user?.userId || req.user?.id;
@@ -22,6 +22,13 @@ function normalizeParticipants(userId, recipientId) {
   return a < b ? [a, b] : [b, a];
 }
 
+/** تبدیل ارقام فارسی/عربی به انگلیسی */
+function toEnglishDigits(str) {
+  return String(str || "")
+    .replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)))
+    .replace(/[٠-٩]/g, (d) => String("٠١٢٣٤٥٦٧٨٩".indexOf(d)));
+}
+
 function formatUser(user) {
   if (!user) return null;
   const u = user.get ? user.get({ plain: true }) : user;
@@ -31,6 +38,7 @@ function formatUser(user) {
     lastName: u.lastName,
     username: u.username,
     mobile: u.mobile,
+    nationalId: u.nationalId || null,
     avatar: u.avatar,
     displayName: [u.firstName, u.lastName].filter(Boolean).join(" ") || u.username || `کاربر ${u.id}`,
   };
@@ -444,7 +452,8 @@ const unreadCount = async (req, res) => {
 const searchUsers = async (req, res) => {
   try {
     const userId = currentUserId(req);
-    const q = (req.query.q || "").trim();
+    const qRaw = (req.query.q || "").trim();
+    const q = toEnglishDigits(qRaw).trim();
     const limit = Math.min(Number(req.query.limit) || 15, 30);
 
     const where = {
@@ -453,14 +462,49 @@ const searchUsers = async (req, res) => {
     };
 
     if (q) {
-      const { fulltextWhere, likeOrWhere } = require("../../utils/mysqlFulltext");
-      const ft = q.length >= 2 ? fulltextWhere(["first_name", "last_name", "username"], q) : null;
-      const like = likeOrWhere(["firstName", "lastName", "username", "mobile"], q);
-      if (ft) {
-        where[Op.or] = [ft, ...(like?.[Op.or] || [])];
-      } else if (like) {
-        Object.assign(where, like);
+      const compact = q.replace(/[\s-]/g, "");
+      const digitsOnly = compact.replace(/\D/g, "");
+      const isDigitsOnly = /^\d+$/.test(compact);
+      const looksLikeNationalId = isDigitsOnly && digitsOnly.length >= 8 && digitsOnly.length <= 10;
+      const looksLikeMobile =
+        /^09\d{9}$/.test(digitsOnly) ||
+        (isDigitsOnly && digitsOnly.length >= 10 && digitsOnly.length <= 11 && digitsOnly.startsWith("09"));
+
+      // کد ملی / موبایل کامل حتی با الگوی رقم — بدون حداقل ۲ حرف نام
+      const allowIdentifierSearch = looksLikeNationalId || looksLikeMobile;
+      if (q.length < 2 && !allowIdentifierSearch) {
+        return res.json({ success: true, data: [] });
       }
+
+      const or = [];
+
+      // nationalId / mobile / username — تطبیق دقیق یا نرمال‌شده
+      or.push({ username: q });
+      or.push({ username: compact });
+      if (digitsOnly) {
+        or.push({ nationalId: digitsOnly });
+        or.push({ nationalId: compact });
+        or.push({ mobile: digitsOnly });
+        or.push({ mobile: compact });
+        if (digitsOnly.length === 10 && digitsOnly.startsWith("9")) {
+          or.push({ mobile: `0${digitsOnly}` });
+        }
+      }
+
+      // نام: حداقل ۲ کاراکتر (برای کوئری غیررقم‌محض شناسه)
+      if (q.length >= 2 && !allowIdentifierSearch) {
+        const { fulltextWhere, likeOrWhere } = require("../../utils/mysqlFulltext");
+        const ft = fulltextWhere(["first_name", "last_name"], q);
+        const like = likeOrWhere(["firstName", "lastName", "username"], q);
+        if (ft) or.push(ft);
+        if (like?.[Op.or]) or.push(...like[Op.or]);
+      } else if (allowIdentifierSearch && q.length >= 2 && !isDigitsOnly) {
+        const { likeOrWhere } = require("../../utils/mysqlFulltext");
+        const like = likeOrWhere(["username"], q);
+        if (like?.[Op.or]) or.push(...like[Op.or]);
+      }
+
+      where[Op.or] = or;
     }
 
     const users = await User.findAll({

@@ -35,6 +35,8 @@ User.init(
     smsDailyDate: { type: DataTypes.DATEONLY, allowNull: true },
     lastLogin: { type: DataTypes.DATE, allowNull: true },
     avatar: { type: DataTypes.STRING, allowNull: true, defaultValue: null },
+    /** Workspace فعال برای چند کسب‌وکار */
+    activeWorkspaceId: { type: DataTypes.INTEGER, allowNull: true },
   },
   {
     sequelize,

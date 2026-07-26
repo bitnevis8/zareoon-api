@@ -2,12 +2,37 @@
   {
     "name": "super_admin",
     "nameEn": "Super Admin",
-    "nameFa": "مدیر کل"
+    "nameFa": "مدیرکل"
   },
   {
     "name": "admin",
     "nameEn": "Admin",
     "nameFa": "مدیر"
+  },
+  {
+    "name": "support",
+    "nameEn": "Support",
+    "nameFa": "پشتیبان"
+  },
+  {
+    "name": "content_moderator",
+    "nameEn": "Content Moderator",
+    "nameFa": "ناظر محتوا"
+  },
+  {
+    "name": "verification_officer",
+    "nameEn": "Verification Officer",
+    "nameFa": "مسئول احراز"
+  },
+  {
+    "name": "finance_officer",
+    "nameEn": "Finance Officer",
+    "nameFa": "مسئول مالی"
+  },
+  {
+    "name": "subscription_officer",
+    "nameEn": "Subscription Officer",
+    "nameFa": "مسئول اشتراک"
   },
   {
     "name": "user",

@@ -1,0 +1,149 @@
+const { Op } = require("sequelize");
+const InventoryLot = require("../farmer/inventoryLot/model");
+const TradeServiceProvider = require("../tradeServiceProvider/model");
+const SupplierPost = require("../supplierProfile/post/model");
+const { WorkspaceMember, WorkspaceSubscription } = require("./model");
+const { getPlanById, PLAN_IDS } = require("./plans");
+
+async function getActiveWorkspaceSubscription(workspaceId) {
+  const now = new Date();
+  return WorkspaceSubscription.findOne({
+    where: {
+      workspaceId,
+      status: "active",
+      [Op.or]: [{ endsAt: null }, { endsAt: { [Op.gt]: now } }],
+    },
+    order: [["endsAt", "DESC"], ["id", "DESC"]],
+  });
+}
+
+async function resolvePlanLimits(workspaceId) {
+  const sub = await getActiveWorkspaceSubscription(workspaceId);
+  const planId = sub?.planId || PLAN_IDS.FREE;
+  const plan = getPlanById(planId) || getPlanById(PLAN_IDS.FREE);
+  return { planId, limits: plan.limits || {}, billingPeriod: sub?.billingPeriod || "none" };
+}
+
+function limitExceededError(message) {
+  const err = new Error(message);
+  err.status = 403;
+  err.code = "PLAN_LIMIT";
+  return err;
+}
+
+async function countActiveLots(workspaceId) {
+  return InventoryLot.count({
+    where: {
+      workspaceId,
+      status: { [Op.in]: ["on_field", "harvested", "reserved"] },
+    },
+  });
+}
+
+async function countServices(workspaceId) {
+  return TradeServiceProvider.count({
+    where: {
+      workspaceId,
+      status: { [Op.in]: ["pending", "approved"] },
+    },
+  });
+}
+
+async function countTeamMembers(workspaceId) {
+  return WorkspaceMember.count({
+    where: { workspaceId, status: { [Op.in]: ["active", "invited"] } },
+  });
+}
+
+async function countPostsThisMonth(workspaceId) {
+  const start = new Date();
+  start.setDate(1);
+  start.setHours(0, 0, 0, 0);
+  return SupplierPost.count({
+    where: {
+      workspaceId,
+      createdAt: { [Op.gte]: start },
+    },
+  });
+}
+
+/**
+ * قبل از ایجاد موجودی / خدمت / عضو / پست بررسی سقف پلن
+ */
+async function assertCanCreateLot(workspaceId) {
+  const { limits } = await resolvePlanLimits(workspaceId);
+  if (limits.activeLots == null) return;
+  const n = await countActiveLots(workspaceId);
+  if (n >= limits.activeLots) {
+    throw limitExceededError(`سقف محصولات فعال پلن شما ${limits.activeLots} است. برای افزایش، اشتراک را ارتقا دهید.`);
+  }
+}
+
+async function assertCanCreateService(workspaceId) {
+  const { limits } = await resolvePlanLimits(workspaceId);
+  if (limits.tradeServices == null) return;
+  const n = await countServices(workspaceId);
+  if (n >= limits.tradeServices) {
+    throw limitExceededError(`سقف خدمات پلن شما ${limits.tradeServices} است.`);
+  }
+}
+
+async function assertCanAddMember(workspaceId) {
+  const { limits } = await resolvePlanLimits(workspaceId);
+  if (limits.teamMembers == null) return;
+  const n = await countTeamMembers(workspaceId);
+  if (n >= limits.teamMembers) {
+    throw limitExceededError(`سقف اعضای تیم پلن شما ${limits.teamMembers} است.`);
+  }
+}
+
+async function assertCanCreatePost(workspaceId) {
+  const { limits } = await resolvePlanLimits(workspaceId);
+  if (limits.postsPerMonth == null) return;
+  const n = await countPostsThisMonth(workspaceId);
+  if (n >= limits.postsPerMonth) {
+    throw limitExceededError(`سقف پست ماهانه پلن شما ${limits.postsPerMonth} است.`);
+  }
+}
+
+async function assertListingLocales(workspaceId, localeCount) {
+  const { limits } = await resolvePlanLimits(workspaceId);
+  if (limits.listingLocales == null) return;
+  if (Number(localeCount) > limits.listingLocales) {
+    throw limitExceededError(`سقف زبان‌های آگهی پلن شما ${limits.listingLocales} است.`);
+  }
+}
+
+async function getWorkspaceUsage(workspaceId) {
+  const { planId, limits, billingPeriod } = await resolvePlanLimits(workspaceId);
+  const [lots, services, members, posts] = await Promise.all([
+    countActiveLots(workspaceId),
+    countServices(workspaceId),
+    countTeamMembers(workspaceId),
+    countPostsThisMonth(workspaceId),
+  ]);
+  return {
+    planId,
+    billingPeriod,
+    limits,
+    usage: {
+      activeLots: lots,
+      tradeServices: services,
+      teamMembers: members,
+      postsThisMonth: posts,
+    },
+  };
+}
+
+module.exports = {
+  resolvePlanLimits,
+  assertCanCreateLot,
+  assertCanCreateService,
+  assertCanAddMember,
+  assertCanCreatePost,
+  assertListingLocales,
+  getWorkspaceUsage,
+  countActiveLots,
+  countServices,
+  countTeamMembers,
+};

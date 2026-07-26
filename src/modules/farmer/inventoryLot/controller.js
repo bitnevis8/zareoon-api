@@ -284,8 +284,8 @@ const list = async (req, res) => {
     include.push({
       model: CustomAttributeValue,
       as: "attributes",
-      include: [
-        {
+    include: [
+      {
           model: CustomAttributeDefinition,
           as: "definition",
           attributes: ["id", "name", "type", "options"],
@@ -486,6 +486,23 @@ const create = async (req, res) => {
     const isAdmin = Boolean(req.user?.roles?.includes?.("Administrator") || req.user?.isAdmin);
     const { allowedUnits, allowedPackaging } = await assertProductListable(payload.productId, { isAdmin });
     validateUnitAndPackaging(payload, { allowedUnits, allowedPackaging });
+
+    if (req.user?.id) {
+      const { ensurePersonalWorkspaceFromReq } = require("../../workspace/service");
+      const { assertCanCreateLot } = require("../../workspace/limits");
+      const ensured = await ensurePersonalWorkspaceFromReq(req);
+      if (ensured?.workspace?.id) {
+        payload.workspaceId = ensured.workspace.id;
+        if (!payload.farmerId) payload.farmerId = req.user.id;
+        await assertCanCreateLot(ensured.workspace.id);
+        if (!ensured.workspace.activitySeller) {
+          await ensured.workspace.update({ activitySeller: true });
+        }
+      } else if (!payload.farmerId) {
+        payload.farmerId = req.user.id;
+      }
+    }
+
     const created = await InventoryLot.create(payload);
     await invalidateInventoryCache();
     res.status(201).json({ success: true, data: formatLotRecord(created) });

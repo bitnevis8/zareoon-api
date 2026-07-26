@@ -540,7 +540,7 @@ class AuthController extends BaseController {
       await user.save();
 
       // بعد از تأیید موفق ایمیل، توکن صادر می‌شود
-      const secretKey = config.get("JWT_SECRET");
+      const secretKey = require("../../../utils/jwtSecret").getJwtSecret();
       const encoder = new TextEncoder();
       const token = await new SignJWT({ 
         userId: user.id,
@@ -793,7 +793,7 @@ class AuthController extends BaseController {
       console.log("User roles for tokenPayload:", user.userRoles);
 
       // ✅ تولید `JWT`
-      const secretKey = config.get("JWT_SECRET");
+      const secretKey = require("../../../utils/jwtSecret").getJwtSecret();
       const encoder = new TextEncoder();
       const tokenPayload = {
         userId: user.id,
@@ -862,32 +862,68 @@ class AuthController extends BaseController {
   // 📌 بررسی وجود کاربر بر اساس شناسه
   async checkIdentifier(req, res) {
     try {
-      const { identifier } = req.body;
+      const { identifier, countryCode } = req.body;
+      const { isValidEmail, isIranMobile, normalizePhoneNumber, detectPhoneCountry } = require("../../../utils/phoneCountries");
+      const { getAuthSignupPublic } = require("../../siteSetting/service");
 
       if (!identifier) {
         return this.response(res, 400, false, "شناسه الزامی است");
       }
 
-      const isEmail = identifier.includes("@");
-      const isMobile = /^09\d{9}$/.test(identifier);
+      const cfg = await getAuthSignupPublic();
+      const raw = String(identifier).trim();
+      const isEmail = raw.includes("@");
+      let mobile = null;
+      let isMobile = false;
 
-      if (!isEmail && !isMobile) {
-        return this.response(res, 400, false, "فرمت شناسه نامعتبر است");
+      if (isEmail) {
+        if (!cfg.emailEnabled) {
+          return this.response(res, 400, false, "ثبت‌نام با ایمیل فعلاً غیرفعال است");
+        }
+        if (!isValidEmail(raw)) {
+          return this.response(res, 400, false, "فرمت ایمیل نامعتبر است");
+        }
+      } else {
+        if (!cfg.phoneEnabled) {
+          return this.response(res, 400, false, "ثبت‌نام با موبایل فعلاً غیرفعال است");
+        }
+        const cc =
+          countryCode ||
+          detectPhoneCountry(raw) ||
+          cfg.defaultPhoneCountry ||
+          "IR";
+        if (!cfg.allowedPhoneCountries.includes(String(cc).toUpperCase())) {
+          return this.response(res, 400, false, "ثبت‌نام با موبایل این کشور فعال نیست");
+        }
+        mobile = isIranMobile(raw)
+          ? raw
+          : normalizePhoneNumber(cc, raw.replace(/^\+/, "").replace(/\D/g, "")) ||
+            (raw.startsWith("+") ? raw : null);
+        if (!mobile && isIranMobile(raw)) mobile = raw;
+        if (!mobile) {
+          // اگر قبلاً نرمال شده 09… باشد
+          if (/^09\d{9}$/.test(raw)) mobile = raw;
+          else if (raw.startsWith("+")) mobile = raw;
+        }
+        if (!mobile) {
+          return this.response(res, 400, false, "فرمت شماره موبایل نامعتبر است");
+        }
+        isMobile = true;
       }
 
+      const lookup = isEmail ? raw.toLowerCase() : mobile;
       let user = null;
       if (isEmail) {
-        user = await this.User.findOne({ where: { email: identifier } });
+        user = await this.User.findOne({ where: { email: lookup } });
       } else {
-        user = await this.User.findOne({ where: { mobile: identifier } });
+        user = await this.User.findOne({ where: { mobile: lookup } });
       }
 
-      // کاربر موقت/غیرفعال ثبت‌نام ناقص = حساب جدید محسوب می‌شود
       const userExists = !!(user && user.isActive);
 
       return this.response(res, 200, true, "بررسی انجام شد", {
         userExists,
-        identifier,
+        identifier: lookup,
         isEmail,
         isMobile,
       });
@@ -906,42 +942,46 @@ class AuthController extends BaseController {
         return this.response(res, 400, false, "تمام فیلدها الزامی است");
       }
 
-      // یافتن کاربر
-      const isEmail = identifier.includes("@");
+      const isEmail = String(identifier).includes("@");
       let user = null;
-      
+
       if (isEmail) {
-        user = await this.User.findOne({ where: { email: identifier } });
+        user = await this.User.findOne({ where: { email: String(identifier).trim().toLowerCase() } });
       } else {
-        user = await this.User.findOne({ where: { mobile: identifier } });
+        user = await this.User.findOne({ where: { mobile: String(identifier).trim() } });
       }
 
       if (!user) {
         return this.response(res, 404, false, "کاربر یافت نشد");
       }
 
-      // بررسی کد تایید
-      if (String(user.mobileVerifyCode) !== String(code).trim()) {
+      const expected = isEmail ? user.emailVerifyCode : user.mobileVerifyCode;
+      const sentAt = isEmail ? user.emailVerificationSentAt : user.mobileVerificationSentAt;
+
+      if (String(expected) !== String(code).trim()) {
         return this.response(res, 400, false, "کد تایید اشتباه است");
       }
 
-      // بررسی انقضای کد (۳ دقیقه)
-      if (!user.mobileVerificationSentAt) {
+      if (!sentAt) {
         return this.response(res, 400, false, "زمان ارسال کد مشخص نیست");
       }
 
-      if (this.isOtpExpired(user.mobileVerificationSentAt, 3)) {
+      if (this.isOtpExpired(sentAt, 3)) {
         return this.response(res, 400, false, "کد تایید منقضی شده است. دوباره درخواست دهید.");
       }
 
       if (action === "register") {
-        // برای ثبت‌نام - کد تایید شد
-        user.isMobileVerified = true;
+        if (isEmail) {
+          user.isEmailVerified = true;
+          user.emailVerifyCode = null;
+        } else {
+          user.isMobileVerified = true;
+          user.mobileVerifyCode = null;
+        }
         await user.save();
-        
-        // بازیابی نقش‌های کاربر
+
         const roles = await user.getUserRoles();
-        
+
         return this.response(res, 200, true, "کد تایید شد", {
           action: "register",
           identifier: identifier,
@@ -955,19 +995,23 @@ class AuthController extends BaseController {
             isEmailVerified: user.isEmailVerified,
             isMobileVerified: user.isMobileVerified,
             isActive: user.isActive,
-            roles: roles.map(role => ({
+            roles: roles.map((role) => ({
               id: role.id,
               name: role.name,
               nameEn: role.nameEn,
               nameFa: role.nameFa,
-            }))
-          }
+            })),
+          },
         });
       } else if (action === "login") {
         // برای ورود - تولید JWT و ورود
-        const secretKey = config.get("JWT_SECRET");
+        const secretKey = require("../../../utils/jwtSecret").getJwtSecret();
         const encoder = new TextEncoder();
-        const token = await new SignJWT({ userMobile: user.mobile })
+        const token = await new SignJWT({
+          userMobile: user.mobile,
+          userEmail: user.email,
+          userId: user.id,
+        })
           .setProtectedHeader({ alg: "HS256" })
           .setExpirationTime("30d")
           .sign(encoder.encode(secretKey));
@@ -1077,27 +1121,110 @@ class AuthController extends BaseController {
     }
   }
 
-  // 📌 ارسال کد برای ثبت‌نام (ایجاد کاربر موقت)
+  // 📌 ارسال کد برای ثبت‌نام (ایجاد کاربر موقت) — موبایل یا ایمیل
   async sendCodeForRegistration(req, res) {
     try {
-      const { mobile } = req.body;
+      const { mobile, email, identifier } = req.body;
+      const { isValidEmail, isIranMobile } = require("../../../utils/phoneCountries");
+      const { getAuthSignupPublic } = require("../../siteSetting/service");
+      const cfg = await getAuthSignupPublic();
 
-      if (!mobile) {
-        return this.response(res, 400, false, "شماره موبایل الزامی است");
-      }
-      if (!/^09\d{9}$/.test(mobile)) {
-        return this.response(res, 400, false, "فرمت شماره موبایل نامعتبر است");
-      }
-
-      let user = await this.User.findOne({ where: { mobile } });
-
-      if (user && user.isActive) {
-        return this.response(res, 409, false, "این شماره موبایل قبلاً ثبت شده است");
+      const raw = String(identifier || email || mobile || "").trim();
+      if (!raw) {
+        return this.response(res, 400, false, "ایمیل یا شماره موبایل الزامی است");
       }
 
+      const isEmail = raw.includes("@");
       const defaultUserRole = await findDefaultUserRole();
       if (!defaultUserRole) {
         return this.response(res, 500, false, "نقش پیش‌فرض یافت نشد.");
+      }
+
+      if (isEmail) {
+        if (!cfg.emailEnabled) {
+          return this.response(res, 400, false, "ثبت‌نام با ایمیل فعلاً غیرفعال است");
+        }
+        const addr = raw.toLowerCase();
+        if (!isValidEmail(addr)) {
+          return this.response(res, 400, false, "فرمت ایمیل نامعتبر است");
+        }
+
+        let user = await this.User.findOne({ where: { email: addr } });
+        if (user && user.isActive) {
+          return this.response(res, 409, false, "این ایمیل قبلاً ثبت شده است");
+        }
+
+        const emailVerifyCode = Math.floor(100000 + Math.random() * 900000);
+
+        if (user) {
+          user.emailVerifyCode = String(emailVerifyCode);
+          user.emailVerificationSentAt = new Date();
+          user.isEmailVerified = false;
+          user.isActive = false;
+          await user.save();
+        } else {
+          user = await this.User.create({
+            firstName: "temp",
+            lastName: "temp",
+            email: addr,
+            username: `temp_${Date.now()}`,
+            password: `temp_${Math.random().toString(36).slice(2)}`,
+            emailVerifyCode: String(emailVerifyCode),
+            emailVerificationSentAt: new Date(),
+            isEmailVerified: false,
+            isActive: false,
+          });
+          user.username = `Zareoon_u_${user.id}`;
+          await user.save();
+          const UserRole = require("../userRole/model");
+          await UserRole.create({ userId: user.id, roleId: defaultUserRole.id });
+        }
+
+        try {
+          await main(
+            addr,
+            "کد تأیید ثبت‌نام زارعون",
+            "",
+            `
+            <div style="text-align:center;font-family:tahoma,sans-serif;font-size:14px;line-height:1.8">
+              <p>کد تأیید ثبت‌نام شما در زارعون:</p>
+              <b style="font-size:28px;letter-spacing:4px">${emailVerifyCode}</b>
+              <p style="color:#666;font-size:12px;margin-top:16px">اگر این ایمیل را در Inbox ندیدید، پوشه Spam / هرزنامه را هم بررسی کنید.</p>
+            </div>
+            `
+          );
+        } catch (mailErr) {
+          console.error("❌ Email sending failed:", mailErr.message || mailErr);
+          return this.response(res, 500, false, "خطا در ارسال ایمیل");
+        }
+
+        return this.response(res, 200, true, "کد تأیید به ایمیل ارسال شد", {
+          expiresInSeconds: 180,
+          channel: "email",
+        });
+      }
+
+      // موبایل
+      if (!cfg.phoneEnabled) {
+        return this.response(res, 400, false, "ثبت‌نام با موبایل فعلاً غیرفعال است");
+      }
+      if (!isIranMobile(raw) && !String(raw).startsWith("+")) {
+        return this.response(res, 400, false, "فرمت شماره موبایل نامعتبر است");
+      }
+      if (!isIranMobile(raw)) {
+        return this.response(
+          res,
+          400,
+          false,
+          "ارسال پیامک فعلاً فقط برای شماره‌های ایران (+۹۸) فعال است"
+        );
+      }
+
+      const phone = raw;
+      let user = await this.User.findOne({ where: { mobile: phone } });
+
+      if (user && user.isActive) {
+        return this.response(res, 409, false, "این شماره موبایل قبلاً ثبت شده است");
       }
 
       if (user) {
@@ -1121,7 +1248,7 @@ class AuthController extends BaseController {
         user = await this.User.create({
           firstName: "temp",
           lastName: "temp",
-          mobile,
+          mobile: phone,
           username: `temp_${Date.now()}`,
           password: `temp_${Math.random().toString(36).slice(2)}`,
           mobileVerifyCode: String(mobileVerifyCode),
@@ -1131,18 +1258,23 @@ class AuthController extends BaseController {
           smsDailyCount: 1,
           smsDailyDate: this.getSmsToday(),
         });
+        user.username = `Zareoon_u_${user.id}`;
+        await user.save();
         const UserRole = require("../userRole/model");
         await UserRole.create({ userId: user.id, roleId: defaultUserRole.id });
       }
 
       try {
-        await this.sendSmsCode(mobile, mobileVerifyCode);
+        await this.sendSmsCode(phone, mobileVerifyCode);
       } catch (smsError) {
         console.error("❌ SMS sending failed:", smsError.response?.data || smsError.message);
         return this.response(res, 500, false, "خطا در ارسال پیامک");
       }
 
-      return this.response(res, 200, true, "کد تایید ارسال شد", { expiresInSeconds: 180 });
+      return this.response(res, 200, true, "کد تایید ارسال شد", {
+        expiresInSeconds: 180,
+        channel: "sms",
+      });
     } catch (error) {
       console.error("❌ Send code for registration failed:", error);
       this.response(res, 500, false, "خطای داخلی سرور", null, error);
@@ -1152,7 +1284,8 @@ class AuthController extends BaseController {
   // 📌 تکمیل ثبت‌نام
   async completeRegistration(req, res) {
     try {
-      const { firstName, lastName, fullName, mobile, password, acceptTerms } = req.body;
+      const { firstName, lastName, fullName, mobile, email, identifier, password, acceptTerms } =
+        req.body;
 
       const resolvedFirst =
         (firstName && String(firstName).trim()) ||
@@ -1161,8 +1294,9 @@ class AuthController extends BaseController {
         (lastName && String(lastName).trim()) ||
         (fullName ? String(fullName).trim().split(/\s+/).slice(1).join(" ") : "");
 
-      if (!resolvedFirst || !resolvedLast || !password || !mobile) {
-        return this.response(res, 400, false, "نام، نام خانوادگی، موبایل و رمز عبور الزامی است");
+      const idRaw = String(identifier || email || mobile || "").trim();
+      if (!resolvedFirst || !resolvedLast || !password || !idRaw) {
+        return this.response(res, 400, false, "نام، نام خانوادگی، شناسه و رمز عبور الزامی است");
       }
       if (acceptTerms === false) {
         return this.response(res, 400, false, "پذیرش قوانین الزامی است");
@@ -1171,11 +1305,18 @@ class AuthController extends BaseController {
         return this.response(res, 400, false, "رمز عبور باید حداقل ۶ کاراکتر باشد");
       }
 
-      const user = await this.User.findOne({ where: { mobile } });
+      const isEmail = idRaw.includes("@");
+      const user = isEmail
+        ? await this.User.findOne({ where: { email: idRaw.toLowerCase() } })
+        : await this.User.findOne({ where: { mobile: idRaw } });
+
       if (!user) {
         return this.response(res, 404, false, "کاربر یافت نشد");
       }
-      if (!user.isMobileVerified) {
+      if (isEmail && !user.isEmailVerified) {
+        return this.response(res, 400, false, "ایمیل تایید نشده است");
+      }
+      if (!isEmail && !user.isMobileVerified) {
         return this.response(res, 400, false, "شماره موبایل تایید نشده است");
       }
 
@@ -1185,6 +1326,10 @@ class AuthController extends BaseController {
       user.isActive = true;
       user.mustChangePassword = false;
       user.mobileVerifyCode = null;
+      user.emailVerifyCode = null;
+      if (!user.username || String(user.username).startsWith("temp_")) {
+        user.username = `Zareoon_u_${user.id}`;
+      }
       await user.save();
 
       await user.reload({ include: [{ model: Role, as: "userRoles" }] });

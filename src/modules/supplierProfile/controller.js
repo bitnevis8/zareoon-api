@@ -468,13 +468,13 @@ const getReviews = async (req, res) => {
 const optionalAuth = async (req, res, next) => {
   try {
     const { jwtVerify } = require("jose");
-    const config = require("config");
+    const { getJwtSecret } = require("../../utils/jwtSecret");
     let token = req.cookies?.token;
     if (!token && req.headers.authorization?.startsWith("Bearer ")) {
       token = req.headers.authorization.substring(7);
     }
     if (token) {
-      const { payload } = await jwtVerify(token, new TextEncoder().encode(config.get("JWT_SECRET")));
+      const { payload } = await jwtVerify(token, new TextEncoder().encode(getJwtSecret()));
       req.user = payload;
       req.user.userId = payload.userId || payload.id;
     }
@@ -610,6 +610,14 @@ const updateMyProfile = async (req, res) => {
         { profileSlug: accountUpdates.profileSlug },
         { where: { userId } }
       );
+      try {
+        const { Workspace } = require("../workspace/model");
+        const wsPatch = { profileSlug: accountUpdates.profileSlug };
+        if (account.displayName) wsPatch.displayName = account.displayName;
+        await Workspace.update(wsPatch, { where: { accountId: account.id } });
+      } catch (e) {
+        console.warn("workspace slug sync:", e?.message || e);
+      }
     }
 
     const entityType = accountUpdates.entityType || account.entityType;
@@ -661,8 +669,23 @@ const createPost = async (req, res) => {
       });
     }
 
+    let workspaceId = null;
+    try {
+      const { ensurePersonalWorkspaceFromReq } = require("../workspace/service");
+      const { assertCanCreatePost } = require("../workspace/limits");
+      const ensured = await ensurePersonalWorkspaceFromReq(req);
+      if (ensured?.workspace?.id) {
+        workspaceId = ensured.workspace.id;
+        await assertCanCreatePost(workspaceId);
+      }
+    } catch (limitErr) {
+      const status = limitErr.status || 500;
+      return res.status(status).json({ success: false, message: limitErr.message || "خطا" });
+    }
+
     const post = await SupplierPost.create({
       userId,
+      workspaceId,
       body: bodyText.slice(0, 5000),
       imageUrl: imageUrls[0] || null,
       imageUrls: imageUrls.length ? imageUrls : null,
@@ -672,7 +695,8 @@ const createPost = async (req, res) => {
     res.status(201).json({ success: true, data: formatPostRecord(post) });
   } catch (error) {
     console.error("createPost:", error);
-    res.status(500).json({ success: false, message: "خطا در انتشار پست" });
+    const status = error.status || 500;
+    res.status(status).json({ success: false, message: error.message || "خطا در انتشار پست" });
   }
 };
 

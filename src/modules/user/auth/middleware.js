@@ -1,8 +1,8 @@
 // src/modules/user/auth/middleware.js
 
 const { jwtVerify } = require("jose");
-const config = require("config");
 const { isAdmin, getRoleSlugs, normalizeRoleSlug } = require("../../../utils/roles");
+const { getJwtSecret } = require("../../../utils/jwtSecret");
 
 const authenticateUser = async (req, res, next) => {
   try {
@@ -19,7 +19,7 @@ const authenticateUser = async (req, res, next) => {
       return res.status(401).json({ success: false, message: "احراز هویت انجام نشده است" });
     }
 
-    const { payload } = await jwtVerify(token, new TextEncoder().encode(config.get("JWT_SECRET")));
+    const { payload } = await jwtVerify(token, new TextEncoder().encode(getJwtSecret()));
 
     req.user = payload;
     req.user.userId = payload.userId || payload.id;

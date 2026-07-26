@@ -118,6 +118,64 @@ const confirmPayment = async (req, res) => {
   }
 };
 
+const getContract = async (req, res) => {
+  try {
+    const data = await escrowService.getContract(req.params.id, req.user);
+    res.json({ success: true, data });
+  } catch (e) {
+    handleError(res, e);
+  }
+};
+
+const requestSignOtp = async (req, res) => {
+  try {
+    const data = await escrowService.requestSignOtp(req.params.id, req.user, req.body);
+    res.json({ success: true, data, message: data.message });
+  } catch (e) {
+    handleError(res, e);
+  }
+};
+
+const verifySignOtp = async (req, res) => {
+  try {
+    const clientIp = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || req.ip;
+    const data = await escrowService.verifySignOtp(req.params.id, req.user, {
+      code: req.body.code,
+      clientIp,
+    });
+    res.json({ success: true, data, message: data.message });
+  } catch (e) {
+    handleError(res, e);
+  }
+};
+
+const startZibalPayment = async (req, res) => {
+  try {
+    const data = await escrowService.startZibalPayment(req.params.id, req.user, req.body);
+    res.json({ success: true, data, message: "در حال انتقال به درگاه زیبال" });
+  } catch (e) {
+    handleError(res, e);
+  }
+};
+
+const verifyZibalPayment = async (req, res) => {
+  try {
+    const data = await escrowService.verifyZibalPayment(req.body, req.user);
+    res.json({ success: true, data, message: data.message });
+  } catch (e) {
+    handleError(res, e);
+  }
+};
+
+const verifyZibalPaymentPublic = async (req, res) => {
+  try {
+    const data = await escrowService.verifyZibalPayment(req.body, null);
+    res.json({ success: true, data, message: data.message });
+  } catch (e) {
+    handleError(res, e);
+  }
+};
+
 const confirmMilestone = async (req, res) => {
   try {
     const milestone = await escrowService.confirmMilestone(
@@ -253,6 +311,12 @@ module.exports = {
   getAgreement,
   createPaymentIntent,
   confirmPayment,
+  getContract,
+  requestSignOtp,
+  verifySignOtp,
+  startZibalPayment,
+  verifyZibalPayment,
+  verifyZibalPaymentPublic,
   confirmMilestone,
   requestRelease,
   approveRelease,

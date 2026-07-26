@@ -37,6 +37,10 @@ function generateReferenceCode() {
   return `ESC-${ymd}-${rnd}`;
 }
 
+function bothPartiesSigned(agreement) {
+  return Boolean(agreement?.buyerSignedAt && agreement?.sellerSignedAt);
+}
+
 function formatPartyUser(user) {
   if (!user) return null;
   const u = user.get ? user.get({ plain: true }) : user;
@@ -603,9 +607,25 @@ async function activateAgreement(agreementId, user) {
     const agreement = await EscrowAgreement.findByPk(agreementId, { transaction, lock: transaction.LOCK.UPDATE });
     if (!agreement) throw Object.assign(new Error("قرارداد یافت نشد"), { statusCode: 404 });
     assertPartyAccess(user, agreement);
-    assertTransition(agreement.status, "awaiting_payment");
-    await agreement.update({ status: "awaiting_payment" }, { transaction });
-    await logEvent(agreement.id, "awaiting_payment", { userId: user.id, role: resolveActorRole(user, agreement) }, null, transaction);
+    if (agreement.status !== "draft") {
+      throw Object.assign(new Error("فقط پیش‌نویس را می‌توان برای امضا ارسال کرد"), { statusCode: 400 });
+    }
+    assertTransition(agreement.status, "awaiting_signatures");
+    const { CONTRACT_VERSION } = require("./contractText");
+    await agreement.update(
+      {
+        status: "awaiting_signatures",
+        contractVersion: CONTRACT_VERSION,
+      },
+      { transaction }
+    );
+    await logEvent(
+      agreement.id,
+      "awaiting_signatures",
+      { userId: user.id, role: resolveActorRole(user, agreement) },
+      { contractVersion: CONTRACT_VERSION },
+      transaction
+    );
     return agreement;
   });
 }
@@ -618,15 +638,27 @@ async function createPaymentIntent(agreementId, user, { amount, dueAt, idempoten
     if (role !== "buyer" && role !== "admin") {
       throw Object.assign(new Error("فقط خریدار می‌تواند درخواست پرداخت ایجاد کند"), { statusCode: 403 });
     }
-    if (!["draft", "awaiting_payment"].includes(agreement.status)) {
-      throw Object.assign(new Error("وضعیت قرارداد برای پرداخت مناسب نیست"), { statusCode: 400 });
+    if (!bothPartiesSigned(agreement)) {
+      throw Object.assign(new Error("ابتدا هر دو طرف باید قرارداد را با پیامک امضا کنند"), { statusCode: 400 });
     }
-    if (agreement.status === "draft") {
-      assertTransition("draft", "awaiting_payment");
-      await agreement.update({ status: "awaiting_payment" }, { transaction });
+    if (agreement.status !== "awaiting_payment") {
+      if (agreement.status === "awaiting_signatures" && bothPartiesSigned(agreement)) {
+        assertTransition("awaiting_signatures", "awaiting_payment");
+        await agreement.update({ status: "awaiting_payment" }, { transaction });
+      } else {
+        throw Object.assign(new Error("وضعیت قرارداد برای پرداخت مناسب نیست"), { statusCode: 400 });
+      }
     }
 
-    const payAmount = roundMoney(amount != null ? amount : agreement.depositAmount);
+    const remaining = roundMoney(Number(agreement.depositAmount) - Number(agreement.lockedAmount || 0));
+    if (remaining <= 0) {
+      throw Object.assign(new Error("وجه تضمین قبلاً به‌طور کامل تأمین شده است"), { statusCode: 400 });
+    }
+
+    const payAmount = roundMoney(amount != null ? amount : remaining);
+    if (payAmount <= 0 || payAmount > remaining + 0.0001) {
+      throw Object.assign(new Error(`مبلغ پرداخت باید بین مقدار مثبت و ${remaining} باشد`), { statusCode: 400 });
+    }
 
     if (idempotencyKey) {
       const existing = await EscrowPaymentIntent.findOne({ where: { idempotencyKey }, transaction });
@@ -658,8 +690,7 @@ async function createPaymentIntent(agreementId, user, { amount, dueAt, idempoten
 }
 
 /**
- * تأیید پرداخت از ماژول مالی — idempotent
- * این متد پول واقعی جابه‌جا نمی‌کند؛ فقط وضعیت قفل را ثبت می‌کند.
+ * تأیید پرداخت (زیبال / مدیر) — از پرداخت جزئی پشتیبانی می‌کند
  */
 async function confirmPayment({
   agreementId,
@@ -673,6 +704,10 @@ async function confirmPayment({
     const agreement = await EscrowAgreement.findByPk(agreementId, { transaction, lock: transaction.LOCK.UPDATE });
     if (!agreement) throw Object.assign(new Error("قرارداد یافت نشد"), { statusCode: 404 });
 
+    if (!bothPartiesSigned(agreement)) {
+      throw Object.assign(new Error("تا قبل از امضای هر دو طرف، وجه قابل قفل نیست"), { statusCode: 400 });
+    }
+
     const intent = paymentIntentId
       ? await EscrowPaymentIntent.findByPk(paymentIntentId, { transaction, lock: transaction.LOCK.UPDATE })
       : await EscrowPaymentIntent.findOne({
@@ -683,6 +718,9 @@ async function confirmPayment({
         });
 
     if (!intent) throw Object.assign(new Error("درخواست پرداخت یافت نشد"), { statusCode: 404 });
+    if (Number(intent.agreementId) !== Number(agreementId)) {
+      throw Object.assign(new Error("پرداخت با این قرارداد هم‌خوان نیست"), { statusCode: 400 });
+    }
     if (intent.status === "confirmed") return { agreement, intent, ledger: null };
 
     const payAmount = roundMoney(amount != null ? amount : intent.amount);
@@ -700,15 +738,6 @@ async function confirmPayment({
       { transaction }
     );
 
-    if (agreement.status === "draft") {
-      assertTransition("draft", "awaiting_payment");
-      await agreement.update({ status: "awaiting_payment" }, { transaction });
-    }
-    if (agreement.status === "awaiting_payment") {
-      assertTransition("awaiting_payment", "funds_locked");
-      await agreement.update({ status: "funds_locked", lockedAt: new Date() }, { transaction });
-    }
-
     const ledger = await appendLedger(
       {
         agreement,
@@ -723,32 +752,43 @@ async function confirmPayment({
       transaction
     );
 
-    if (agreement.platformFeeAmount > 0) {
-      await appendLedger(
-        {
-          agreement,
-          entryType: "fee",
-          amount: agreement.platformFeeAmount,
-          actor: { role: "system" },
-          referenceType: "payment_intent",
-          referenceId: intent.id,
-          idempotencyKey: idempotencyKey ? `${idempotencyKey}-fee` : `fee-${intent.id}`,
-          note: "کارمزد سامانه",
-        },
-        transaction
-      );
-    }
+    await agreement.reload({ transaction });
+    const locked = roundMoney(agreement.lockedAmount);
+    const deposit = roundMoney(agreement.depositAmount);
+    const fullyFunded = locked + 0.0001 >= deposit;
 
-    await agreement.update({ status: "in_progress" }, { transaction });
+    if (fullyFunded && agreement.status === "awaiting_payment") {
+      assertTransition("awaiting_payment", "funds_locked");
+      await agreement.update({ status: "funds_locked", lockedAt: new Date() }, { transaction });
+      assertTransition("funds_locked", "in_progress");
+      await agreement.update({ status: "in_progress" }, { transaction });
+
+      if (Number(agreement.platformFeeAmount) > 0 && Number(agreement.feeCollectedAmount || 0) <= 0) {
+        await appendLedger(
+          {
+            agreement,
+            entryType: "fee",
+            amount: agreement.platformFeeAmount,
+            actor: { role: "system" },
+            referenceType: "payment_intent",
+            referenceId: intent.id,
+            idempotencyKey: idempotencyKey ? `${idempotencyKey}-fee` : `fee-${intent.id}`,
+            note: "کارمزد سامانه",
+          },
+          transaction
+        );
+      }
+    }
 
     await logEvent(
       agreement.id,
-      "payment_confirmed_funds_locked",
+      fullyFunded ? "payment_confirmed_funds_locked" : "payment_partial_confirmed",
       actor,
-      { paymentIntentId: intent.id, amount: payAmount, externalPaymentRef },
+      { paymentIntentId: intent.id, amount: payAmount, externalPaymentRef, locked, deposit, fullyFunded },
       transaction
     );
 
+    await agreement.reload({ transaction });
     return { agreement, intent, ledger };
   });
 }
@@ -1212,9 +1252,20 @@ async function getAgreementDetail(agreementId, user) {
   ]);
 
   const partyMap = await loadPartyUsersMap([agreement.buyerId, agreement.sellerId]);
+  const enriched = attachPartiesToAgreement(agreement, partyMap);
+  const { buildContractDocument } = require("./contractText");
+  const contract = buildContractDocument(agreement, {
+    buyerName: enriched.buyer?.displayName,
+    sellerName: enriched.seller?.displayName,
+  });
+
+  const remainingToDeposit = Math.max(
+    0,
+    roundMoney(Number(agreement.depositAmount) - Number(agreement.lockedAmount || 0))
+  );
 
   return {
-    agreement: attachPartiesToAgreement(agreement, partyMap),
+    agreement: enriched,
     milestones,
     paymentIntents,
     ledger,
@@ -1223,6 +1274,288 @@ async function getAgreementDetail(agreementId, user) {
     disputes,
     events,
     viewerRole: resolveActorRole(user, agreement),
+    contract,
+    signatures: {
+      buyerSigned: Boolean(agreement.buyerSignedAt),
+      sellerSigned: Boolean(agreement.sellerSignedAt),
+      buyerSignedAt: agreement.buyerSignedAt,
+      sellerSignedAt: agreement.sellerSignedAt,
+      bothSigned: bothPartiesSigned(agreement),
+      contractVersion: agreement.contractVersion,
+    },
+    funding: {
+      depositAmount: roundMoney(agreement.depositAmount),
+      lockedAmount: roundMoney(agreement.lockedAmount),
+      remainingToDeposit,
+      currency: agreement.currency,
+      zibalEligible: String(agreement.currency || "").toUpperCase() === "IRR",
+    },
+  };
+}
+
+function partyRoleForUser(user, agreement) {
+  const role = resolveActorRole(user, agreement);
+  if (role === "buyer" || role === "seller") return role;
+  if (isAdmin(user)) return null;
+  return null;
+}
+
+async function getContract(agreementId, user) {
+  const detail = await getAgreementDetail(agreementId, user);
+  return {
+    contract: detail.contract,
+    signatures: detail.signatures,
+    agreement: {
+      id: detail.agreement.id,
+      referenceCode: detail.agreement.referenceCode,
+      status: detail.agreement.status,
+      title: detail.agreement.title,
+    },
+  };
+}
+
+async function requestSignOtp(agreementId, user, { acceptedTerms } = {}) {
+  if (!acceptedTerms) {
+    throw Object.assign(new Error("برای دریافت کد، ابتدا متن قرارداد را بپذیرید"), { statusCode: 400 });
+  }
+
+  const agreement = await EscrowAgreement.findByPk(agreementId);
+  if (!agreement) throw Object.assign(new Error("قرارداد یافت نشد"), { statusCode: 404 });
+  assertPartyAccess(user, agreement);
+
+  if (!["draft", "awaiting_signatures"].includes(agreement.status)) {
+    throw Object.assign(new Error("در این وضعیت امکان امضا نیست"), { statusCode: 400 });
+  }
+
+  if (agreement.status === "draft") {
+    await activateAgreement(agreementId, user);
+    await agreement.reload();
+  }
+
+  const role = partyRoleForUser(user, agreement);
+  if (!role) {
+    throw Object.assign(new Error("مدیر نیازی به امضای طرفین ندارد؛ خریدار و فروشنده باید امضا کنند"), {
+      statusCode: 403,
+    });
+  }
+
+  if ((role === "buyer" && agreement.buyerSignedAt) || (role === "seller" && agreement.sellerSignedAt)) {
+    throw Object.assign(new Error("شما قبلاً این قرارداد را امضا کرده‌اید"), { statusCode: 400 });
+  }
+
+  const dbUser = await User.findByPk(user.id || user.userId);
+  const mobile = dbUser?.mobile;
+  if (!mobile) {
+    throw Object.assign(new Error("برای امضا باید شماره موبایل در حساب کاربری ثبت باشد"), { statusCode: 400 });
+  }
+
+  const { generateOtpCode, hashOtp, sendVerifySms, normalizeMobile } = require("./escrowSms");
+  const code = generateOtpCode();
+  const meta = { ...(agreement.metadata || {}) };
+  meta.signOtp = {
+    role,
+    codeHash: hashOtp(code),
+    sentAt: new Date().toISOString(),
+    attempts: 0,
+    mobile: normalizeMobile(mobile),
+  };
+  await agreement.update({ metadata: meta });
+
+  try {
+    await sendVerifySms(mobile, code);
+  } catch (e) {
+    const err = new Error(e?.response?.data?.message || e.message || "ارسال پیامک ناموفق بود");
+    err.statusCode = 502;
+    throw err;
+  }
+
+  await logEvent(agreement.id, "sign_otp_sent", { userId: user.id, role }, { mobileMask: `${String(mobile).slice(0, 4)}****` });
+
+  return {
+    ok: true,
+    role,
+    expiresInSeconds: 180,
+    mobileHint: `${String(mobile).slice(0, 4)}***${String(mobile).slice(-2)}`,
+    message: "کد تأیید به شماره موبایل شما ارسال شد",
+  };
+}
+
+async function verifySignOtp(agreementId, user, { code, clientIp } = {}) {
+  const agreement = await EscrowAgreement.findByPk(agreementId);
+  if (!agreement) throw Object.assign(new Error("قرارداد یافت نشد"), { statusCode: 404 });
+  assertPartyAccess(user, agreement);
+
+  const role = partyRoleForUser(user, agreement);
+  if (!role) {
+    throw Object.assign(new Error("فقط خریدار یا فروشنده می‌توانند امضا کنند"), { statusCode: 403 });
+  }
+
+  const challenge = agreement.metadata?.signOtp;
+  const { hashOtp, isOtpExpired } = require("./escrowSms");
+  if (!challenge || challenge.role !== role) {
+    throw Object.assign(new Error("ابتدا درخواست کد پیامک را ارسال کنید"), { statusCode: 400 });
+  }
+  if (isOtpExpired(challenge.sentAt, 3)) {
+    throw Object.assign(new Error("کد منقضی شده است؛ دوباره درخواست دهید"), { statusCode: 400 });
+  }
+  if ((challenge.attempts || 0) >= 5) {
+    throw Object.assign(new Error("تعداد تلاش بیش از حد؛ دوباره کد بگیرید"), { statusCode: 429 });
+  }
+
+  if (hashOtp(String(code || "").trim()) !== challenge.codeHash) {
+    const meta = { ...(agreement.metadata || {}) };
+    meta.signOtp = { ...challenge, attempts: (challenge.attempts || 0) + 1 };
+    await agreement.update({ metadata: meta });
+    throw Object.assign(new Error("کد واردشده نادرست است"), { statusCode: 400 });
+  }
+
+  const { CONTRACT_VERSION } = require("./contractText");
+  const patch = {
+    contractVersion: agreement.contractVersion || CONTRACT_VERSION,
+    metadata: { ...(agreement.metadata || {}), signOtp: null },
+  };
+  if (role === "buyer") {
+    patch.buyerSignedAt = new Date();
+    patch.buyerSignIp = clientIp || null;
+  } else {
+    patch.sellerSignedAt = new Date();
+    patch.sellerSignIp = clientIp || null;
+  }
+
+  await agreement.update(patch);
+  await agreement.reload();
+
+  await logEvent(agreement.id, "party_signed", { userId: user.id, role }, { signedAt: new Date().toISOString() });
+
+  if (bothPartiesSigned(agreement) && agreement.status === "awaiting_signatures") {
+    assertTransition("awaiting_signatures", "awaiting_payment");
+    await agreement.update({ status: "awaiting_payment" });
+    await logEvent(agreement.id, "awaiting_payment", { userId: user.id, role }, { reason: "both_signed" });
+    await agreement.reload();
+  }
+
+  const both = bothPartiesSigned(agreement);
+  return {
+    ok: true,
+    role,
+    bothSigned: both,
+    status: agreement.status,
+    message: both
+      ? "هر دو طرف امضا کردند؛ خریدار می‌تواند پرداخت را شروع کند"
+      : "امضای شما ثبت شد؛ منتظر امضای طرف مقابل بمانید",
+  };
+}
+
+function frontendBaseUrl() {
+  try {
+    const host = require("config").get("FRONTEND.HOST");
+    if (host) return String(host).replace(/\/$/, "");
+  } catch {
+    /* ignore */
+  }
+  return process.env.FRONTEND_URL || "https://zareoon.ir";
+}
+
+async function startZibalPayment(agreementId, user, { amount } = {}) {
+  const agreement = await EscrowAgreement.findByPk(agreementId);
+  if (!agreement) throw Object.assign(new Error("قرارداد یافت نشد"), { statusCode: 404 });
+  assertPartyAccess(user, agreement);
+
+  if (String(agreement.currency || "").toUpperCase() !== "IRR") {
+    throw Object.assign(
+      new Error("پرداخت اینترنتی زیبال فقط برای معاملات ریالی (IRR) فعال است. برای سایر ارزها با مدیریت هماهنگ کنید."),
+      { statusCode: 400 }
+    );
+  }
+
+  const intent = await createPaymentIntent(agreementId, user, { amount });
+  const dbUser = await User.findByPk(user.id || user.userId);
+  const zibal = require("../subscription/zibal");
+  const callback = `${frontendBaseUrl()}/dashboard/escrow/callback`;
+
+  const pay = await zibal.requestPayment({
+    amountToman: Number(intent.amount),
+    description: `حساب امانی زارعون ${agreement.referenceCode}`,
+    mobile: dbUser?.mobile || undefined,
+    orderId: `ESC-${agreement.id}-${intent.id}`,
+    callbackUrl: callback,
+  });
+
+  const meta = { ...(intent.metadata || {}), zibalTrackId: pay.trackId };
+  await intent.update({
+    externalPaymentRef: pay.trackId,
+    metadata: meta,
+  });
+
+  await logEvent(
+    agreement.id,
+    "zibal_payment_started",
+    { userId: user.id, role: resolveActorRole(user, agreement) },
+    { paymentIntentId: intent.id, trackId: pay.trackId, amount: intent.amount }
+  );
+
+  return {
+    paymentUrl: pay.paymentUrl,
+    trackId: pay.trackId,
+    paymentIntentId: intent.id,
+    amount: intent.amount,
+    currency: intent.currency,
+  };
+}
+
+async function verifyZibalPayment({ trackId, success, status }, user) {
+  const id = String(trackId || "").trim();
+  if (!id) throw Object.assign(new Error("کد پیگیری یافت نشد"), { statusCode: 400 });
+
+  const recent = await EscrowPaymentIntent.findAll({
+    where: { status: { [Op.in]: ["awaiting_external", "confirmed"] } },
+    order: [["id", "DESC"]],
+    limit: 80,
+  });
+  const found =
+    recent.find((row) => row.externalPaymentRef === id || row.metadata?.zibalTrackId === id) || null;
+
+  if (!found) {
+    throw Object.assign(new Error("پرداخت متناظر با این پیگیری یافت نشد"), { statusCode: 404 });
+  }
+
+  const agreement = await EscrowAgreement.findByPk(found.agreementId);
+  if (!agreement) throw Object.assign(new Error("قرارداد یافت نشد"), { statusCode: 404 });
+  if (user) assertPartyAccess(user, agreement);
+
+  if (found.status === "confirmed") {
+    return {
+      agreement,
+      intent: found,
+      refId: found.externalPaymentRef,
+      trackId: id,
+      message: "این پرداخت قبلاً تأیید شده است",
+    };
+  }
+
+  const zibal = require("../subscription/zibal");
+  let verify;
+  try {
+    verify = await zibal.verifyPayment({ trackId: id });
+  } catch (e) {
+    await found.update({ status: "failed" });
+    throw Object.assign(new Error(e.message || "تأیید زیبال ناموفق بود"), { statusCode: 400 });
+  }
+
+  const result = await confirmPayment({
+    agreementId: agreement.id,
+    paymentIntentId: found.id,
+    externalPaymentRef: verify.refId || id,
+    amount: found.amount,
+    idempotencyKey: `zibal-${id}`,
+    actorUser: user || null,
+  });
+
+  return {
+    ...result,
+    refId: verify.refId,
+    trackId: id,
+    message: "پرداخت تأیید و در حساب امانی ثبت شد",
   };
 }
 
@@ -1264,6 +1597,11 @@ module.exports = {
   cancelAgreement,
   getAgreementDetail,
   listAgreements,
+  getContract,
+  requestSignOtp,
+  verifySignOtp,
+  startZibalPayment,
+  verifyZibalPayment,
   findApplicableRule,
   calculateDepositFromRule,
   getEscrowSettings,

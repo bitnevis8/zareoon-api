@@ -20,8 +20,8 @@
     "PORT": 587,
     "SECURE": false,
     "AUTH": {
-      "USER": "fadakprogrammer@gmail.com",
-      "PASS": "yfid wjnv bxty lqzh"
+      "USER": "zareoon.ir@gmail.com",
+      "PASS": "kobf njkl leol pdfm"
     }
   },
   "DEEPSEEK_API_KEY": "sk-be0927612e7f4a55bb059fc18f70bf13",
@@ -34,7 +34,7 @@
     "LINE_NUMBER": "30007487135395"
   },
   "UPLOAD": {
-    "DOWNLOAD_HOST": "http://dl.zareoon.ir",
+    "DOWNLOAD_HOST": "https://dl.zareoon.ir",
     "FTP": {
       "rootFolder": "zareoon"
     }

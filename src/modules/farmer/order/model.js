@@ -14,6 +14,7 @@ Order.init(
       defaultValue: "pending" 
     },
     supplierId: { type: DataTypes.INTEGER, allowNull: true },
+    sellerWorkspaceId: { type: DataTypes.INTEGER, allowNull: true },
     adminNotes: { type: DataTypes.TEXT, allowNull: true },
     approvedAt: { type: DataTypes.DATE, allowNull: true },
     approvedBy: { type: DataTypes.INTEGER, allowNull: true },

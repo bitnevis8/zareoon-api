@@ -70,19 +70,26 @@ const checkout = async (req, res) => {
 
     for (const it of items) {
       let supplierId = null;
+      let sellerWorkspaceId = null;
       if (it.inventoryLotId) {
         const lot = await InventoryLot.findByPk(it.inventoryLotId, { transaction: tx });
         if (lot?.farmerId) supplierId = Number(lot.farmerId);
+        if (lot?.workspaceId) sellerWorkspaceId = Number(lot.workspaceId);
       }
       const key = supplierId == null ? "none" : String(supplierId);
-      if (!groups.has(key)) groups.set(key, { supplierId, items: [] });
+      if (!groups.has(key)) groups.set(key, { supplierId, sellerWorkspaceId, items: [] });
       groups.get(key).items.push(it);
     }
 
     const orderIds = [];
-    for (const { supplierId, items: groupItems } of groups.values()) {
+    for (const { supplierId, sellerWorkspaceId, items: groupItems } of groups.values()) {
       const order = await Order.create(
-        { customerId, status: "pending", supplierId: supplierId || null },
+        {
+          customerId,
+          status: "pending",
+          supplierId: supplierId || null,
+          sellerWorkspaceId: sellerWorkspaceId || null,
+        },
         { transaction: tx }
       );
       orderIds.push(order.id);

@@ -11,6 +11,7 @@ SupplierPost.init(
       allowNull: false,
       references: { model: "users", key: "id" },
     },
+    workspaceId: { type: DataTypes.INTEGER, allowNull: true },
     body: { type: DataTypes.TEXT, allowNull: false },
     imageUrl: { type: DataTypes.STRING(500), allowNull: true },
     imageUrls: { type: DataTypes.JSON, allowNull: true },

@@ -37,7 +37,8 @@ function merchantId() {
   return String(cfg("MERCHANT", "ZIBAL_MERCHANT", "") || "").trim();
 }
 
-function callbackUrl() {
+function callbackUrl(override) {
+  if (override && String(override).trim()) return String(override).trim();
   return (
     String(cfg("CALLBACK_URL", "ZIBAL_CALLBACK_URL", "") || "").trim() ||
     `${process.env.FRONTEND_URL || (config.has("FRONTEND_URL") ? config.get("FRONTEND_URL") : "http://localhost:3001")}/pricing/callback`
@@ -48,7 +49,7 @@ function startPayUrl(trackId) {
   return `${API_BASE}/start/${trackId}`;
 }
 
-async function requestPayment({ amountToman, description, mobile, orderId }) {
+async function requestPayment({ amountToman, description, mobile, orderId, callbackUrl: cbOverride }) {
   const merchant = merchantId();
   if (!merchant) {
     const err = new Error("ZIBAL.MERCHANT تنظیم نشده است");
@@ -64,7 +65,7 @@ async function requestPayment({ amountToman, description, mobile, orderId }) {
   const body = {
     merchant,
     amount: amountRial,
-    callbackUrl: callbackUrl(),
+    callbackUrl: callbackUrl(cbOverride),
     description: description || "خرید اشتراک زارعون",
   };
   if (orderId) body.orderId = String(orderId);

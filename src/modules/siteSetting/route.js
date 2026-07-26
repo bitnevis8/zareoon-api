@@ -7,12 +7,15 @@ router.get("/vip/public", controller.getVipPublic);
 router.get("/ui/public", controller.getUiPublic);
 router.get("/languages/public", controller.getLanguagesPublic);
 router.get("/public-page-slug-rules/public", controller.getSlugRulesPublic);
+router.get("/auth-signup/public", controller.getAuthSignupPublic);
 
 router.use(authenticateUser);
 router.get("/trade", authorizeRole("Administrator"), controller.getTrade);
 router.patch("/trade", authorizeRole("Administrator"), controller.patchTrade);
 router.get("/languages", authorizeRole("Administrator"), controller.getLanguages);
 router.patch("/languages", authorizeRole("Administrator"), controller.patchLanguages);
+router.get("/auth-signup", authorizeRole("Administrator"), controller.getAuthSignup);
+router.patch("/auth-signup", authorizeRole("Administrator"), controller.patchAuthSignup);
 router.get("/blocked-page-slugs", authorizeRole("Administrator"), controller.getBlockedSlugs);
 router.patch("/blocked-page-slugs", authorizeRole("Administrator"), controller.patchBlockedSlugs);
 router.get("/blocked-page-slugs/export", authorizeRole("Administrator"), controller.exportBlockedSlugs);

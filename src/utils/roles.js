@@ -1,6 +1,17 @@
-/** نقش‌های سامانه: super_admin, admin, user, seller, service_provider */
+/** نقش‌های سامانه: پلتفرم + فعالیت (سازگاری) + جدا از Workspace */
 
-const ADMIN_ROLES = new Set(["super_admin", "admin"]);
+const { PLATFORM_ROLES } = require("../modules/workspace/constants");
+
+const ADMIN_ROLES = new Set([PLATFORM_ROLES.SUPER_ADMIN, PLATFORM_ROLES.ADMIN, "admin"]);
+const PLATFORM_STAFF_ROLES = new Set([
+  PLATFORM_ROLES.SUPER_ADMIN,
+  PLATFORM_ROLES.ADMIN,
+  PLATFORM_ROLES.SUPPORT,
+  PLATFORM_ROLES.CONTENT_MODERATOR,
+  PLATFORM_ROLES.VERIFICATION_OFFICER,
+  PLATFORM_ROLES.FINANCE_OFFICER,
+  PLATFORM_ROLES.SUBSCRIPTION_OFFICER,
+]);
 const SELLER_ROLES = new Set(["seller"]);
 const LEGACY_ADMIN_ALIASES = new Set(["administrator"]);
 
@@ -18,19 +29,22 @@ function getRoleSlugs(user) {
 }
 
 function isSuperAdmin(user) {
-  return getRoleSlugs(user).includes("super_admin");
+  return getRoleSlugs(user).includes(PLATFORM_ROLES.SUPER_ADMIN);
 }
 
 function isAdmin(user) {
   const roles = getRoleSlugs(user);
-  return roles.some((r) => ADMIN_ROLES.has(r));
+  return roles.some((r) => ADMIN_ROLES.has(r) || r === PLATFORM_ROLES.SUPER_ADMIN);
+}
+
+function isPlatformStaff(user) {
+  return getRoleSlugs(user).some((r) => PLATFORM_STAFF_ROLES.has(r));
 }
 
 function isSeller(user) {
   return getRoleSlugs(user).some((r) => SELLER_ROLES.has(r));
 }
 
-/** @deprecated use isSeller */
 function isSupplier(user) {
   return isSeller(user);
 }
@@ -40,10 +54,9 @@ function isServiceProvider(user) {
 }
 
 function isUser(user) {
-  return getRoleSlugs(user).includes("user");
+  return getRoleSlugs(user).includes(PLATFORM_ROLES.USER);
 }
 
-/** @deprecated use isUser */
 function isCustomer(user) {
   return isUser(user);
 }
@@ -54,11 +67,14 @@ function canManagePublicProfile(user) {
 
 module.exports = {
   ADMIN_ROLES,
+  PLATFORM_STAFF_ROLES,
   SELLER_ROLES,
+  PLATFORM_ROLES,
   normalizeRoleSlug,
   getRoleSlugs,
   isSuperAdmin,
   isAdmin,
+  isPlatformStaff,
   isSeller,
   isSupplier,
   isServiceProvider,

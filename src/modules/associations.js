@@ -317,6 +317,44 @@ const defineAssociations = () => {
     Account.hasMany(AccountProfileField, { foreignKey: 'accountId', as: 'profileFields', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
     AccountProfileField.belongsTo(Account, { foreignKey: 'accountId', as: 'account', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
+    // Workspace domain
+    const {
+      Workspace,
+      WorkspaceMember,
+      WorkspaceSubscription,
+      UserPersonVerification,
+      WorkspaceBusinessVerification,
+      WorkspaceRepresentation,
+    } = require('./workspace/model');
+
+    User.hasMany(Workspace, { foreignKey: 'createdByUserId', as: 'ownedWorkspaces', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
+    Workspace.belongsTo(User, { foreignKey: 'createdByUserId', as: 'creator', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
+    User.belongsTo(Workspace, { foreignKey: 'activeWorkspaceId', as: 'activeWorkspace', onDelete: 'SET NULL', onUpdate: 'CASCADE', constraints: false });
+
+    Workspace.hasMany(WorkspaceMember, { foreignKey: 'workspaceId', as: 'members', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    WorkspaceMember.belongsTo(Workspace, { foreignKey: 'workspaceId', as: 'workspace', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    User.hasMany(WorkspaceMember, { foreignKey: 'userId', as: 'workspaceMemberships', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    WorkspaceMember.belongsTo(User, { foreignKey: 'userId', as: 'user', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+
+    Workspace.hasMany(WorkspaceSubscription, { foreignKey: 'workspaceId', as: 'subscriptions', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    WorkspaceSubscription.belongsTo(Workspace, { foreignKey: 'workspaceId', as: 'workspace', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+
+    User.hasOne(UserPersonVerification, { foreignKey: 'userId', as: 'personVerification', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    UserPersonVerification.belongsTo(User, { foreignKey: 'userId', as: 'user', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+
+    Workspace.hasOne(WorkspaceBusinessVerification, { foreignKey: 'workspaceId', as: 'businessVerification', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    WorkspaceBusinessVerification.belongsTo(Workspace, { foreignKey: 'workspaceId', as: 'workspace', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+
+    Workspace.hasMany(WorkspaceRepresentation, { foreignKey: 'workspaceId', as: 'representations', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    WorkspaceRepresentation.belongsTo(Workspace, { foreignKey: 'workspaceId', as: 'workspace', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    User.hasMany(WorkspaceRepresentation, { foreignKey: 'userId', as: 'representations', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    WorkspaceRepresentation.belongsTo(User, { foreignKey: 'userId', as: 'user', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+
+    Workspace.belongsTo(Account, { foreignKey: 'accountId', as: 'account', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
+    Account.belongsTo(Workspace, { foreignKey: 'workspaceId', as: 'workspace', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
+    TradeServiceProvider.belongsTo(Workspace, { foreignKey: 'workspaceId', as: 'workspace', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
+    Workspace.hasMany(TradeServiceProvider, { foreignKey: 'workspaceId', as: 'serviceProviders', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
+
     // Escrow module
     EscrowAgreement.belongsTo(User, { foreignKey: 'buyerId', as: 'buyer', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
     EscrowAgreement.belongsTo(User, { foreignKey: 'sellerId', as: 'seller', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });

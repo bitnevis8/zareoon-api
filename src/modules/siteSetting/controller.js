@@ -14,6 +14,9 @@ const {
   setPublicPageSlugRules,
   getCacheConfig,
   updateCacheConfig,
+  getAuthSignupConfig,
+  updateAuthSignupConfig,
+  getAuthSignupPublic,
 } = require("./service");
 const cacheService = require("../../core/cache/cacheService");
 const { listReservedSlugs } = require("../../utils/publicPageSlug");
@@ -335,6 +338,36 @@ const pingCacheRedis = async (_req, res) => {
   }
 };
 
+const getAuthSignup = async (_req, res) => {
+  try {
+    const data = await getAuthSignupConfig();
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error("Site settings getAuthSignup error:", error);
+    res.status(500).json({ success: false, message: "خطا در دریافت تنظیمات ثبت‌نام" });
+  }
+};
+
+const patchAuthSignup = async (req, res) => {
+  try {
+    const data = await updateAuthSignupConfig(req.body || {});
+    res.json({ success: true, data, message: "تنظیمات ثبت‌نام ذخیره شد" });
+  } catch (error) {
+    console.error("Site settings patchAuthSignup error:", error);
+    res.status(500).json({ success: false, message: "خطا در ذخیره تنظیمات ثبت‌نام" });
+  }
+};
+
+const getAuthSignupPublicHandler = async (_req, res) => {
+  try {
+    const data = await getAuthSignupPublic();
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error("Site settings getAuthSignupPublic error:", error);
+    res.status(500).json({ success: false, message: "خطا در دریافت تنظیمات" });
+  }
+};
+
 module.exports = {
   getTrade,
   patchTrade,
@@ -353,4 +386,7 @@ module.exports = {
   patchCache,
   flushCache,
   pingCacheRedis,
+  getAuthSignup,
+  patchAuthSignup,
+  getAuthSignupPublic: getAuthSignupPublicHandler,
 };

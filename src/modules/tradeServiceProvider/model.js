@@ -50,6 +50,7 @@ TradeServiceProvider.init(
     reviewCount: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
     profileSlug: { type: DataTypes.STRING(120), allowNull: true, unique: true },
     isPublic: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+    workspaceId: { type: DataTypes.INTEGER, allowNull: true },
     /**
      * ACTIVE | INACTIVE | SUSPENDED | CLOSED | PENDING_DELETION | ARCHIVED
      */

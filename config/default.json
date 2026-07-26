@@ -6,7 +6,7 @@
   },
   "UPLOAD": {
     "TEMP_PATH": "tmp/uploads",
-    "DOWNLOAD_HOST": "http://dl.zareoon.ir",
+    "DOWNLOAD_HOST": "https://dl.zareoon.ir",
     "MAX_FILE_SIZE": 52428800,
     "ALLOWED_MIMES": [
       "image/jpeg",

@@ -1,6 +1,9 @@
 const { UserSubscription } = require("./model");
-const { PLANS, getPlanById, planTotalMonths } = require("./plans");
+const { PLANS, getPlanById, planTotalMonths, BILLING_PERIODS, priceForPlanPeriod } = require("./plans");
 const zibal = require("./zibal");
+const { ensurePersonalWorkspaceFromReq, getActiveWorkspaceSubscription } = require("../workspace/service");
+const { WorkspaceSubscription } = require("../workspace/model");
+const { periodMonths } = require("../workspace/plans");
 
 function addMonths(date, months) {
   const d = new Date(date);
@@ -9,11 +12,12 @@ function addMonths(date, months) {
 }
 
 function publicPlan(plan) {
+  if (!plan) return null;
   return {
     id: plan.id,
     name: plan.name,
     durationMonths: plan.durationMonths,
-    bonusMonths: plan.bonusMonths,
+    bonusMonths: plan.bonusMonths || 0,
     totalMonths: planTotalMonths(plan),
     priceToman: plan.priceToman,
     badge: plan.badge,
@@ -21,6 +25,7 @@ function publicPlan(plan) {
     features: plan.features,
     limits: plan.limits || null,
     isFree: plan.priceToman === 0,
+    badgeKind: plan.badgeKind || null,
   };
 }
 
@@ -33,12 +38,37 @@ exports.listPlans = async (_req, res) => {
       sandbox: zibal.isSandbox(),
       configured: Boolean(zibal.merchantId()),
     },
+    noteFa: "اشتراک متعلق به Workspace است. جزئیات دوره پرداخت: GET /workspace/catalog",
   });
 };
 
 exports.mySubscription = async (req, res) => {
   try {
     const userId = req.user.id;
+    const ensured = await ensurePersonalWorkspaceFromReq(req).catch(() => null);
+    if (ensured?.workspace?.id) {
+      const wsSub = await getActiveWorkspaceSubscription(ensured.workspace.id);
+      if (wsSub) {
+        if (wsSub.endsAt && new Date(wsSub.endsAt) < new Date()) {
+          wsSub.status = "expired";
+          await wsSub.save();
+        } else {
+          return res.json({
+            success: true,
+            data: {
+              planId: wsSub.planId,
+              billingPeriod: wsSub.billingPeriod,
+              status: wsSub.status,
+              scope: "workspace",
+              workspaceId: ensured.workspace.id,
+              subscription: wsSub,
+              plan: publicPlan(getPlanById(wsSub.planId) || PLANS[0]),
+            },
+          });
+        }
+      }
+    }
+
     const active = await UserSubscription.findOne({
       where: { userId, status: "active" },
       order: [["ends_at", "DESC"]],
@@ -59,6 +89,7 @@ exports.mySubscription = async (req, res) => {
       data: {
         planId: active.planId,
         status: active.status,
+        scope: "legacy_user",
         subscription: active,
         plan: publicPlan(getPlanById(active.planId) || PLANS[0]),
       },
@@ -73,30 +104,50 @@ exports.startCheckout = async (req, res) => {
   try {
     const userId = req.user.id;
     const planId = String(req.body?.planId || "");
+    const billingPeriod = String(req.body?.billingPeriod || BILLING_PERIODS.MONTHLY);
     const plan = getPlanById(planId);
 
     if (!plan) {
       return res.status(400).json({ success: false, message: "بسته نامعتبر است" });
     }
 
-    if (plan.priceToman <= 0) {
+    const amountToman =
+      billingPeriod && Object.values(BILLING_PERIODS).includes(billingPeriod)
+        ? priceForPlanPeriod(plan.id, billingPeriod)
+        : plan.priceToman;
+
+    if (amountToman <= 0) {
       return res.json({
         success: true,
         data: { planId: "free", activated: true, message: "بسته رایگان نیاز به پرداخت ندارد" },
       });
     }
 
+    const ensured = await ensurePersonalWorkspaceFromReq(req);
     const pending = await UserSubscription.create({
       userId,
       planId: plan.id,
       status: "pending",
-      amountToman: plan.priceToman,
+      amountToman,
       gateway: "zibal",
-      meta: { planName: plan.name },
+      meta: { planName: plan.name, billingPeriod, workspaceId: ensured?.workspace?.id || null },
     });
 
+    if (ensured?.workspace?.id) {
+      await WorkspaceSubscription.create({
+        workspaceId: ensured.workspace.id,
+        planId: plan.id,
+        billingPeriod: billingPeriod || BILLING_PERIODS.MONTHLY,
+        status: "pending",
+        amountToman,
+        gateway: "zibal",
+        legacyUserSubscriptionId: pending.id,
+        meta: { planName: plan.name },
+      });
+    }
+
     const { trackId, paymentUrl } = await zibal.requestPayment({
-      amountToman: plan.priceToman,
+      amountToman,
       description: `اشتراک ${plan.name} — زارعون`,
       mobile: req.user.mobile,
       orderId: String(pending.id),
@@ -105,6 +156,13 @@ exports.startCheckout = async (req, res) => {
     pending.authority = trackId;
     await pending.save();
 
+    if (ensured?.workspace?.id) {
+      await WorkspaceSubscription.update(
+        { authority: String(trackId) },
+        { where: { legacyUserSubscriptionId: pending.id } }
+      );
+    }
+
     return res.json({
       success: true,
       data: {
@@ -112,7 +170,10 @@ exports.startCheckout = async (req, res) => {
         trackId,
         authority: trackId,
         paymentUrl,
-        amountToman: plan.priceToman,
+        amountToman,
+        billingPeriod,
+        workspaceId: ensured?.workspace?.id || null,
+        workspaceName: ensured?.workspace?.displayName || ensured?.workspace?.name || null,
       },
     });
   } catch (error) {
@@ -157,22 +218,26 @@ exports.verifyCheckout = async (req, res) => {
       });
     }
 
-    // Zibal: success=1 means paid; also accept legacy Zarinpal Status=OK during transition
     const canceled =
       (success !== "" && success !== "1") ||
       (success === "" && status !== "" && status.toUpperCase() !== "OK" && status !== "1");
     if (canceled) {
       sub.status = "canceled";
       await sub.save();
+      await WorkspaceSubscription.update(
+        { status: "canceled" },
+        { where: { legacyUserSubscriptionId: sub.id } }
+      );
       return res.status(400).json({ success: false, message: "پرداخت توسط کاربر لغو شد" });
     }
 
     const verified = await zibal.verifyPayment({ trackId });
 
     const plan = getPlanById(sub.planId);
-    const months = planTotalMonths(plan);
+    const billingPeriod = sub.meta?.billingPeriod || BILLING_PERIODS.MONTHLY;
+    const months = periodMonths(billingPeriod) || planTotalMonths(plan) || 1;
     const startsAt = new Date();
-    const endsAt = addMonths(startsAt, months || 1);
+    const endsAt = addMonths(startsAt, months);
 
     await UserSubscription.update(
       { status: "expired" },
@@ -186,12 +251,30 @@ exports.verifyCheckout = async (req, res) => {
     sub.meta = { ...(sub.meta || {}), verifyCode: verified.code, cardPan: verified.cardPan };
     await sub.save();
 
+    const wsPending = await WorkspaceSubscription.findOne({
+      where: { legacyUserSubscriptionId: sub.id },
+    });
+    if (wsPending) {
+      await WorkspaceSubscription.update(
+        { status: "expired" },
+        { where: { workspaceId: wsPending.workspaceId, status: "active" } }
+      );
+      wsPending.status = "active";
+      wsPending.refId = verified.refId;
+      wsPending.startsAt = startsAt;
+      wsPending.endsAt = endsAt;
+      wsPending.billingPeriod = billingPeriod;
+      await wsPending.save();
+    }
+
     return res.json({
       success: true,
       data: {
         subscription: sub,
         plan: publicPlan(plan),
         refId: verified.refId,
+        billingPeriod,
+        scope: wsPending ? "workspace" : "legacy_user",
       },
     });
   } catch (error) {

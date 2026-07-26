@@ -1,5 +1,5 @@
 const { SignJWT } = require("jose");
-const config = require("config");
+const { getJwtSecret } = require("./jwtSecret");
 
 function getCookieConfig(isProduction, rememberMe = false) {
   return {
@@ -25,7 +25,7 @@ function mapRolesForToken(user) {
 
 /** JWT نشست با نقش‌های به‌روز — برای ثبت‌نام، ورود، become-seller و خدمات‌دهنده */
 async function signUserSessionToken(user) {
-  const secretKey = config.get("JWT_SECRET");
+  const secretKey = getJwtSecret();
   const encoder = new TextEncoder();
   const payload = {
     userId: user.id,

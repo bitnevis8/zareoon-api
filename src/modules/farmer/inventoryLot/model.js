@@ -9,6 +9,7 @@ InventoryLot.init(
   {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     farmerId: { type: DataTypes.INTEGER, allowNull: false },
+    workspaceId: { type: DataTypes.INTEGER, allowNull: true },
     productId: { type: DataTypes.INTEGER, allowNull: false },
     englishName: { type: DataTypes.STRING(200), allowNull: true },
     arabicName: { type: DataTypes.STRING(200), allowNull: true },
@@ -46,6 +47,7 @@ InventoryLot.init(
     underscored: true,
     indexes: [
       { fields: ["farmer_id"] },
+      { fields: ["workspace_id"] },
       { fields: ["product_id"] },
       { fields: ["status"] },
       { fields: ["quality_grade"] },
