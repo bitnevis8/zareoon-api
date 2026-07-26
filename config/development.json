@@ -18,7 +18,7 @@
   "EMAIL": {
     "PROVIDER": "resend",
     "RESEND_API_KEY": "",
-    "FROM": "زارعون <onboarding@resend.dev>",
+    "FROM": "Zareoon <noreply@zareoon.ir>",
     "HOST": "smtp.gmail.com",
     "PORT": 587,
     "SECURE": false,
