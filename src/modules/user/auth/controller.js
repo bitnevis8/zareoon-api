@@ -8,6 +8,7 @@ const config = require("config");
 const Joi = require("joi");
 const axios = require("axios");
 const { main } = require("../../../utils/emailSender/nodemailerConfig");
+const { buildVerificationEmail } = require("../../../utils/emailSender/zareoonEmailTemplates");
 const moment = require("moment");
 const { Op } = require("sequelize");
 const { buildAccountNav } = require("../../account/navLabels");
@@ -98,11 +99,15 @@ class AuthController extends BaseController {
     });
   }
 
-  isOtpExpired(sentAt, minutes = 3) {
+  /** اعتبار کد پیامک / ایمیل — دقیقه‌ها */
+  static OTP_VALID_MINUTES = 3;
+
+  isOtpExpired(sentAt, minutes = this.constructor.OTP_VALID_MINUTES ?? 3) {
     if (!sentAt) return true;
-    const diffInMinutes = (Date.now() - new Date(sentAt).getTime()) / (1000 * 60);
-    return diffInMinutes > minutes;
+    const ms = (Number(minutes) || 3) * 60 * 1000;
+    return Date.now() - new Date(sentAt).getTime() > ms;
   }
+
   // اضافه کردن متد logout در AuthController
   async logout(req, res) {
     try {
@@ -326,17 +331,8 @@ class AuthController extends BaseController {
       });
 
       // ✅ ارسال ایمیل تأییدیه
-      await main(
-        value.email,
-        "کد تأیید ایمیل شما",
-        "",
-        `
-        <div style="text-align: center;">
-          <span style="font-family:'tahoma';font-size:'14px'">کد تأییدیه ایمیل شما: </span><br>
-          <b style="font-size: 24px;">${emailVerifyCode}</b>
-        </div>
-      `
-      );
+      const mail = await buildVerificationEmail({ code: emailVerifyCode, purpose: "register" });
+      await main(value.email, mail.subject, mail.text, mail.html, { from: mail.from });
       console.log("✅ Email verification sent to:", value.email);
 
       // ✅ JWT با نقش پیش‌فرض user
@@ -518,12 +514,8 @@ class AuthController extends BaseController {
         return this.response(res, 400, false, "کد وارد شده صحیح نیست.");
       }
 
-      // ✅ بررسی انقضای کد (۳ دقیقه)
-      const currentTime = moment();
-      const codeSentTime = moment(user.emailVerificationSentAt);
-      const diffInMinutes = currentTime.diff(codeSentTime, "minutes");
-
-      if (diffInMinutes > 3) {
+      // ✅ بررسی انقضای کد (۳ دقیقه — مثل موبایل)
+      if (this.isOtpExpired(user.emailVerificationSentAt, this.constructor.OTP_VALID_MINUTES)) {
         console.warn("❌ Expired email verification code for", value.email);
         return this.response(
           res,
@@ -603,15 +595,8 @@ class AuthController extends BaseController {
       await user.save();
 
       // ✅ ارسال مجدد ایمیل تأییدیه
-      await main(
-        value.email,
-        "کد تأیید ایمیل شما",
-        "",
-        `<div style="text-align: center;">
-            <span style="font-family:'tahoma';font-size:'14px'">کد تأیید جدید ایمیل شما: </span><br>
-            <b style="font-size: 24px;">${newEmailVerifyCode}</b>
-          </div>`
-      );
+      const mail = await buildVerificationEmail({ code: newEmailVerifyCode, purpose: "resend" });
+      await main(value.email, mail.subject, mail.text, mail.html, { from: mail.from });
       console.log("🔄 New verification code sent to:", value.email);
 
       this.response(res, 200, true, "کد تأیید جدید به ایمیل شما ارسال شد.");
@@ -966,7 +951,7 @@ class AuthController extends BaseController {
         return this.response(res, 400, false, "زمان ارسال کد مشخص نیست");
       }
 
-      if (this.isOtpExpired(sentAt, 3)) {
+      if (this.isOtpExpired(sentAt, this.constructor.OTP_VALID_MINUTES)) {
         return this.response(res, 400, false, "کد تایید منقضی شده است. دوباره درخواست دهید.");
       }
 
@@ -1181,18 +1166,8 @@ class AuthController extends BaseController {
         }
 
         try {
-          await main(
-            addr,
-            "کد تأیید ثبت‌نام زارعون",
-            "",
-            `
-            <div style="text-align:center;font-family:tahoma,sans-serif;font-size:14px;line-height:1.8">
-              <p>کد تأیید ثبت‌نام شما در زارعون:</p>
-              <b style="font-size:28px;letter-spacing:4px">${emailVerifyCode}</b>
-              <p style="color:#666;font-size:12px;margin-top:16px">اگر این ایمیل را در Inbox ندیدید، پوشه Spam / هرزنامه را هم بررسی کنید.</p>
-            </div>
-            `
-          );
+          const mail = await buildVerificationEmail({ code: emailVerifyCode, purpose: "register" });
+          await main(addr, mail.subject, mail.text, mail.html, { from: mail.from });
         } catch (mailErr) {
           console.error("❌ Email sending failed:", mailErr.message || mailErr);
           return this.response(res, 500, false, "خطا در ارسال ایمیل");

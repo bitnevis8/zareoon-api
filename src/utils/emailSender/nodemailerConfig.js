@@ -1,29 +1,59 @@
 const nodemailer = require("nodemailer");
 const config = require("config");
+const { getMailFrom, getFrontendHost } = require("./zareoonEmailTemplates");
 
 const transporter = nodemailer.createTransport({
   host: config.get("EMAIL.HOST"),
   port: config.get("EMAIL.PORT"),
-  secure: config.get("EMAIL.SECURE"), // true for port 465, false for other ports
+  secure: config.get("EMAIL.SECURE"),
   auth: {
     user: config.get("EMAIL.AUTH.USER"),
     pass: config.get("EMAIL.AUTH.PASS"),
   },
 });
 
-// async..await is not allowed in global scope, must use a wrapper
-async function main(to, subject, text, html) {
-  // send mail with defined transport object
+function getSmtpUser() {
+  try {
+    return config.get("EMAIL.AUTH.USER");
+  } catch {
+    return "zareoon.ir@gmail.com";
+  }
+}
+
+/**
+ * @param {string} to
+ * @param {string} subject
+ * @param {string} text
+ * @param {string} html
+ * @param {{ from?: string }} [opts]
+ */
+async function main(to, subject, text, html, opts = {}) {
+  const site = getFrontendHost();
+  const smtpUser = getSmtpUser();
+  const from = opts.from || getMailFrom();
+
   const info = await transporter.sendMail({
-    from: `"FADAK PROGRAMMER" <${"fadakprgrammer@gmail.com"}>`,
-    to: to, // list of receivers-> string for users use , between each email
-    subject: subject, // Subject line
-    text: text, // plain text body
-    html: html,
+    from,
+    to,
+    replyTo: from,
+    subject,
+    text: text || undefined,
+    html,
+    headers: {
+      "X-Mailer": "Zareoon",
+      "X-Priority": "1",
+      "X-Entity-Ref-ID": `zareoon-otp-${Date.now()}`,
+      "List-Unsubscribe": `<${site}/auth/login>`,
+      "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+    },
+    // هم‌ترازی Envelope با حساب SMTP اعتبار را بهتر می‌کند
+    envelope: {
+      from: smtpUser,
+      to,
+    },
   });
   console.log("Message sent: %s", info.messageId);
-
-  // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
+  return info;
 }
-//main().catch(console.error);کامنت شد چون در هر فایلی که فراخوانی شود این کد رو مینویسسیم
+
 module.exports = { main };
