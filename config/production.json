@@ -16,6 +16,9 @@
   },
   "MONGODB_URI": "mongodb://pachim:PbYPRucbkgnkc2cGKBe0@127.0.0.1:27017/parandx_news?directConnection=true&serverSelectionTimeoutMS=2000&authSource=admin",
   "EMAIL": {
+    "PROVIDER": "resend",
+    "RESEND_API_KEY": "",
+    "FROM": "Zareoon|زارعون <noreply@zareoon.ir>",
     "HOST": "smtp.gmail.com",
     "PORT": 587,
     "SECURE": false,

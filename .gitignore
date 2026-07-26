@@ -1,2 +1,6 @@
 node_modules/
 .pachim.json
+config/local.json
+config/local-*.json
+.env
+.env.*

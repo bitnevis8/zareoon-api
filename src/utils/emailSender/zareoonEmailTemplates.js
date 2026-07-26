@@ -12,6 +12,13 @@ function getFrontendHost() {
 }
 
 function getMailFrom() {
+  try {
+    if (config.has("EMAIL.FROM") && config.get("EMAIL.FROM")) {
+      return String(config.get("EMAIL.FROM"));
+    }
+  } catch {
+    /* ignore */
+  }
   let user = "zareoon.ir@gmail.com";
   try {
     if (config.has("EMAIL.AUTH.USER")) user = config.get("EMAIL.AUTH.USER");

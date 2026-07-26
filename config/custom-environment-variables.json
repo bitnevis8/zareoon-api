@@ -1,0 +1,6 @@
+{
+  "EMAIL": {
+    "RESEND_API_KEY": "RESEND_API_KEY",
+    "FROM": "EMAIL_FROM"
+  }
+}

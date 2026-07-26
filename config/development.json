@@ -16,6 +16,9 @@
   },
   "MONGODB_URI": "mongodb://localhost:27017/taganeh",
   "EMAIL": {
+    "PROVIDER": "resend",
+    "RESEND_API_KEY": "",
+    "FROM": "زارعون <onboarding@resend.dev>",
     "HOST": "smtp.gmail.com",
     "PORT": 587,
     "SECURE": false,
