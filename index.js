@@ -34,8 +34,13 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const baseRouter = require("./src/core/baseRouter");
 const initializeDatabase = require("./src/core/database/init");
-const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
+const {
+  loginLimiter,
+  uploadLimiter,
+  productWriteLimiter,
+  searchLimiter,
+} = require("./src/middleware/rateLimiters");
 
 // تنظیمات سرور
 const SERVER_CONFIG = {
@@ -103,21 +108,28 @@ const startServer = async () => {
 
     const app = express();
 
-    // اعتماد به پراکسی برای Rate Limiting صحیح
-    app.set('trust proxy', 1); 
+    // باید قبل از rate limiter باشد — IP واقعی پشت Cloudflare / nginx
+    app.set("trust proxy", true);
 
-    const limiter = rateLimit({
-      windowMs: 15 * 60 * 1000,
-      max: SERVER_CONFIG.NODE_ENV === "production" ? 1500 : 5000,
-      message: {
-        status: 429,
-        success: false,
-        message: "تعداد درخواست‌های شما بیش از حد مجاز است. لطفاً کمی صبر کنید.",
-      },
-      standardHeaders: true,
-      legacyHeaders: false,
-    });
-    app.use(limiter);
+    // Rate limit جداگانه (نه یک سقف سراسری برای کل API)
+    app.use("/user/auth/login", loginLimiter);
+    app.use("/user/auth/check-identifier", loginLimiter);
+    app.use("/user/auth/verify-code", loginLimiter);
+    app.use("/user/auth/resend-code", loginLimiter);
+    app.use("/user/auth/send-code-for-registration", loginLimiter);
+    app.use("/user/auth/forgot-password", loginLimiter);
+    app.use("/user/auth/register", loginLimiter);
+    app.use("/user/auth/complete-registration", loginLimiter);
+
+    app.use("/file-upload", uploadLimiter);
+
+    app.use("/supplier/product", productWriteLimiter);
+    app.use("/farmer/product", productWriteLimiter);
+
+    app.use("/location/search", searchLimiter);
+    app.use("/hs-code/search", searchLimiter);
+    app.use("/user/user/search", searchLimiter);
+    app.use("/messaging/users/search", searchLimiter);
 
     app.use(
       helmet({
