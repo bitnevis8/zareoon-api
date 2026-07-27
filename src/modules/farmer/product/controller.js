@@ -90,7 +90,7 @@ const list = async (req, res) => {
   // کش برای lite و جستجو (پاسخ‌های عمومی پرتکرار)
   const shouldCache = lite || Boolean(q);
   const cacheKey = shouldCache
-    ? `${q ? "search" : "products"}:list:${stableQueryKey(req.query, [
+    ? `${q ? "search" : "products"}:list:v2:${stableQueryKey(req.query, [
         "parentId",
         "isOrderable",
         "isActive",
@@ -116,6 +116,7 @@ const list = async (req, res) => {
 
   const options = { where, order: [["homepageSortOrder", "ASC"], ["sortOrder", "ASC"], ["id", "ASC"]] };
   if (lite) {
+    // فقط فیلدهای لازم برای کاشی/درخت/منو — فیلدهای سنگین (seo/filters/…) فقط در getById
     options.attributes = [
       "id",
       "parentId",
@@ -137,16 +138,6 @@ const list = async (req, res) => {
       "level",
       "isLeaf",
       "translations",
-      "filters",
-      "defaultMeasurementUnit",
-      "allowedMeasurementUnits",
-      "allowedPackagingTypes",
-      "listingPolicy",
-      "attributeSetId",
-      "tradeCompliance",
-      "seo",
-      "metaTitle",
-      "metaDescription",
     ];
   }
 
