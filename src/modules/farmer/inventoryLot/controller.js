@@ -168,6 +168,15 @@ const list = async (req, res) => {
     else if (statuses.length > 1) where.status = { [Op.in]: statuses };
   }
 
+  // فقط موجودی‌های معاوضه‌پذیر
+  const barterOnly =
+    String(req.query.barter || "") === "1" ||
+    String(req.query.barter || "").toLowerCase() === "true" ||
+    String(req.query.acceptBarter || "") === "1";
+  if (barterOnly) {
+    where.acceptBarter = true;
+  }
+
   // فقط موجودی قابل فروش
   const availableOnly =
     String(req.query.available || "") === "1" ||
@@ -443,6 +452,7 @@ function formatLotRecord(lot) {
 }
 
 function prepareLotPayload(body) {
+  const { normalizeBarterFields } = require("../barter/service");
   const payload = { ...body };
   if (body.filterValues !== undefined) {
     payload.filterValues = normalizeFilterValues(body.filterValues);
@@ -461,6 +471,24 @@ function prepareLotPayload(body) {
     const p = body.packagingType != null ? String(body.packagingType).trim() : "";
     payload.packagingType = p || null;
   }
+
+  const barterTouched =
+    body.acceptBarter !== undefined ||
+    body.acceptCash !== undefined ||
+    body.barterDesiredKind !== undefined ||
+    body.barterDesiredCategoryId !== undefined ||
+    body.barterDesiredName !== undefined ||
+    body.barterAnnounceMode !== undefined ||
+    body.barterNotes !== undefined ||
+    body.barterDesiredQuantity !== undefined ||
+    body.barterDesiredUnit !== undefined ||
+    body.barterDesiredCategoryLabel !== undefined ||
+    body.barterDesiredServiceCategoryId !== undefined ||
+    body.barterDesiredServiceSubcategoryId !== undefined;
+  if (barterTouched) {
+    Object.assign(payload, normalizeBarterFields(body));
+  }
+
   if (body.displayContent !== undefined) {
     return applyDisplayContentToPayload(payload, body);
   }
@@ -504,8 +532,19 @@ const create = async (req, res) => {
     }
 
     const created = await InventoryLot.create(payload);
+    let notifiedCount = 0;
+    try {
+      const { notifyBarterRecipients } = require("../barter/service");
+      notifiedCount = await notifyBarterRecipients(created, payload.farmerId || req.user?.id);
+    } catch (e) {
+      console.warn("Barter announce skipped:", e.message);
+    }
     await invalidateInventoryCache();
-    res.status(201).json({ success: true, data: formatLotRecord(created) });
+    res.status(201).json({
+      success: true,
+      data: formatLotRecord(created),
+      barterNotifiedCount: notifiedCount,
+    });
   } catch (error) {
     if (error.status === 400 || error.status === 403 || error.status === 404) {
       return res.status(error.status).json({ success: false, message: error.message });
@@ -548,9 +587,26 @@ const update = async (req, res) => {
         supplierInclude,
       ],
     });
+
+    let barterNotifiedCount = 0;
+    try {
+      const { shouldReannounce, notifyBarterRecipients, normalizeBarterFields } = require("../barter/service");
+      const nextBarter = barterTouchedFields(req.body)
+        ? normalizeBarterFields({ ...existing.toJSON(), ...payload })
+        : null;
+      if (nextBarter && (await shouldReannounce(existing, nextBarter))) {
+        barterNotifiedCount = await notifyBarterRecipients(
+          { ...updated.toJSON(), ...nextBarter },
+          existing.farmerId
+        );
+      }
+    } catch (e) {
+      console.warn("Barter reannounce skipped:", e.message);
+    }
+
     const [data] = await attachLotCoverImages([updated]);
     await invalidateInventoryCache();
-    res.json({ success: true, data });
+    res.json({ success: true, data, barterNotifiedCount });
   } catch (error) {
     if (error.status === 400 || error.status === 403 || error.status === 404) {
       return res.status(error.status).json({ success: false, message: error.message });
@@ -558,6 +614,23 @@ const update = async (req, res) => {
     throw error;
   }
 };
+
+function barterTouchedFields(body = {}) {
+  return (
+    body.acceptBarter !== undefined ||
+    body.acceptCash !== undefined ||
+    body.barterDesiredKind !== undefined ||
+    body.barterDesiredCategoryId !== undefined ||
+    body.barterDesiredName !== undefined ||
+    body.barterAnnounceMode !== undefined ||
+    body.barterNotes !== undefined ||
+    body.barterDesiredQuantity !== undefined ||
+    body.barterDesiredUnit !== undefined ||
+    body.barterDesiredCategoryLabel !== undefined ||
+    body.barterDesiredServiceCategoryId !== undefined ||
+    body.barterDesiredServiceSubcategoryId !== undefined
+  );
+}
 
 const remove = async (req, res) => {
   const id = req.params.id;

@@ -47,6 +47,7 @@ const PLANS = [
       searchBoost: 0,
       featuredBadge: false,
       support: "standard",
+      landingPages: 10,
     },
     features: [
       "تا ۳ محصول فعال",
@@ -54,6 +55,7 @@ const PLANS = [
       "۱ عضو تیم (مالک)",
       "۱ زبان",
       "بدون آمار پیشرفته",
+      "۱۰ لندینگ محصول",
     ],
   },
   {
@@ -75,6 +77,7 @@ const PLANS = [
       searchBoost: 1,
       featuredBadge: false,
       support: "standard",
+      landingPages: 1,
     },
     features: [
       "تا ۲۵ محصول فعال",
@@ -83,6 +86,7 @@ const PLANS = [
       "تا ۲ زبان",
       "آمار ۳۰ روزه",
       "۲ اعتبار ویژه‌سازی",
+      "۱ لندینگ محصول",
     ],
   },
   {
@@ -104,6 +108,7 @@ const PLANS = [
       searchBoost: 2,
       featuredBadge: true,
       support: "priority",
+      landingPages: 5,
     },
     features: [
       "تا ۱۰۰ محصول فعال",
@@ -113,6 +118,7 @@ const PLANS = [
       "آمار ۱۸۰ روزه",
       "۸ اعتبار ویژه‌سازی",
       "نشان ویژه پروفایل",
+      "۵ لندینگ محصول",
     ],
   },
   {
@@ -134,6 +140,7 @@ const PLANS = [
       searchBoost: 3,
       featuredBadge: true,
       support: "dedicated",
+      landingPages: 10,
     },
     features: [
       "محصول بدون سقف",
@@ -143,6 +150,7 @@ const PLANS = [
       "آمار ۳۶۵ روزه",
       "۳۰ اعتبار ویژه‌سازی",
       "بالاترین اولویت نمایش",
+      "۱۰ لندینگ محصول حرفه‌ای",
     ],
   },
 ];

@@ -11,7 +11,8 @@ const PUBLIC_PAGE_SLUG_RULES = "publicPageSlugRules";
 const CACHE_CONFIG = "cacheConfig";
 const AUTH_SIGNUP_CONFIG = "authSignupConfig";
 
-const ALL_LANGUAGE_CODES = ["fa", "es", "en", "ar", "nl", "tr", "ru", "ur", "fi"];
+const ALL_LANGUAGE_CODES = ["fa", "ar", "en", "ru", "tr", "es", "nl", "ur", "fi"];
+const DEFAULT_ENABLED_LANGUAGE_CODES = ["fa", "ar", "en", "ru", "tr"];
 
 const { ALL_PHONE_COUNTRY_CODES } = require("../../utils/phoneCountries");
 
@@ -191,8 +192,6 @@ function resolveVipMessage(cfg, lang = "fa") {
 async function validateRegistrationForServices(normalizedServices, lang = "fa", options = {}) {
   const vipConfig = await getVipTradeCategoriesConfig();
   const seen = new Set();
-  /** بسته‌بندی و آماده‌سازی — خدمت اختصاصی زارعون؛ عضویت آزاد ندارد */
-  const PLATFORM_OWNED = new Set(["packaging-prep"]);
   /** دسته‌هایی که همین پروفایل از قبل داشته — برای ویرایش صفحهٔ اختصاصی مجاز است */
   const alreadyOwned = new Set(
     (Array.isArray(options.existingCategoryIds) ? options.existingCategoryIds : [])
@@ -205,19 +204,6 @@ async function validateRegistrationForServices(normalizedServices, lang = "fa", 
     seen.add(svc.categoryId);
     const categoryId = String(svc.categoryId || "").trim();
     if (!categoryId) continue;
-
-    if (PLATFORM_OWNED.has(categoryId)) {
-      // ویرایش صفحهٔ رسمی زارعون (که از قبل بسته‌بندی دارد) مجاز است؛ ثبت‌نام جدید خیر
-      if (alreadyOwned.has(categoryId)) continue;
-      return {
-        ok: false,
-        categoryId,
-        message:
-          lang === "en"
-            ? "This service is operated exclusively by Zareoon. Provider registration is not available."
-            : "این خدمت به‌صورت اختصاصی توسط زارعون ارائه می‌شود و عضویت ارائه‌دهنده برای آن فعال نیست.",
-      };
-    }
 
     const cfg = vipConfig[categoryId];
     if (cfg?.enabled) {
@@ -310,37 +296,45 @@ async function getPublicVipCategories() {
 }
 
 function normalizeLanguageCodes(codes) {
-  if (!Array.isArray(codes)) return [...ALL_LANGUAGE_CODES];
+  if (!Array.isArray(codes)) return [...DEFAULT_ENABLED_LANGUAGE_CODES];
   const unique = [...new Set(codes.map((c) => String(c || "").trim().toLowerCase()))].filter((c) =>
     ALL_LANGUAGE_CODES.includes(c)
   );
   if (!unique.includes("fa")) unique.unshift("fa");
-  return unique.length ? unique : [...ALL_LANGUAGE_CODES];
+  // حفظ ترتیب پیش‌فرض برای زبان‌های شناخته‌شده
+  const ordered = [];
+  for (const code of ALL_LANGUAGE_CODES) {
+    if (unique.includes(code)) ordered.push(code);
+  }
+  return ordered.length ? ordered : [...DEFAULT_ENABLED_LANGUAGE_CODES];
+}
+
+function isSameCodeSet(a, b) {
+  if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+  const sa = [...a].map((c) => String(c).toLowerCase()).sort();
+  const sb = [...b].map((c) => String(c).toLowerCase()).sort();
+  return sa.every((c, i) => c === sb[i]);
 }
 
 async function getEnabledLanguages() {
   const stored = await getJsonSetting(ENABLED_LANGUAGES, null);
-  if (!stored) return [...ALL_LANGUAGE_CODES];
-  let next = normalizeLanguageCodes(stored);
+  const coreMigrated = await getBoolSetting("enabledLanguagesCoreSetV1", false);
 
-  // One-time migrations for languages added after the setting was first saved.
-  const migrations = [
-    { code: "es", flag: "enabledLanguagesEsV1" },
-    { code: "nl", flag: "enabledLanguagesNlV1" },
-  ];
-  let changed = false;
-  for (const { code, flag } of migrations) {
-    if (!next.includes(code) && ALL_LANGUAGE_CODES.includes(code)) {
-      const migrated = await getBoolSetting(flag, false);
-      if (!migrated) {
-        next = normalizeLanguageCodes([...next, code]);
-        await setBoolSetting(flag, true);
-        changed = true;
-      }
+  // یک‌بار: پیش‌فرض قدیمی (همه زبان‌ها) → مجموعهٔ هستهٔ fa/ar/en/ru/tr
+  if (!coreMigrated) {
+    await setBoolSetting("enabledLanguagesCoreSetV1", true);
+    await setBoolSetting("enabledLanguagesEsV1", true);
+    await setBoolSetting("enabledLanguagesNlV1", true);
+    const normalizedStored = stored ? normalizeLanguageCodes(stored) : null;
+    if (!normalizedStored || isSameCodeSet(normalizedStored, ALL_LANGUAGE_CODES)) {
+      const core = [...DEFAULT_ENABLED_LANGUAGE_CODES];
+      await setJsonSetting(ENABLED_LANGUAGES, core);
+      return core;
     }
   }
-  if (changed) await setJsonSetting(ENABLED_LANGUAGES, next);
-  return next;
+
+  if (!stored) return [...DEFAULT_ENABLED_LANGUAGE_CODES];
+  return normalizeLanguageCodes(stored);
 }
 
 async function updateEnabledLanguages(codes) {
@@ -499,6 +493,7 @@ module.exports = {
   BLOCKED_PAGE_SLUGS,
   PUBLIC_PAGE_SLUG_RULES,
   ALL_LANGUAGE_CODES,
+  DEFAULT_ENABLED_LANGUAGE_CODES,
   DEFAULT_VIP_MESSAGE,
   DEFAULT_PUBLIC_PAGE_SLUG_RULES,
   isTradeProvidersAutoApprove,

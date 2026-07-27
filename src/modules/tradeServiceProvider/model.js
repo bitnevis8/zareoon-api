@@ -2,16 +2,26 @@ const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../../core/database/mysql/connection");
 
 const L1_CATEGORY_IDS = [
+  "inspection-standards",
+  "packaging-prep",
   "import-export",
   "intl-logistics",
   "customs-clearance",
   "intl-finance",
-  "inspection-standards",
   "insurance-risk",
   "legal-trade",
   "market-development",
-  "packaging-prep",
   "specialized-trade",
+  "intl-certificates",
+  "export-compliance",
+  "trade-documents",
+  "supply-chain",
+  "ecommerce-marketplace",
+  "trade-digital",
+  "investment-consulting",
+  "trade-events",
+  "business-immigration",
+  "esg-sustainability",
 ];
 
 class TradeServiceProvider extends Model {}

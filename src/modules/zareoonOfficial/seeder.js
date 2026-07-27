@@ -93,11 +93,23 @@ async function upsertTradeProvider(user, cfg, workspaceId = null) {
     servicesOffered: cfg.servicesOffered || null,
     experienceYears: cfg.experienceYears || null,
     notes: cfg.notes || null,
+    licenses: cfg.licenses || null,
     status: cfg.status || "approved",
     profileSlug: cfg.profileSlug,
     isPublic: cfg.isPublic !== false,
     pageStatus: cfg.pageStatus || "ACTIVE",
     logoUrl: cfg.logoUrl || null,
+    addressLabel: cfg.addressLabel || null,
+    latitude:
+      cfg.latitude != null && cfg.latitude !== "" && Number.isFinite(Number(cfg.latitude))
+        ? Number(cfg.latitude)
+        : null,
+    longitude:
+      cfg.longitude != null && cfg.longitude !== "" && Number.isFinite(Number(cfg.longitude))
+        ? Number(cfg.longitude)
+        : null,
+    businessHours:
+      cfg.businessHours && typeof cfg.businessHours === "object" ? cfg.businessHours : null,
   };
 
   let row = await TradeServiceProvider.findOne({
@@ -122,25 +134,26 @@ async function ensureZareoonWorkspace(user, account) {
     (account?.id ? await Workspace.findOne({ where: { accountId: account.id } }) : null);
 
   if (!workspace) {
+    const label = account?.displayName || account?.profileSlug || "workspace";
     workspace = await Workspace.create({
-      name: account?.displayName || account?.profileSlug || "زارعون",
-      displayName: account?.displayName || "زارعون",
-      profileSlug: account?.profileSlug || "zareoon",
+      name: label,
+      displayName: label,
+      profileSlug: account?.profileSlug || "workspace",
       entityType: account?.entityType || "company",
       activityBuyer: true,
-      activitySeller: true,
+      activitySeller: Boolean(account?.profileSlug === "zareoon"),
       activityServices: true,
       isPublic: true,
       createdByUserId: user.id,
       accountId: account?.id || null,
-      addressLabel: "تهران، تهران",
-      addressText: "تهران",
+      addressLabel: account?.profileSlug === "zareoon" ? "تهران، تهران" : null,
+      addressText: account?.profileSlug === "zareoon" ? "تهران" : null,
     });
   } else {
     await workspace.update({
-      displayName: account?.displayName || workspace.displayName || "زارعون",
-      profileSlug: account?.profileSlug || workspace.profileSlug || "zareoon",
-      activitySeller: true,
+      displayName: account?.displayName || workspace.displayName || account?.profileSlug,
+      profileSlug: account?.profileSlug || workspace.profileSlug,
+      activitySeller: account?.profileSlug === "zareoon" ? true : workspace.activitySeller,
       activityServices: true,
       isPublic: true,
       accountId: account?.id || workspace.accountId,
@@ -185,19 +198,18 @@ async function fixProductDisplayNames() {
   return n;
 }
 
-function buildOriginFilter(item, index = 0) {
+function buildOriginFilter(item, defaultVerificationLevel = "full") {
   const country = String(item.originCountry || item.supplyCountry || "IR").toUpperCase();
   const province = item.originProvince || item.supplyProvince || null;
   const city = item.originCity || item.supplyCity || null;
   const verified = item.listingVerified !== false;
-  const levels = ["basic", "standard", "enhanced", "full"];
   return {
     originCountry: country,
     originProvince: province,
     originCity: city,
     listingVerified: verified,
     verificationLevel: verified
-      ? item.verificationLevel || levels[index % levels.length]
+      ? item.verificationLevel || defaultVerificationLevel
       : "none",
   };
 }
@@ -225,7 +237,7 @@ async function seedInventoryLots(user, workspace, lotsCfg) {
     const legacy = displayContentToLegacyFields(item.displayContent || {});
     const titleFa = item.displayContent?.fa?.title || product.name;
     const grade = item.qualityGrade || "Premium";
-    const filterValues = buildOriginFilter(item, i);
+    const filterValues = buildOriginFilter(item, data.defaultVerificationLevel || "full");
     const locationLabel = buildLocationLabel(item, filterValues);
 
     const existing = await InventoryLot.findOne({
@@ -316,3 +328,7 @@ async function seedZareoonOfficial() {
 }
 
 module.exports = seedZareoonOfficial;
+module.exports.ensureRole = ensureRole;
+module.exports.upsertAccount = upsertAccount;
+module.exports.upsertTradeProvider = upsertTradeProvider;
+module.exports.ensureProviderWorkspace = ensureZareoonWorkspace;

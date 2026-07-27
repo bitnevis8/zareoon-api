@@ -43,6 +43,9 @@ require("../../modules/account/profileField/model");
 require("../../modules/escrow/model");
 require("../../modules/subscription/model");
 require("../../modules/workspace/model");
+require("../../modules/productLanding/model");
+require("../../modules/productLanding/templateModel");
+require("../../modules/barter/model");
 
 // Import and define all associations
 const defineAssociations = require("../../modules/associations");
@@ -104,6 +107,24 @@ const initializeDatabase = async (options = { force: false, seed: false, useMong
         "ALTER TABLE workspaces ADD COLUMN latitude DECIMAL(10,7) NULL",
         "ALTER TABLE workspaces ADD COLUMN longitude DECIMAL(10,7) NULL",
         "ALTER TABLE workspaces ADD COLUMN business_hours JSON NULL",
+        "ALTER TABLE product_landing_pages ADD COLUMN template_id INT NULL",
+        "ALTER TABLE inventory_lots ADD COLUMN accept_cash TINYINT(1) NOT NULL DEFAULT 1",
+        "ALTER TABLE inventory_lots ADD COLUMN accept_barter TINYINT(1) NOT NULL DEFAULT 0",
+        "ALTER TABLE inventory_lots ADD COLUMN barter_desired_kind VARCHAR(16) NOT NULL DEFAULT 'product'",
+        "ALTER TABLE inventory_lots ADD COLUMN barter_desired_category_id INT NULL",
+        "ALTER TABLE inventory_lots ADD COLUMN barter_desired_category_label VARCHAR(255) NULL",
+        "ALTER TABLE inventory_lots ADD COLUMN barter_desired_service_category_id VARCHAR(64) NULL",
+        "ALTER TABLE inventory_lots ADD COLUMN barter_desired_service_subcategory_id VARCHAR(64) NULL",
+        "ALTER TABLE inventory_lots ADD COLUMN barter_desired_name VARCHAR(255) NULL",
+        "ALTER TABLE inventory_lots ADD COLUMN barter_desired_quantity DECIMAL(18,3) NULL",
+        "ALTER TABLE inventory_lots ADD COLUMN barter_desired_unit VARCHAR(50) NULL",
+        "ALTER TABLE inventory_lots ADD COLUMN barter_announce_mode VARCHAR(16) NOT NULL DEFAULT 'silent'",
+        "ALTER TABLE inventory_lots ADD COLUMN barter_notes TEXT NULL",
+        "ALTER TABLE inventory_lots ADD COLUMN barter_announced_at DATETIME NULL",
+        "CREATE INDEX idx_lots_accept_barter ON inventory_lots (accept_barter, status)",
+        "CREATE INDEX idx_lots_barter_category ON inventory_lots (barter_desired_category_id)",
+        "CREATE INDEX idx_lots_barter_kind ON inventory_lots (barter_desired_kind, accept_barter)",
+        "CREATE INDEX idx_lots_barter_service_cat ON inventory_lots (barter_desired_service_category_id)",
       ];
       for (const sql of alters) {
         try {
@@ -113,6 +134,13 @@ const initializeDatabase = async (options = { force: false, seed: false, useMong
             console.warn("⚠️ Auth column alter skipped:", e.message);
           }
         }
+      }
+
+      try {
+        const { ensureSystemTemplates } = require("../../modules/productLanding/controller");
+        await ensureSystemTemplates();
+      } catch (e) {
+        console.warn("⚠️ Landing templates seed skipped:", e.message);
       }
     }
 

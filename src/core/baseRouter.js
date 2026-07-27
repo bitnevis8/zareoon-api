@@ -21,6 +21,8 @@ const subscriptionRouter = require('../modules/subscription/route');
 const backupRouter = require('../modules/backup/route');
 const publicSlugRouter = require('../modules/publicSlug/route');
 const workspaceRouter = require('../modules/workspace/route');
+const productLandingRouter = require('../modules/productLanding/route');
+const barterRouter = require('../modules/barter/route');
 
 // Use routers
 baseRouter.use('/user', userRouter);
@@ -43,5 +45,7 @@ baseRouter.use('/subscription', subscriptionRouter);
 baseRouter.use('/backup', backupRouter);
 baseRouter.use('/public-slug', publicSlugRouter);
 baseRouter.use('/workspace', workspaceRouter);
+baseRouter.use('/product-landing', productLandingRouter);
+baseRouter.use('/barter', barterRouter);
 
 module.exports = baseRouter;

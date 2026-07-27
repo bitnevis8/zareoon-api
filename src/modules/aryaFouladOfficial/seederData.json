@@ -1,0 +1,56 @@
+﻿{
+  "ownerEmail": "rahimi@zareoon.ir",
+  "avatarUrl": "/images/advertice/afg-insp.png",
+  "account": {
+    "entityType": "company",
+    "profileSlug": "afg-insp",
+    "headline": "بازرسی مهندسی آریا فولاد قرن",
+    "bio": "آریا فولاد قرن با ارائه خدمات بازرسی کالا، کنترل کیفیت، بازرسی مواد اولیه، تجهیزات صنعتی و صدور گواهینامه‌های معتبر، ریسک معاملات تجاری شما را کاهش داده و از انطباق کالا با استانداردهای موردنیاز اطمینان حاصل می‌کند.",
+    "displayName": "بازرسی مهندسی آریا فولاد قرن",
+    "isPublic": true,
+    "shopStatus": "INACTIVE",
+    "country": "Iran",
+    "publicEmail": "info@afg-insp.ir",
+    "shopContacts": null,
+    "profileFields": {
+      "companyName": "بازرسی مهندسی آریا فولاد قرن"
+    }
+  },
+  "tradeProvider": {
+    "entityType": "company",
+    "displayName": "بازرسی مهندسی آریا فولاد قرن",
+    "contactName": "مهدی رحیمی",
+    "phone": "061-34468005",
+    "email": "info@afg-insp.ir",
+    "profileSlug": "afg-insp",
+    "logoUrl": "/images/advertice/afg-insp.png",
+    "status": "approved",
+    "isPublic": true,
+    "pageStatus": "ACTIVE",
+    "experienceYears": 15,
+    "servicesOffered": "بازرسی کالاهای وارداتی و صادراتی؛ کنترل کیفیت (QC)؛ بازرسی مواد اولیه و محصولات تولیدی؛ آزمون و آزمایش کالا؛ صدور گواهی بازرسی؛ استاندارد و گواهینامه‌ها؛ بازرسی قبل از حمل (PSI).",
+    "countriesRoutes": "ایران، خاورمیانه، اروپا، آسیا",
+    "licenses": "گواهینامه‌های معتبر بازرسی و کنترل کیفیت",
+    "notes": "همراه مطمئن تجارت بین‌المللی شما در حوزه بازرسی، آزمون و استاندارد.",
+    "addressLabel": "اهواز، کوروش، خیابان ۲۰، اقبال فرعی اول، پلاک ۷",
+    "latitude": 31.3642075,
+    "longitude": 48.7351316,
+    "businessHours": {
+      "saturday": { "closed": false, "open": "08:00", "close": "17:00" },
+      "sunday": { "closed": false, "open": "08:00", "close": "17:00" },
+      "monday": { "closed": false, "open": "08:00", "close": "17:00" },
+      "tuesday": { "closed": false, "open": "08:00", "close": "17:00" },
+      "wednesday": { "closed": false, "open": "08:00", "close": "17:00" },
+      "thursday": { "closed": false, "open": "08:00", "close": "17:00" },
+      "friday": { "closed": true, "open": "", "close": "" }
+    },
+    "selectedServices": [
+      { "categoryId": "inspection-standards", "subcategoryId": "cargo-inspection" },
+      { "categoryId": "inspection-standards", "subcategoryId": "quality-control" },
+      { "categoryId": "inspection-standards", "subcategoryId": "testing" },
+      { "categoryId": "inspection-standards", "subcategoryId": "inspection-certificate" },
+      { "categoryId": "inspection-standards", "subcategoryId": "standards-certification" },
+      { "categoryId": "inspection-standards", "subcategoryId": "pre-shipment-inspection" }
+    ]
+  }
+}

@@ -25,6 +25,7 @@ const OrderRequestItem = require('./farmer/orderRequestItem/model');
 const LcRequest = require('./lcRequest/model');
 const ServiceRequest = require('./serviceRequest/model');
 const { ApplicantRequest, ApplicantRequestNotification } = require('./applicantRequest/model');
+const { BarterNotification } = require('./barter/model');
 const TradeServiceProvider = require('./tradeServiceProvider/model');
 const Conversation = require('./messaging/conversation/model');
 const Message = require('./messaging/message/model');
@@ -276,6 +277,12 @@ const defineAssociations = () => {
     ApplicantRequestNotification.belongsTo(ApplicantRequest, { foreignKey: 'requestId', as: 'request', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
     User.hasMany(ApplicantRequestNotification, { foreignKey: 'recipientUserId', as: 'applicantRequestAlerts', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
     ApplicantRequestNotification.belongsTo(User, { foreignKey: 'recipientUserId', as: 'recipient', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+
+    InventoryLot.hasMany(BarterNotification, { foreignKey: 'inventoryLotId', as: 'barterNotifications', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    BarterNotification.belongsTo(InventoryLot, { foreignKey: 'inventoryLotId', as: 'inventoryLot', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    User.hasMany(BarterNotification, { foreignKey: 'recipientUserId', as: 'barterAlerts', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    BarterNotification.belongsTo(User, { foreignKey: 'recipientUserId', as: 'recipient', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    InventoryLot.belongsTo(Product, { foreignKey: 'barterDesiredCategoryId', as: 'barterDesiredCategory', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
 
     User.hasMany(TradeServiceProvider, { foreignKey: 'userId', as: 'tradeServiceProviders', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
     TradeServiceProvider.belongsTo(User, { foreignKey: 'userId', as: 'user', onDelete: 'SET NULL', onUpdate: 'CASCADE' });

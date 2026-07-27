@@ -87,6 +87,7 @@ class FTPService {
         attributes: ["documents"],
         messages: ["images"],
         "supplier-posts": ["images"],
+        "product-landing": ["images", "videos"],
         system: ["temp", "backups", "logs"],
         shared: ["templates", "icons", "banners", "default"],
       };

@@ -18,6 +18,7 @@ const seedInventoryLots = require("../../../modules/farmer/inventoryLot/seeder")
 const seedTradeServiceProviders = require("../../../modules/tradeServiceProvider/seeder");
 const seedClearDefaultShops = require("../../../modules/account/clearDefaultShopsSeeder");
 const seedZareoonOfficial = require("../../../modules/zareoonOfficial/seeder");
+const seedAryaFouladOfficial = require("../../../modules/aryaFouladOfficial/seeder");
 
 // Group seeders by module for better organization and control
 const userSeeders = [seedRoles, seedUsers, seedUserRoles];
@@ -52,10 +53,16 @@ async function runSeeders() {
   // 3. Run Farmer module (Products only; categories merged)
   await runSeederGroup([seedProducts, seedAttributeDefinitions], "Farmer Product Data");
 
-    // 4. Clear demo shops / inventory / trade providers, then seed official Zareoon page
+    // 4. Clear demo shops / inventory / VIP locks, then seed official providers
     await runSeederGroup(
-      [seedInventoryLots, seedClearDefaultShops, seedTradeServiceProviders, seedZareoonOfficial],
-      "Clear Defaults + Official Zareoon"
+      [
+        seedInventoryLots,
+        seedClearDefaultShops,
+        seedTradeServiceProviders,
+        seedZareoonOfficial,
+        seedAryaFouladOfficial,
+      ],
+      "Clear Defaults + Official Providers"
     );
 
     console.log("\n✅ All database seeding completed successfully!");

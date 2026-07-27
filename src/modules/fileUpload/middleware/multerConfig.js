@@ -4,8 +4,8 @@ const crypto = require("crypto");
 const config = require("config");
 const fs = require('fs');
 
-// اطمینان از وجود دایرکتوری موقت
-const tempPath = config.get("UPLOAD.TEMP_PATH");
+// مسیر موقت را مطلق کن تا cwd سرویس روی ویندوز قاطی نشود
+const tempPath = path.resolve(config.get("UPLOAD.TEMP_PATH"));
 if (!fs.existsSync(tempPath)) {
   fs.mkdirSync(tempPath, { recursive: true });
 }

@@ -1,5 +1,6 @@
 const Product = require("./model");
 const treeDataFull = require("./seederData5.json");
+const { enrichTree } = require("./seoContentGenerator");
 
 function tField(translations, lang, key) {
   const block = translations?.[lang];
@@ -30,7 +31,11 @@ function mapNodeToProduct(n) {
     finnishName: tField(tr, "fi", "name"),
     urduName: tField(tr, "ur", "name"),
     slug: n.slug || null,
-    description: tField(tr, "fa", "metaDescription") || tField(tr, "en", "metaDescription"),
+    description:
+      tField(tr, "fa", "description") ||
+      tField(tr, "en", "description") ||
+      tField(tr, "fa", "metaDescription") ||
+      tField(tr, "en", "metaDescription"),
     imageUrl: n.imageUrl || null,
     imageStatus: n.imageStatus || null,
     icon: n.icon || null,
@@ -90,7 +95,7 @@ function sortNodesForSeeding(nodes) {
 const seedProducts = async () => {
   console.log("🌱 Seeding Products from seederData5.json...");
   const raw = Array.isArray(treeDataFull) ? treeDataFull : treeDataFull.data || [];
-  const nodes = sortNodesForSeeding(raw);
+  const nodes = sortNodesForSeeding(enrichTree(raw));
 
   let created = 0;
   let updated = 0;

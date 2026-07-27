@@ -29,6 +29,34 @@ InventoryLot.init(
     tieredPricing: { type: DataTypes.JSON, allowNull: true },
     // Minimum order quantity for this lot
     minimumOrderQuantity: { type: DataTypes.DECIMAL(18, 3), allowNull: true },
+    /** فروش نقدی (قیمت) فعال باشد — حتی بدون قیمت می‌توان فقط معاوضه کرد */
+    acceptCash: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+    /** آمادگی معاوضه (کالا به کالا یا کالا به خدمات) */
+    acceptBarter: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    /** product = کالا به کالا | service = کالا به خدمات */
+    barterDesiredKind: {
+      type: DataTypes.ENUM("product", "service"),
+      allowNull: false,
+      defaultValue: "product",
+    },
+    /** دسته کالای مورد نظر برای معاوضه (اختیاری در حالت بی‌صدا) */
+    barterDesiredCategoryId: { type: DataTypes.INTEGER, allowNull: true },
+    barterDesiredCategoryLabel: { type: DataTypes.STRING(255), allowNull: true },
+    /** دسته/زیردسته خدمات مورد نظر (برای کالا به خدمات) */
+    barterDesiredServiceCategoryId: { type: DataTypes.STRING(64), allowNull: true },
+    barterDesiredServiceSubcategoryId: { type: DataTypes.STRING(64), allowNull: true },
+    /** نام آزاد کالا یا خدمت مورد نظر */
+    barterDesiredName: { type: DataTypes.STRING(255), allowNull: true },
+    barterDesiredQuantity: { type: DataTypes.DECIMAL(18, 3), allowNull: true },
+    barterDesiredUnit: { type: DataTypes.STRING(50), allowNull: true },
+    /** silent = فقط روی آگهی | announce = اطلاع به فروشندگان/ارائه‌دهندگان آن دسته */
+    barterAnnounceMode: {
+      type: DataTypes.ENUM("silent", "announce"),
+      allowNull: false,
+      defaultValue: "silent",
+    },
+    barterNotes: { type: DataTypes.TEXT, allowNull: true },
+    barterAnnouncedAt: { type: DataTypes.DATE, allowNull: true },
     areaHectare: { type: DataTypes.DECIMAL(10, 3), allowNull: true },
     yieldEstimatePerHectare: { type: DataTypes.DECIMAL(10, 3), allowNull: true },
     description: { type: DataTypes.TEXT, allowNull: true },
@@ -55,6 +83,10 @@ InventoryLot.init(
       { name: "idx_lots_status_updated", fields: ["status", "updated_at"] },
       { name: "idx_lots_status_product", fields: ["status", "product_id"] },
       { name: "idx_lots_product_status", fields: ["product_id", "status"] },
+      { name: "idx_lots_accept_barter", fields: ["accept_barter", "status"] },
+      { name: "idx_lots_barter_category", fields: ["barter_desired_category_id"] },
+      { name: "idx_lots_barter_kind", fields: ["barter_desired_kind", "accept_barter"] },
+      { name: "idx_lots_barter_service_cat", fields: ["barter_desired_service_category_id"] },
     ]
   }
 );

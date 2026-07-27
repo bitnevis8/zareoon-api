@@ -35,6 +35,27 @@ const authenticateUser = async (req, res, next) => {
   }
 };
 
+/** اگر توکن باشد کاربر را می‌چسباند؛ در غیر این صورت بدون خطا ادامه می‌دهد */
+const optionalAuthenticateUser = async (req, res, next) => {
+  try {
+    let token = req.cookies?.token;
+    if (!token) {
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith("Bearer ")) {
+        token = authHeader.substring(7);
+      }
+    }
+    if (!token) return next();
+    const { payload } = await jwtVerify(token, new TextEncoder().encode(getJwtSecret()));
+    req.user = payload;
+    req.user.userId = payload.userId || payload.id;
+    req.user.id = req.user.userId;
+  } catch {
+    // ignore invalid token for public routes
+  }
+  return next();
+};
+
 const ADMIN_ROLE_ALIASES = new Set(["administrator", "admin", "super_admin", "super admin", "superadmin"]);
 
 const authorizeRole = (requiredRole) => (req, res, next) => {
@@ -74,5 +95,6 @@ const authorizeRole = (requiredRole) => (req, res, next) => {
 
 module.exports = {
   authenticateUser,
+  optionalAuthenticateUser,
   authorizeRole,
 };

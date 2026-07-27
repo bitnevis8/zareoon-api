@@ -42,19 +42,26 @@ function buildWatermarkSvg(width, height) {
  * @returns {{ outputPath: string, fileName: string, mimeType: string, size: number } | null}
  */
 async function processUploadImage(inputPath, { watermark = true, maxEdge = MAX_EDGE } = {}) {
-  const dir = path.dirname(inputPath);
-  const base = path.basename(inputPath, path.extname(inputPath));
-  const fileName = `${base}.webp`;
+  const absInput = path.resolve(inputPath);
+  const dir = path.dirname(absInput);
+  const base = path.basename(absInput, path.extname(absInput));
+  // هرگز روی همان فایل ورودی ننویس (webp→webp روی ویندوز: unable to open for write)
+  const fileName = `${base}.out.webp`;
   const outputPath = path.join(dir, fileName);
 
-  let pipeline = sharp(inputPath, { failOn: "none" }).rotate();
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
 
+  // کل فایل را در حافظه بخوان تا قفل فایل ویندوز با toFile تداخل نکند
+  const inputBuffer = fs.readFileSync(absInput);
+
+  let pipeline = sharp(inputBuffer, { failOn: "none" }).rotate();
   const meta = await pipeline.metadata();
   const width = meta.width || maxEdge;
   const height = meta.height || maxEdge;
 
-  // بعد از rotate دوباره pipeline بسازیم تا متادیتا درست باشد
-  pipeline = sharp(inputPath, { failOn: "none" }).rotate();
+  pipeline = sharp(inputBuffer, { failOn: "none" }).rotate();
 
   if (width > maxEdge || height > maxEdge) {
     pipeline = pipeline.resize(maxEdge, maxEdge, {
@@ -63,7 +70,6 @@ async function processUploadImage(inputPath, { watermark = true, maxEdge = MAX_E
     });
   }
 
-  // ابعاد نهایی برای واترمارک
   const resized = await pipeline.toBuffer({ resolveWithObject: true });
   const outW = resized.info.width || width;
   const outH = resized.info.height || height;
@@ -79,13 +85,15 @@ async function processUploadImage(inputPath, { watermark = true, maxEdge = MAX_E
     ]);
   }
 
-  await final
+  const outBuffer = await final
     .webp({
       quality: WEBP_QUALITY,
       effort: WEBP_EFFORT,
       smartSubsample: true,
     })
-    .toFile(outputPath);
+    .toBuffer();
+
+  fs.writeFileSync(outputPath, outBuffer);
 
   const stat = fs.statSync(outputPath);
   return {

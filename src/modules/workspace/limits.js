@@ -114,13 +114,40 @@ async function assertListingLocales(workspaceId, localeCount) {
   }
 }
 
+async function countLandingPages(workspaceId) {
+  const ProductLandingPage = require("../productLanding/model");
+  return ProductLandingPage.count({
+    where: {
+      workspaceId,
+      status: { [Op.in]: ["draft", "published"] },
+    },
+  });
+}
+
+async function assertCanCreateLandingPage(workspaceId) {
+  const { limits } = await resolvePlanLimits(workspaceId);
+  if (limits.landingPages == null) return;
+  if (Number(limits.landingPages) <= 0) {
+    throw limitExceededError(
+      "لندینگ محصول در پلن فعلی فعال نیست. برای ساخت لندینگ، اشتراک را ارتقا دهید."
+    );
+  }
+  const n = await countLandingPages(workspaceId);
+  if (n >= limits.landingPages) {
+    throw limitExceededError(
+      `سقف لندینگ محصول پلن شما ${limits.landingPages} است. برای افزایش، اشتراک را ارتقا دهید.`
+    );
+  }
+}
+
 async function getWorkspaceUsage(workspaceId) {
   const { planId, limits, billingPeriod } = await resolvePlanLimits(workspaceId);
-  const [lots, services, members, posts] = await Promise.all([
+  const [lots, services, members, posts, landings] = await Promise.all([
     countActiveLots(workspaceId),
     countServices(workspaceId),
     countTeamMembers(workspaceId),
     countPostsThisMonth(workspaceId),
+    countLandingPages(workspaceId),
   ]);
   return {
     planId,
@@ -131,6 +158,7 @@ async function getWorkspaceUsage(workspaceId) {
       tradeServices: services,
       teamMembers: members,
       postsThisMonth: posts,
+      landingPages: landings,
     },
   };
 }
@@ -142,8 +170,10 @@ module.exports = {
   assertCanAddMember,
   assertCanCreatePost,
   assertListingLocales,
+  assertCanCreateLandingPage,
   getWorkspaceUsage,
   countActiveLots,
   countServices,
   countTeamMembers,
+  countLandingPages,
 };

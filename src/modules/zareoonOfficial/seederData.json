@@ -5,7 +5,7 @@
     "entityType": "company",
     "profileSlug": "zareoon",
     "headline": "فروشگاه و خدمات تخصصی زارعون",
-    "bio": "زارعون؛ فروش عمده خرما و کود اوره، به‌همراه خدمات بسته‌بندی و آماده‌سازی کالا و گمرک و ترخیص.",
+    "bio": "زارعون؛ فروش عمده خرما و کود اوره، به‌همراه خدمات بسته‌بندی و آماده‌سازی کالا، گمرک و ترخیص، و راهکارهای نرم‌افزاری و تحول دیجیتال تجارت.",
     "displayName": "زارعون",
     "isPublic": true,
     "shopStatus": "ACTIVE",
@@ -23,7 +23,7 @@
     "profileFields": {
       "companyName": "زارعون",
       "mainProducts": "خرما، کود اوره",
-      "certificates": "خدمات اختصاصی بسته‌بندی و آماده‌سازی کالا در زارعون"
+      "certificates": "بسته‌بندی و آماده‌سازی کالا؛ راهکارهای نرم‌افزاری و تحول دیجیتال تجارت"
     }
   },
   "tradeProvider": {
@@ -38,9 +38,9 @@
     "isPublic": true,
     "pageStatus": "ACTIVE",
     "experienceYears": 10,
-    "servicesOffered": "بسته‌بندی و آماده‌سازی کالا برای حمل داخلی و بین‌المللی؛ لیبل و چاپ تجاری؛ پالت‌بندی؛ استانداردسازی بسته‌بندی؛ گمرک و ترخیص کالا؛ کارگزاری گمرکی؛ ثبت سفارش و مجوزهای واردات و صادرات.",
+    "servicesOffered": "بسته‌بندی و آماده‌سازی کالا برای حمل داخلی و بین‌المللی؛ لیبل و چاپ تجاری؛ پالت‌بندی؛ استانداردسازی بسته‌بندی؛ گمرک و ترخیص کالا؛ کارگزاری گمرکی؛ ثبت سفارش و مجوزهای واردات و صادرات؛ نرم‌افزارهای تجارت؛ اتوماسیون فرآیندها؛ تحول دیجیتال کسب‌وکار و تحلیل داده تجاری.",
     "countriesRoutes": "ایران، خاورمیانه، اروپا، آسیا",
-    "notes": "خدمات بسته‌بندی و آماده‌سازی کالا به‌صورت اختصاصی توسط زارعون ارائه می‌شود.",
+    "notes": "زارعون خدمات بسته‌بندی و آماده‌سازی کالا و همچنین راهکارهای نرم‌افزاری و تحول دیجیتال تجارت را ارائه می‌دهد.",
     "selectedServices": [
       {
         "categoryId": "packaging-prep",
@@ -57,6 +57,22 @@
       {
         "categoryId": "packaging-prep",
         "subcategoryId": "packaging-standards"
+      },
+      {
+        "categoryId": "trade-digital",
+        "subcategoryId": "trade-software"
+      },
+      {
+        "categoryId": "trade-digital",
+        "subcategoryId": "process-automation"
+      },
+      {
+        "categoryId": "trade-digital",
+        "subcategoryId": "digital-transformation"
+      },
+      {
+        "categoryId": "trade-digital",
+        "subcategoryId": "trade-data-analytics"
       },
       {
         "categoryId": "customs-clearance",
