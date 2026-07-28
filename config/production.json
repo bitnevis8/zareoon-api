@@ -12,7 +12,9 @@
     "TYPE": "mysql",
     "HOST": "localhost",
     "USER": "zareoonroot",
-    "PASSWORD": "88bY$&^*^&(HBS0lgnk05712cGKB88"
+    "PASSWORD": "88bY$&^*^&(HBS0lgnk05712cGKB88",
+    "FORCE_SYNC": false,
+    "SEED": false
   },
   "MONGODB_URI": "mongodb://pachim:PbYPRucbkgnkc2cGKBe0@127.0.0.1:27017/parandx_news?directConnection=true&serverSelectionTimeoutMS=2000&authSource=admin",
   "EMAIL": {

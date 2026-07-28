@@ -12,7 +12,9 @@
     "TYPE": "mysql",
     "HOST": "localhost",
     "USER": "root",
-    "PASSWORD": ""
+    "PASSWORD": "",
+    "FORCE_SYNC": false,
+    "SEED": false
   },
   "MONGODB_URI": "mongodb://localhost:27017/taganeh",
   "EMAIL": {

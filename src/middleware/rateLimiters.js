@@ -30,8 +30,12 @@ const common = {
   legacyHeaders: false,
   message: RATE_LIMIT_MESSAGE,
   keyGenerator,
-  // keyGenerator سفارشی؛ هشدار پیش‌فرض express-rate-limit را خاموش می‌کنیم
-  validate: { keyGeneratorIpFallback: false },
+  // keyGenerator سفارشی (CF-Connecting-IP) — ولیدیشن IP پیش‌فرض این نسخه را خاموش کن
+  validate: {
+    ip: false,
+    trustProxy: false,
+    xForwardedForHeader: false,
+  },
 };
 
 /** لاگین / احراز — ۵ درخواست در دقیقه */

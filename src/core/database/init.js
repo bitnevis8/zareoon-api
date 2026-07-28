@@ -70,12 +70,16 @@ const initializeDatabase = async (options = { force: false, seed: false, useMong
 
     if (options.force) {
       // غیرفعال کردن موقت Foreign Key Checks
-      await mysqlConnection.query('SET FOREIGN_KEY_CHECKS = 0');
+      console.log("⏳ FORCE_SYNC: dropping & recreating all tables...");
+      await mysqlConnection.query("SET FOREIGN_KEY_CHECKS = 0");
       await mysqlConnection.sync({ force: true });
-      await mysqlConnection.query('SET FOREIGN_KEY_CHECKS = 1');
+      await mysqlConnection.query("SET FOREIGN_KEY_CHECKS = 1");
+      console.log("✅ FORCE_SYNC finished.");
     } else {
-      await mysqlConnection.sync();
-      // ستون‌های جدید احراز هویت (اگر هنوز نیستند)
+      // sequelize.sync() روی دیتابیس بزرگ / با قفل متادیتا اغلب گیر می‌کند.
+      // وقتی FORCE_SYNC=false فقط ALTER سبک + ایندکس؛ ساخت جدول جدید با FORCE_SYNC=true یک‌بار.
+      console.log("ℹ️ FORCE_SYNC=false — از sequelize.sync رد شد (جلوگیری از هنگ).");
+      console.log("⏳ Checking optional ALTER/INDEX statements...");
       const alters = [
         "ALTER TABLE users ADD COLUMN must_change_password TINYINT(1) NOT NULL DEFAULT 0",
         "ALTER TABLE users ADD COLUMN sms_daily_count INT NOT NULL DEFAULT 0",
@@ -135,6 +139,7 @@ const initializeDatabase = async (options = { force: false, seed: false, useMong
           }
         }
       }
+      console.log("✅ Optional ALTER/INDEX pass finished.");
 
       try {
         const { ensureSystemTemplates } = require("../../modules/productLanding/controller");
@@ -145,8 +150,10 @@ const initializeDatabase = async (options = { force: false, seed: false, useMong
     }
 
     try {
+      console.log("⏳ Ensuring performance indexes...");
       const { ensurePerformanceIndexes } = require("./mysql/ensurePerformanceIndexes");
       await ensurePerformanceIndexes(mysqlConnection);
+      console.log("✅ Performance indexes OK.");
     } catch (e) {
       console.warn("⚠️ Performance indexes skipped:", e.message);
     }
@@ -161,8 +168,11 @@ const initializeDatabase = async (options = { force: false, seed: false, useMong
     console.log(`✅ MySQL Database ${options.force ? "recreated" : "synchronized"} successfully.`);
 
     if (options.seed) {
+      console.log("⏳ SEED=true — سیدر کامل ممکن است چند دقیقه طول بکشد (محصولات / HS / …)");
       await seedMySQLDatabase();
       console.log("✅ MySQL Database seeded successfully.");
+    } else {
+      console.log("ℹ️ SEED=false — سیدر کامل اجرا نشد.");
     }
 
     // اتصال و راه‌اندازی MongoDB

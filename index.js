@@ -73,25 +73,55 @@ function isDevLocalOrigin(origin) {
   try {
     const u = new URL(origin);
     const host = u.hostname;
-    return host === "localhost" || host === "127.0.0.1" || /^192\.168\./.test(host);
+    if (host === "localhost" || host === "127.0.0.1" || host === "10.0.2.2") return true;
+    // LAN رایج: 192.168.* / 10.* / 172.16–31.*
+    if (/^192\.168\.\d{1,3}\.\d{1,3}$/.test(host)) return true;
+    if (/^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(host)) return true;
+    if (/^172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3}$/.test(host)) return true;
+    return false;
   } catch {
     return false;
   }
 }
 
+function isTruthyEnv(value) {
+  const v = String(value).trim().toLowerCase();
+  return v === "1" || v === "true" || v === "yes" || v === "on";
+}
+
+function isFalsyEnv(value) {
+  const v = String(value).trim().toLowerCase();
+  return v === "0" || v === "false" || v === "no" || v === "off";
+}
+
+/**
+ * خواندن بولین از env (اولویت) یا config فایل محیط (development/production).
+ * Env اگر ست شده باشد همیشه بر config غلبه می‌کند.
+ */
+function readDbBootstrapFlag(configKey, envKey, defaultValue) {
+  if (process.env[envKey] !== undefined && String(process.env[envKey]).trim() !== "") {
+    if (isTruthyEnv(process.env[envKey])) return true;
+    if (isFalsyEnv(process.env[envKey])) return false;
+  }
+  if (config.has(configKey)) {
+    return Boolean(config.get(configKey));
+  }
+  return defaultValue;
+}
+
 //------------------------------------------------------------------------------------startServer
 const startServer = async () => {
   try {
-    // پیش‌فرض: force + seed فعال (مثل قبل). برای غیرفعال‌کردن دائمی داده:
-    //   DB_FORCE_SYNC=false
-    //   DB_SEED=false
-    const forceDb = process.env.DB_FORCE_SYNC !== "false";
-    const seedDb = process.env.DB_SEED !== "false";
-    if (forceDb || seedDb) {
-      console.warn(
-        `⚠️ DB sync: force=${forceDb}, seed=${seedDb} — برای حفظ داده روی استارت بعدی: DB_FORCE_SYNC=false DB_SEED=false`
-      );
-    }
+    // DB.FORCE_SYNC / DB.SEED در api/config/{development|production}.json
+    // override موقت: DB_FORCE_SYNC=true|false  و  DB_SEED=true|false
+    const forceDb = readDbBootstrapFlag("DB.FORCE_SYNC", "DB_FORCE_SYNC", false);
+    const seedDb = readDbBootstrapFlag("DB.SEED", "DB_SEED", SERVER_CONFIG.NODE_ENV !== "production");
+
+    console.log(
+      `DB bootstrap [${SERVER_CONFIG.NODE_ENV}]: FORCE_SYNC=${forceDb} SEED=${seedDb}` +
+        (forceDb ? " ⚠️ جداول drop و recreate می‌شوند" : "")
+    );
+
     await initializeDatabase({
       force: forceDb,
       seed: seedDb,
@@ -183,9 +213,9 @@ const startServer = async () => {
     app.use("/", baseRouter);
 
     // راه‌اندازی سرور
-    app.listen(SERVER_CONFIG.PORT, () => {
+    app.listen(SERVER_CONFIG.PORT, "0.0.0.0", () => {
       console.log(
-        `🚀 Zareoon API SERVER listening on: ${SERVER_CONFIG.IP}:${SERVER_CONFIG.PORT} in ${SERVER_CONFIG.NODE_ENV} mode`
+        `🚀 Zareoon API SERVER listening on: 0.0.0.0:${SERVER_CONFIG.PORT} (${SERVER_CONFIG.IP}) in ${SERVER_CONFIG.NODE_ENV} mode`
       );
     });
 
