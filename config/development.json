@@ -13,8 +13,8 @@
     "HOST": "localhost",
     "USER": "root",
     "PASSWORD": "",
-    "FORCE_SYNC": true,
-    "SEED": true
+    "FORCE_SYNC": false,
+    "SEED": false
   },
   "MONGODB_URI": "mongodb://localhost:27017/taganeh",
   "EMAIL": {
