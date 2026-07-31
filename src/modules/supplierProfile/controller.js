@@ -171,15 +171,22 @@ async function attachLotCoverImages(lots) {
     order: [["createdAt", "DESC"]],
   });
 
-  const coverMap = {};
+  const previewMap = {};
   for (const f of files) {
-    if (!coverMap[f.entityId]) coverMap[f.entityId] = f.downloadUrl;
+    const id = f.entityId;
+    if (!previewMap[id]) previewMap[id] = [];
+    if (previewMap[id].length >= 3) continue;
+    if (f.downloadUrl) previewMap[id].push(f.downloadUrl);
   }
 
-  return plain.map((l) => ({
-    ...l,
-    coverImageUrl: coverMap[l.id] || null,
-  }));
+  return plain.map((l) => {
+    const urls = previewMap[l.id] || [];
+    return {
+      ...l,
+      coverImageUrl: urls[0] || null,
+      previewImageUrls: urls,
+    };
+  });
 }
 
 function resolveLotPublicTitle(lot) {

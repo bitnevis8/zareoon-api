@@ -21,6 +21,7 @@ require("../../modules/hsCode/model");
 require("../../modules/farmer/product/model");
 require("../../modules/farmer/customAttributeDefinition/model");
 require("../../modules/farmer/inventoryLot/model");
+require("../../modules/farmer/inventoryLot/dailyPriceModel");
 require("../../modules/farmer/customAttributeValue/model");
 require("../../modules/farmer/order/model");
 require("../../modules/farmer/orderItem/model");
@@ -129,12 +130,25 @@ const initializeDatabase = async (options = { force: false, seed: false, useMong
         "CREATE INDEX idx_lots_barter_category ON inventory_lots (barter_desired_category_id)",
         "CREATE INDEX idx_lots_barter_kind ON inventory_lots (barter_desired_kind, accept_barter)",
         "CREATE INDEX idx_lots_barter_service_cat ON inventory_lots (barter_desired_service_category_id)",
+        `CREATE TABLE IF NOT EXISTS inventory_lot_daily_prices (
+          id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          inventory_lot_id INT NOT NULL,
+          price_date DATE NOT NULL,
+          price DECIMAL(18,2) NOT NULL,
+          created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          UNIQUE KEY uq_lot_daily_price_date (inventory_lot_id, price_date),
+          KEY idx_lot_daily_price_date (price_date),
+          CONSTRAINT fk_lot_daily_prices_lot FOREIGN KEY (inventory_lot_id) REFERENCES inventory_lots(id) ON DELETE CASCADE ON UPDATE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+        "ALTER TABLE inventory_lots ADD COLUMN fx_rate_source VARCHAR(16) NULL",
+        "ALTER TABLE inventory_lots ADD COLUMN fx_rate_manual DECIMAL(18,2) NULL",
       ];
       for (const sql of alters) {
         try {
           await mysqlConnection.query(sql);
         } catch (e) {
-          if (!/Duplicate column|ER_DUP_FIELDNAME|Duplicate key name|ER_DUP_KEYNAME/i.test(e.message || "")) {
+          if (!/Duplicate column|ER_DUP_FIELDNAME|Duplicate key name|ER_DUP_KEYNAME|already exists|ER_TABLE_EXISTS_ERROR/i.test(e.message || "")) {
             console.warn("⚠️ Auth column alter skipped:", e.message);
           }
         }

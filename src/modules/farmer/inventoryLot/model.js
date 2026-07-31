@@ -25,6 +25,17 @@ InventoryLot.init(
     reservedQuantity: { type: DataTypes.DECIMAL(18, 3), allowNull: false, defaultValue: 0 },
     price: { type: DataTypes.DECIMAL(18, 2), allowNull: true },
     priceCurrency: { type: DataTypes.STRING(10), allowNull: false, defaultValue: "TOMAN" },
+    /**
+     * منبع نرخ تبدیل به تومان برای ارزهای غیرریالی:
+     * manual = نرخ دستی فروشنده | zareoon = نرخ اعلامی سامانه
+     */
+    fxRateSource: {
+      type: DataTypes.STRING(16),
+      allowNull: true,
+      defaultValue: null,
+    },
+    /** نرخ دستی: تومان به ازای هر ۱ واحد ارز قیمت (مثلاً هر ۱ دلار = چند تومان) */
+    fxRateManual: { type: DataTypes.DECIMAL(18, 2), allowNull: true },
     // Tiered pricing for different order quantities
     tieredPricing: { type: DataTypes.JSON, allowNull: true },
     // Minimum order quantity for this lot

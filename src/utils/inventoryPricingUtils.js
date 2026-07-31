@@ -64,11 +64,12 @@ const validateInventoryMinimumOrder = (minimumOrderQuantity, requestedQuantity) 
 
 /**
  * Get pricing information for an inventory lot
- * @param {Object} inventoryLot - Inventory lot object with tieredPricing
+ * @param {Object} inventoryLot - Inventory lot object with tieredPricing / dailyPrices
  * @param {number} quantity - Requested quantity
+ * @param {{ date?: string }} [options]
  * @returns {Object} - Complete pricing information
  */
-const getInventoryPricing = (inventoryLot, quantity) => {
+const getInventoryPricing = (inventoryLot, quantity, options = {}) => {
   const minimumOrderValidation = validateInventoryMinimumOrder(
     inventoryLot.minimumOrderQuantity,
     quantity
@@ -80,6 +81,37 @@ const getInventoryPricing = (inventoryLot, quantity) => {
       error: minimumOrderValidation.message,
       minimumOrderQuantity: inventoryLot.minimumOrderQuantity,
       requestedQuantity: quantity
+    };
+  }
+
+  let dayPrice = null;
+  if (Array.isArray(inventoryLot.dailyPrices) && inventoryLot.dailyPrices.length) {
+    const target =
+      options.date ||
+      inventoryLot.priceForDate ||
+      new Date().toISOString().slice(0, 10);
+    const hit = inventoryLot.dailyPrices.find((r) => String(r.priceDate || "").slice(0, 10) === String(target).slice(0, 10));
+    if (hit && hit.price != null && hit.price !== "") {
+      const n = parseFloat(hit.price);
+      if (Number.isFinite(n)) dayPrice = n;
+    }
+  } else if (inventoryLot.priceFromSchedule && inventoryLot.effectivePrice != null) {
+    const n = parseFloat(inventoryLot.effectivePrice);
+    if (Number.isFinite(n)) dayPrice = n;
+  }
+
+  // قیمت روز مشخص‌شده → ساده (اولویت بر پلکانی)
+  if (dayPrice != null) {
+    return {
+      isValid: true,
+      quantity,
+      minimumOrderQuantity: inventoryLot.minimumOrderQuantity,
+      tieredPricing: null,
+      calculatedPrice: null,
+      pricePerUnit: dayPrice,
+      totalPrice: dayPrice * quantity,
+      pricingType: "daily",
+      priceDate: options.date || inventoryLot.priceForDate || null,
     };
   }
 

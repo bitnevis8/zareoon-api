@@ -18,6 +18,12 @@ const {
   stableQueryKey,
   invalidateInventoryCache,
 } = require("../../../utils/cacheInvalidate");
+const {
+  syncLotDailyPrices,
+  attachDailyPricingToLots,
+  todayDateOnly,
+} = require("./dailyPriceService");
+const InventoryLotDailyPrice = require("./dailyPriceModel");
 
 const BLOCKED_LISTING = new Set(["category-navigation-only"]);
 const RESTRICTED_LISTING = new Set(["pre-approval-required", "manual-review-only"]);
@@ -127,15 +133,26 @@ async function attachLotCoverImages(lots) {
     order: [["createdAt", "DESC"]],
   });
 
-  const coverMap = {};
+  /** تا ۳ تصویر برای Hover Gallery در کارت‌ها */
+  const previewMap = {};
   for (const f of files) {
-    if (!coverMap[f.entityId]) coverMap[f.entityId] = f.downloadUrl;
+    const id = f.entityId;
+    if (!previewMap[id]) previewMap[id] = [];
+    if (previewMap[id].length >= 3) continue;
+    if (f.downloadUrl) previewMap[id].push(f.downloadUrl);
   }
 
-  return plain.map((l) => ({
-    ...attachDisplayContentToLot(l),
-    coverImageUrl: coverMap[l.id] || null,
-  }));
+  return attachDailyPricingToLots(
+    plain.map((l) => {
+      const urls = previewMap[l.id] || [];
+      return {
+        ...attachDisplayContentToLot(l),
+        coverImageUrl: urls[0] || null,
+        previewImageUrls: urls,
+      };
+    }),
+    { forDate: todayDateOnly(), includePast: false }
+  );
 }
 
 const list = async (req, res) => {
@@ -454,6 +471,28 @@ function formatLotRecord(lot) {
 function prepareLotPayload(body) {
   const { normalizeBarterFields } = require("../barter/service");
   const payload = { ...body };
+  // فیلدهای غیرمدل — جدا ذخیره می‌شوند
+  delete payload.dailyPrices;
+  delete payload.effectivePrice;
+  delete payload.priceFromSchedule;
+  delete payload.priceForDate;
+
+  const currency = String(payload.priceCurrency || body.priceCurrency || "TOMAN").toUpperCase();
+  payload.priceCurrency = currency;
+  const domestic = currency === "TOMAN" || currency === "IRT" || currency === "IRR";
+  if (domestic) {
+    payload.fxRateSource = null;
+    payload.fxRateManual = null;
+  } else if (body.fxRateSource !== undefined || body.fxRateManual !== undefined) {
+    const source = body.fxRateSource === "manual" ? "manual" : "zareoon";
+    payload.fxRateSource = source;
+    if (source === "manual" && body.fxRateManual != null && body.fxRateManual !== "") {
+      payload.fxRateManual = Number(body.fxRateManual);
+    } else {
+      payload.fxRateManual = null;
+    }
+  }
+
   if (body.filterValues !== undefined) {
     payload.filterValues = normalizeFilterValues(body.filterValues);
   }
@@ -532,6 +571,9 @@ const create = async (req, res) => {
     }
 
     const created = await InventoryLot.create(payload);
+    if (req.body.dailyPrices !== undefined) {
+      await syncLotDailyPrices(created.id, req.body.dailyPrices);
+    }
     let notifiedCount = 0;
     try {
       const { notifyBarterRecipients } = require("../barter/service");
@@ -540,9 +582,10 @@ const create = async (req, res) => {
       console.warn("Barter announce skipped:", e.message);
     }
     await invalidateInventoryCache();
+    const [data] = await attachLotCoverImages([created]);
     res.status(201).json({
       success: true,
-      data: formatLotRecord(created),
+      data,
       barterNotifiedCount: notifiedCount,
     });
   } catch (error) {
@@ -577,6 +620,9 @@ const update = async (req, res) => {
     validateUnitAndPackaging(unitCheck, { allowedUnits, allowedPackaging });
     const [count] = await InventoryLot.update(payload, { where: { id } });
     if (!count) return res.status(404).json({ success: false, message: "Not found" });
+    if (req.body.dailyPrices !== undefined) {
+      await syncLotDailyPrices(id, req.body.dailyPrices);
+    }
     const updated = await InventoryLot.findByPk(id, {
       include: [
         {
@@ -707,7 +753,12 @@ const calculatePrice = async (req, res) => {
 
     const inventoryLot = await InventoryLot.findByPk(inventoryLotId, {
       include: [
-        supplierInclude
+        supplierInclude,
+        {
+          model: InventoryLotDailyPrice,
+          as: "dailyPrices",
+          required: false,
+        },
       ]
     });
 
@@ -727,7 +778,8 @@ const calculatePrice = async (req, res) => {
       });
     }
 
-    const pricing = getInventoryPricing(inventoryLot, quantity);
+    const forDate = req.query.date ? String(req.query.date).slice(0, 10) : todayDateOnly();
+    const pricing = getInventoryPricing(inventoryLot, quantity, { date: forDate });
     
     res.json({ 
       success: true, 

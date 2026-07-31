@@ -17,6 +17,7 @@ const Location = require('./location/model');
 const Product = require('./farmer/product/model');
 const CustomAttributeDefinition = require('./farmer/customAttributeDefinition/model');
 const InventoryLot = require('./farmer/inventoryLot/model');
+const InventoryLotDailyPrice = require('./farmer/inventoryLot/dailyPriceModel');
 const CustomAttributeValue = require('./farmer/customAttributeValue/model');
 const Order = require('./farmer/order/model');
 const OrderItem = require('./farmer/orderItem/model');
@@ -216,6 +217,19 @@ const defineAssociations = () => {
     InventoryLot.belongsTo(User, { foreignKey: 'farmerId', as: 'supplier', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
     Product.hasMany(InventoryLot, { foreignKey: 'productId', as: 'inventoryLots', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
     InventoryLot.belongsTo(Product, { foreignKey: 'productId', as: 'product', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
+
+    InventoryLot.hasMany(InventoryLotDailyPrice, {
+      foreignKey: 'inventoryLotId',
+      as: 'dailyPrices',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    });
+    InventoryLotDailyPrice.belongsTo(InventoryLot, {
+      foreignKey: 'inventoryLotId',
+      as: 'inventoryLot',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    });
 
     // CustomAttributeValue -> InventoryLot & Definition
     InventoryLot.hasMany(CustomAttributeValue, { foreignKey: 'inventoryLotId', as: 'attributes', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
