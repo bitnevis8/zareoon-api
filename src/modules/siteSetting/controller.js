@@ -17,6 +17,9 @@ const {
   getAuthSignupConfig,
   updateAuthSignupConfig,
   getAuthSignupPublic,
+  getUploadConfig,
+  updateUploadConfig,
+  getUploadConfigPublic,
 } = require("./service");
 const cacheService = require("../../core/cache/cacheService");
 const { listReservedSlugs } = require("../../utils/publicPageSlug");
@@ -368,6 +371,36 @@ const getAuthSignupPublicHandler = async (_req, res) => {
   }
 };
 
+const getUpload = async (_req, res) => {
+  try {
+    const data = await getUploadConfig();
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error("Site settings getUpload error:", error);
+    res.status(500).json({ success: false, message: "خطا در دریافت تنظیمات آپلود" });
+  }
+};
+
+const patchUpload = async (req, res) => {
+  try {
+    const data = await updateUploadConfig(req.body || {});
+    res.json({ success: true, data, message: "تنظیمات آپلود ذخیره شد" });
+  } catch (error) {
+    console.error("Site settings patchUpload error:", error);
+    res.status(500).json({ success: false, message: "خطا در ذخیره تنظیمات آپلود" });
+  }
+};
+
+const getUploadPublicHandler = async (_req, res) => {
+  try {
+    const data = await getUploadConfigPublic();
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error("Site settings getUploadPublic error:", error);
+    res.status(500).json({ success: false, message: "خطا در دریافت تنظیمات" });
+  }
+};
+
 module.exports = {
   getTrade,
   patchTrade,
@@ -389,4 +422,7 @@ module.exports = {
   getAuthSignup,
   patchAuthSignup,
   getAuthSignupPublic: getAuthSignupPublicHandler,
+  getUpload,
+  patchUpload,
+  getUploadPublic: getUploadPublicHandler,
 };

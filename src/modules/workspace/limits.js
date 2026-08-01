@@ -4,6 +4,24 @@ const TradeServiceProvider = require("../tradeServiceProvider/model");
 const SupplierPost = require("../supplierProfile/post/model");
 const { WorkspaceMember, WorkspaceSubscription } = require("./model");
 const { getPlanById, PLAN_IDS } = require("./plans");
+const { isAdmin } = require("../../utils/roles");
+
+/** سقف‌های نامحدود برای مدیرکل / مدیر سامانه */
+const ADMIN_UNLIMITED_LIMITS = {
+  activeLots: null,
+  tradeServices: null,
+  teamMembers: null,
+  listingLocales: null,
+  analyticsDays: 365,
+  featuredCredits: null,
+  imagesPerLot: null,
+  activeVideos: null,
+  postsPerMonth: null,
+  searchBoost: 3,
+  featuredBadge: true,
+  support: "dedicated",
+  landingPages: null,
+};
 
 async function getActiveWorkspaceSubscription(workspaceId) {
   const now = new Date();
@@ -13,15 +31,26 @@ async function getActiveWorkspaceSubscription(workspaceId) {
       status: "active",
       [Op.or]: [{ endsAt: null }, { endsAt: { [Op.gt]: now } }],
     },
-    order: [["endsAt", "DESC"], ["id", "DESC"]],
+    order: [
+      ["endsAt", "DESC"],
+      ["id", "DESC"],
+    ],
   });
 }
 
-async function resolvePlanLimits(workspaceId) {
+async function resolvePlanLimits(workspaceId, actor = null) {
+  if (actor && isAdmin(actor)) {
+    return {
+      planId: "admin_unlimited",
+      limits: { ...ADMIN_UNLIMITED_LIMITS },
+      billingPeriod: "none",
+      adminBypass: true,
+    };
+  }
   const sub = await getActiveWorkspaceSubscription(workspaceId);
   const planId = sub?.planId || PLAN_IDS.FREE;
   const plan = getPlanById(planId) || getPlanById(PLAN_IDS.FREE);
-  return { planId, limits: plan.limits || {}, billingPeriod: sub?.billingPeriod || "none" };
+  return { planId, limits: plan.limits || {}, billingPeriod: sub?.billingPeriod || "none", adminBypass: false };
 }
 
 function limitExceededError(message) {
@@ -69,8 +98,10 @@ async function countPostsThisMonth(workspaceId) {
 
 /**
  * قبل از ایجاد موجودی / خدمت / عضو / پست بررسی سقف پلن
+ * مدیرکل و مدیر سامانه بدون نیاز به پلن — نامحدود
  */
-async function assertCanCreateLot(workspaceId) {
+async function assertCanCreateLot(workspaceId, actor = null) {
+  if (actor && isAdmin(actor)) return;
   const { limits } = await resolvePlanLimits(workspaceId);
   if (limits.activeLots == null) return;
   const n = await countActiveLots(workspaceId);
@@ -79,7 +110,8 @@ async function assertCanCreateLot(workspaceId) {
   }
 }
 
-async function assertCanCreateService(workspaceId) {
+async function assertCanCreateService(workspaceId, actor = null) {
+  if (actor && isAdmin(actor)) return;
   const { limits } = await resolvePlanLimits(workspaceId);
   if (limits.tradeServices == null) return;
   const n = await countServices(workspaceId);
@@ -88,7 +120,8 @@ async function assertCanCreateService(workspaceId) {
   }
 }
 
-async function assertCanAddMember(workspaceId) {
+async function assertCanAddMember(workspaceId, actor = null) {
+  if (actor && isAdmin(actor)) return;
   const { limits } = await resolvePlanLimits(workspaceId);
   if (limits.teamMembers == null) return;
   const n = await countTeamMembers(workspaceId);
@@ -97,7 +130,8 @@ async function assertCanAddMember(workspaceId) {
   }
 }
 
-async function assertCanCreatePost(workspaceId) {
+async function assertCanCreatePost(workspaceId, actor = null) {
+  if (actor && isAdmin(actor)) return;
   const { limits } = await resolvePlanLimits(workspaceId);
   if (limits.postsPerMonth == null) return;
   const n = await countPostsThisMonth(workspaceId);
@@ -106,7 +140,8 @@ async function assertCanCreatePost(workspaceId) {
   }
 }
 
-async function assertListingLocales(workspaceId, localeCount) {
+async function assertListingLocales(workspaceId, localeCount, actor = null) {
+  if (actor && isAdmin(actor)) return;
   const { limits } = await resolvePlanLimits(workspaceId);
   if (limits.listingLocales == null) return;
   if (Number(localeCount) > limits.listingLocales) {
@@ -124,7 +159,8 @@ async function countLandingPages(workspaceId) {
   });
 }
 
-async function assertCanCreateLandingPage(workspaceId) {
+async function assertCanCreateLandingPage(workspaceId, actor = null) {
+  if (actor && isAdmin(actor)) return;
   const { limits } = await resolvePlanLimits(workspaceId);
   if (limits.landingPages == null) return;
   if (Number(limits.landingPages) <= 0) {
@@ -140,8 +176,8 @@ async function assertCanCreateLandingPage(workspaceId) {
   }
 }
 
-async function getWorkspaceUsage(workspaceId) {
-  const { planId, limits, billingPeriod } = await resolvePlanLimits(workspaceId);
+async function getWorkspaceUsage(workspaceId, actor = null) {
+  const { planId, limits, billingPeriod, adminBypass } = await resolvePlanLimits(workspaceId, actor);
   const [lots, services, members, posts, landings] = await Promise.all([
     countActiveLots(workspaceId),
     countServices(workspaceId),
@@ -153,6 +189,7 @@ async function getWorkspaceUsage(workspaceId) {
     planId,
     billingPeriod,
     limits,
+    adminBypass: !!adminBypass,
     usage: {
       activeLots: lots,
       tradeServices: services,
@@ -165,6 +202,7 @@ async function getWorkspaceUsage(workspaceId) {
 
 module.exports = {
   resolvePlanLimits,
+  getActiveWorkspaceSubscription,
   assertCanCreateLot,
   assertCanCreateService,
   assertCanAddMember,
@@ -176,4 +214,5 @@ module.exports = {
   countServices,
   countTeamMembers,
   countLandingPages,
+  ADMIN_UNLIMITED_LIMITS,
 };

@@ -10,6 +10,7 @@ const BLOCKED_PAGE_SLUGS = "blockedPageSlugs";
 const PUBLIC_PAGE_SLUG_RULES = "publicPageSlugRules";
 const CACHE_CONFIG = "cacheConfig";
 const AUTH_SIGNUP_CONFIG = "authSignupConfig";
+const UPLOAD_CONFIG = "uploadConfig";
 
 const ALL_LANGUAGE_CODES = ["fa", "ar", "en", "ru", "tr", "es", "nl", "ur", "fi"];
 const DEFAULT_ENABLED_LANGUAGE_CODES = ["fa", "ar", "en", "ru", "tr"];
@@ -36,6 +37,114 @@ const DEFAULT_CACHE_CONFIG = {
   ttlSearch: 30,
   ttlSettings: 300,
 };
+
+/** تنظیمات پردازش تصویر هنگام آپلود (WebP، واترمارک، کراپ سمت کلاینت) */
+const DEFAULT_UPLOAD_CONFIG = {
+  processImages: true,
+  maxEdge: 1600,
+  webpQuality: 78,
+  webpEffort: 6,
+  watermarkEnabled: true,
+  watermarkLogoEnabled: true,
+  watermarkTextEnabled: true,
+  watermarkText: "زارعون",
+  watermarkOpacity: 0.62,
+  watermarkPosition: "bottom-right",
+  cropBeforeUpload: true,
+  cropOutputSize: 1200,
+  showUserGuide: true,
+};
+
+function clampInt(n, min, max, fallback) {
+  const v = Number(n);
+  if (!Number.isFinite(v)) return fallback;
+  return Math.min(Math.max(Math.floor(v), min), max);
+}
+
+function clampFloat(n, min, max, fallback) {
+  const v = Number(n);
+  if (!Number.isFinite(v)) return fallback;
+  return Math.min(Math.max(v, min), max);
+}
+
+async function getUploadConfig() {
+  const raw = await getJsonSetting(UPLOAD_CONFIG, {});
+  const pos = String(raw.watermarkPosition || DEFAULT_UPLOAD_CONFIG.watermarkPosition).toLowerCase();
+  return {
+    processImages: raw.processImages !== false,
+    maxEdge: clampInt(raw.maxEdge, 400, 4096, DEFAULT_UPLOAD_CONFIG.maxEdge),
+    webpQuality: clampInt(raw.webpQuality, 40, 95, DEFAULT_UPLOAD_CONFIG.webpQuality),
+    webpEffort: clampInt(raw.webpEffort, 0, 6, DEFAULT_UPLOAD_CONFIG.webpEffort),
+    watermarkEnabled: raw.watermarkEnabled !== false,
+    watermarkLogoEnabled: raw.watermarkLogoEnabled !== false,
+    watermarkTextEnabled: raw.watermarkTextEnabled !== false,
+    watermarkText: String(raw.watermarkText || DEFAULT_UPLOAD_CONFIG.watermarkText).slice(0, 40),
+    watermarkOpacity: clampFloat(raw.watermarkOpacity, 0.15, 1, DEFAULT_UPLOAD_CONFIG.watermarkOpacity),
+    watermarkPosition: pos === "bottom-left" ? "bottom-left" : "bottom-right",
+    cropBeforeUpload: raw.cropBeforeUpload !== false,
+    cropOutputSize: clampInt(raw.cropOutputSize, 400, 2400, DEFAULT_UPLOAD_CONFIG.cropOutputSize),
+    showUserGuide: raw.showUserGuide !== false,
+  };
+}
+
+async function updateUploadConfig(patch = {}) {
+  const current = await getUploadConfig();
+  const next = {
+    processImages: patch.processImages !== undefined ? !!patch.processImages : current.processImages,
+    maxEdge: patch.maxEdge !== undefined ? clampInt(patch.maxEdge, 400, 4096, current.maxEdge) : current.maxEdge,
+    webpQuality:
+      patch.webpQuality !== undefined
+        ? clampInt(patch.webpQuality, 40, 95, current.webpQuality)
+        : current.webpQuality,
+    webpEffort:
+      patch.webpEffort !== undefined ? clampInt(patch.webpEffort, 0, 6, current.webpEffort) : current.webpEffort,
+    watermarkEnabled: patch.watermarkEnabled !== undefined ? !!patch.watermarkEnabled : current.watermarkEnabled,
+    watermarkLogoEnabled:
+      patch.watermarkLogoEnabled !== undefined ? !!patch.watermarkLogoEnabled : current.watermarkLogoEnabled,
+    watermarkTextEnabled:
+      patch.watermarkTextEnabled !== undefined ? !!patch.watermarkTextEnabled : current.watermarkTextEnabled,
+    watermarkText:
+      patch.watermarkText !== undefined
+        ? String(patch.watermarkText || DEFAULT_UPLOAD_CONFIG.watermarkText).slice(0, 40)
+        : current.watermarkText,
+    watermarkOpacity:
+      patch.watermarkOpacity !== undefined
+        ? clampFloat(patch.watermarkOpacity, 0.15, 1, current.watermarkOpacity)
+        : current.watermarkOpacity,
+    watermarkPosition:
+      patch.watermarkPosition !== undefined
+        ? String(patch.watermarkPosition).toLowerCase() === "bottom-left"
+          ? "bottom-left"
+          : "bottom-right"
+        : current.watermarkPosition,
+    cropBeforeUpload: patch.cropBeforeUpload !== undefined ? !!patch.cropBeforeUpload : current.cropBeforeUpload,
+    cropOutputSize:
+      patch.cropOutputSize !== undefined
+        ? clampInt(patch.cropOutputSize, 400, 2400, current.cropOutputSize)
+        : current.cropOutputSize,
+    showUserGuide: patch.showUserGuide !== undefined ? !!patch.showUserGuide : current.showUserGuide,
+  };
+  await setJsonSetting(UPLOAD_CONFIG, next);
+  try {
+    const cache = require("../../core/cache/cacheService");
+    cache.invalidateAdminConfigCache();
+  } catch {
+    /* ignore */
+  }
+  return next;
+}
+
+/** تنظیمات عمومی برای کلاینت (کراپ / راهنما) — بدون جزئیات فشرده‌سازی حساس نیست ولی همه را می‌دهیم */
+async function getUploadConfigPublic() {
+  const cfg = await getUploadConfig();
+  return {
+    cropBeforeUpload: cfg.cropBeforeUpload,
+    cropOutputSize: cfg.cropOutputSize,
+    showUserGuide: cfg.showUserGuide,
+    processImages: cfg.processImages,
+    watermarkEnabled: cfg.watermarkEnabled,
+  };
+}
 
 function clampTtl(n, fallback) {
   const v = Number(n);
@@ -537,4 +646,9 @@ module.exports = {
   updateAuthSignupConfig,
   getAuthSignupPublic,
   normalizeAuthSignupConfig,
+  UPLOAD_CONFIG,
+  DEFAULT_UPLOAD_CONFIG,
+  getUploadConfig,
+  updateUploadConfig,
+  getUploadConfigPublic,
 };

@@ -8,6 +8,7 @@ router.get("/ui/public", controller.getUiPublic);
 router.get("/languages/public", controller.getLanguagesPublic);
 router.get("/public-page-slug-rules/public", controller.getSlugRulesPublic);
 router.get("/auth-signup/public", controller.getAuthSignupPublic);
+router.get("/upload/public", controller.getUploadPublic);
 
 router.use(authenticateUser);
 router.get("/trade", authorizeRole("Administrator"), controller.getTrade);
@@ -25,5 +26,7 @@ router.get("/cache", authorizeRole("Administrator"), controller.getCache);
 router.patch("/cache", authorizeRole("Administrator"), controller.patchCache);
 router.post("/cache/flush", authorizeRole("Administrator"), controller.flushCache);
 router.post("/cache/ping", authorizeRole("Administrator"), controller.pingCacheRedis);
+router.get("/upload", authorizeRole("Administrator"), controller.getUpload);
+router.patch("/upload", authorizeRole("Administrator"), controller.patchUpload);
 
 module.exports = router;

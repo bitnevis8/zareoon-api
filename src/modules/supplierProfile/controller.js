@@ -683,7 +683,7 @@ const createPost = async (req, res) => {
       const ensured = await ensurePersonalWorkspaceFromReq(req);
       if (ensured?.workspace?.id) {
         workspaceId = ensured.workspace.id;
-        await assertCanCreatePost(workspaceId);
+        await assertCanCreatePost(workspaceId, req.user);
       }
     } catch (limitErr) {
       const status = limitErr.status || 500;

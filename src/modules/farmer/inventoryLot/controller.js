@@ -145,10 +145,14 @@ async function attachLotCoverImages(lots) {
   return attachDailyPricingToLots(
     plain.map((l) => {
       const urls = previewMap[l.id] || [];
+      const productImg =
+        l.product?.imageUrl || l.Product?.imageUrl || l.imageUrl || null;
+      const cover = urls[0] || productImg || null;
+      const preview = urls.length ? urls : cover ? [cover] : [];
       return {
         ...attachDisplayContentToLot(l),
-        coverImageUrl: urls[0] || null,
-        previewImageUrls: urls,
+        coverImageUrl: cover,
+        previewImageUrls: preview,
       };
     }),
     { forDate: todayDateOnly(), includePast: false }
@@ -469,7 +473,7 @@ function formatLotRecord(lot) {
 }
 
 function prepareLotPayload(body) {
-  const { normalizeBarterFields } = require("../barter/service");
+  const { normalizeBarterFields } = require("../../barter/service");
   const payload = { ...body };
   // فیلدهای غیرمدل — جدا ذخیره می‌شوند
   delete payload.dailyPrices;
@@ -550,8 +554,11 @@ function applyHashtagsToPayload(payload, body) {
 const create = async (req, res) => {
   try {
     const payload = prepareLotPayload(req.body);
-    const isAdmin = Boolean(req.user?.roles?.includes?.("Administrator") || req.user?.isAdmin);
-    const { allowedUnits, allowedPackaging } = await assertProductListable(payload.productId, { isAdmin });
+    const { isAdmin: userIsAdmin } = require("../../../utils/roles");
+    const adminActor = userIsAdmin(req.user);
+    const { allowedUnits, allowedPackaging } = await assertProductListable(payload.productId, {
+      isAdmin: adminActor,
+    });
     validateUnitAndPackaging(payload, { allowedUnits, allowedPackaging });
 
     if (req.user?.id) {
@@ -561,7 +568,7 @@ const create = async (req, res) => {
       if (ensured?.workspace?.id) {
         payload.workspaceId = ensured.workspace.id;
         if (!payload.farmerId) payload.farmerId = req.user.id;
-        await assertCanCreateLot(ensured.workspace.id);
+        await assertCanCreateLot(ensured.workspace.id, req.user);
         if (!ensured.workspace.activitySeller) {
           await ensured.workspace.update({ activitySeller: true });
         }
@@ -576,7 +583,7 @@ const create = async (req, res) => {
     }
     let notifiedCount = 0;
     try {
-      const { notifyBarterRecipients } = require("../barter/service");
+      const { notifyBarterRecipients } = require("../../barter/service");
       notifiedCount = await notifyBarterRecipients(created, payload.farmerId || req.user?.id);
     } catch (e) {
       console.warn("Barter announce skipped:", e.message);
@@ -636,7 +643,7 @@ const update = async (req, res) => {
 
     let barterNotifiedCount = 0;
     try {
-      const { shouldReannounce, notifyBarterRecipients, normalizeBarterFields } = require("../barter/service");
+      const { shouldReannounce, notifyBarterRecipients, normalizeBarterFields } = require("../../barter/service");
       const nextBarter = barterTouchedFields(req.body)
         ? normalizeBarterFields({ ...existing.toJSON(), ...payload })
         : null;

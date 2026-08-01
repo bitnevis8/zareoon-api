@@ -236,7 +236,7 @@ const create = async (req, res) => {
     const { assertCanCreateService } = require("../workspace/limits");
     const ensured = await ensurePersonalWorkspaceFromReq(req);
     if (ensured?.workspace?.id) {
-      await assertCanCreateService(ensured.workspace.id);
+      await assertCanCreateService(ensured.workspace.id, req.user);
     }
 
     const record = await TradeServiceProvider.create({

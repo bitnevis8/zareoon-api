@@ -26,4 +26,8 @@ router.post("/admin/verification/person/:userId", authenticateUser, c.adminRevie
 router.post("/admin/verification/business/:workspaceId", authenticateUser, c.adminReviewBusiness);
 router.post("/admin/verification/representation/:id", authenticateUser, c.adminReviewRepresentation);
 
+router.get("/admin/subscriptions/user/:userId", authenticateUser, c.adminListUserSubscriptions);
+router.post("/admin/subscriptions/grant", authenticateUser, c.adminGrantSubscription);
+router.post("/admin/subscriptions/revoke", authenticateUser, c.adminRevokeSubscription);
+
 module.exports = router;

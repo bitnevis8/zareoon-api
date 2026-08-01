@@ -14,7 +14,7 @@ function safeUnlink(filePath) {
 }
 
 /**
- * تصویر → WebP فشرده + واترمارک؛ غیرتصویر بدون تغییر
+ * تصویر → WebP فشرده + واترمارک طبق تنظیمات سایت؛ غیرتصویر بدون تغییر
  */
 async function resolveUploadAsset(reqFile, { watermark = true } = {}) {
   const originalPath = reqFile.path;
@@ -29,7 +29,39 @@ async function resolveUploadAsset(reqFile, { watermark = true } = {}) {
     };
   }
 
-  const processed = await processUploadImage(originalPath, { watermark });
+  let uploadCfg = {};
+  try {
+    const { getUploadConfig } = require("../siteSetting/service");
+    uploadCfg = await getUploadConfig();
+  } catch (e) {
+    console.warn("uploadConfig load failed, using defaults:", e.message);
+  }
+
+  const applyWatermark = watermark && uploadCfg.watermarkEnabled !== false;
+  const processed = await processUploadImage(originalPath, {
+    watermark: applyWatermark,
+    maxEdge: uploadCfg.maxEdge,
+    webpQuality: uploadCfg.webpQuality,
+    webpEffort: uploadCfg.webpEffort,
+    processImages: uploadCfg.processImages !== false,
+    watermarkLogoEnabled: uploadCfg.watermarkLogoEnabled !== false,
+    watermarkTextEnabled: uploadCfg.watermarkTextEnabled !== false,
+    watermarkText: uploadCfg.watermarkText || "زارعون",
+    watermarkOpacity: uploadCfg.watermarkOpacity,
+    watermarkPosition: uploadCfg.watermarkPosition,
+  });
+
+  if (!processed) {
+    return {
+      localPath: originalPath,
+      fileName: reqFile.filename,
+      mimeType: reqFile.mimetype,
+      size: reqFile.size,
+      originalName: reqFile.originalname,
+      processedPath: null,
+    };
+  }
+
   const baseOriginal = path.basename(reqFile.originalname, path.extname(reqFile.originalname));
   return {
     localPath: processed.outputPath,

@@ -68,7 +68,7 @@ async function getMyWorkspace(req, res) {
       preferredWorkspaceId: preferredWorkspaceIdFromReq(req),
     });
     if (ctx?.workspace?.id) {
-      ctx.usage = await getWorkspaceUsage(ctx.workspace.id);
+      ctx.usage = await getWorkspaceUsage(ctx.workspace.id, req.user);
     }
     return res.json({ success: true, data: ctx });
   } catch (error) {
@@ -222,7 +222,7 @@ async function inviteMember(req, res) {
       return res.status(400).json({ success: false, message: "نمی‌توان مالک جدید دعوت کرد" });
     }
 
-    await assertCanAddMember(ensured.workspace.id);
+    await assertCanAddMember(ensured.workspace.id, req.user);
 
     const mobile = String(req.body?.mobile || "").trim();
     const email = String(req.body?.email || "").trim().toLowerCase();
@@ -885,6 +885,70 @@ async function adminListPending(req, res) {
   }
 }
 
+function assertSubscriptionAdmin(user) {
+  if (isAdmin(user)) return;
+  const err = new Error("فقط مدیر سامانه می‌تواند اشتراک اختصاص دهد");
+  err.status = 403;
+  throw err;
+}
+
+async function adminListUserSubscriptions(req, res) {
+  try {
+    assertSubscriptionAdmin(req.user);
+    const {
+      listUserWorkspacesWithSubs,
+    } = require("./adminSubscriptionService");
+    const data = await listUserWorkspacesWithSubs(req.params.userId);
+    return res.json({ success: true, data });
+  } catch (error) {
+    const status = error.status || 500;
+    return res.status(status).json({ success: false, message: error.message || "خطا" });
+  }
+}
+
+async function adminGrantSubscription(req, res) {
+  try {
+    assertSubscriptionAdmin(req.user);
+    const { grantManualSubscription } = require("./adminSubscriptionService");
+    const body = req.body || {};
+    const data = await grantManualSubscription({
+      workspaceId: body.workspaceId,
+      planId: body.planId,
+      durationDays: body.durationDays,
+      durationMonths: body.durationMonths,
+      endsAt: body.endsAt,
+      unlimited: body.unlimited,
+      note: body.note,
+      targetUserId: body.userId || body.targetUserId,
+      grantedByUserId: req.user.id || req.user.userId,
+    });
+    return res.json({
+      success: true,
+      data,
+      message: `پلن «${data.plan.name}» با موفقیت اختصاص داده شد`,
+    });
+  } catch (error) {
+    const status = error.status || 500;
+    return res.status(status).json({ success: false, message: error.message || "خطا در اختصاص پلن" });
+  }
+}
+
+async function adminRevokeSubscription(req, res) {
+  try {
+    assertSubscriptionAdmin(req.user);
+    const { revokeManualSubscription } = require("./adminSubscriptionService");
+    const data = await revokeManualSubscription({
+      workspaceId: req.body?.workspaceId || req.params.workspaceId,
+      revokedByUserId: req.user.id || req.user.userId,
+      note: req.body?.note,
+    });
+    return res.json({ success: true, data, message: "اشتراک لغو شد؛ کسب‌وکار به پلن رایگان برگشت" });
+  } catch (error) {
+    const status = error.status || 500;
+    return res.status(status).json({ success: false, message: error.message || "خطا در لغو اشتراک" });
+  }
+}
+
 module.exports = {
   getMyWorkspace,
   listMine,
@@ -905,4 +969,7 @@ module.exports = {
   adminReviewBusiness,
   adminReviewRepresentation,
   adminListPending,
+  adminListUserSubscriptions,
+  adminGrantSubscription,
+  adminRevokeSubscription,
 };

@@ -352,7 +352,7 @@ async function create(req, res) {
     if (!ctx?.workspace?.id) {
       return res.status(400).json({ success: false, message: "کسب‌وکار فعال ندارید" });
     }
-    await assertCanCreateLandingPage(ctx.workspace.id);
+    await assertCanCreateLandingPage(ctx.workspace.id, req.user);
     await ensureSystemTemplates();
 
     const body = req.body || {};
