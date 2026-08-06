@@ -6,5 +6,6 @@
   "DB": {
     "FORCE_SYNC": false,
     "SEED": true
-  }
+  },
+  "AI_FREE_PARSPACK_API_KEY": "PASTE_ZAREOON_PARSPACK_AI_STUDIO_KEY_HERE"
 }

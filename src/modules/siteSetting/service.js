@@ -593,6 +593,8 @@ async function getAuthSignupPublic() {
 }
 
 module.exports = {
+  getJsonSetting,
+  setJsonSetting,
   TRADE_PROVIDERS_AUTO_APPROVE,
   SHOPS_AUTO_APPROVE,
   PAGE_DELETION_GRACE_DAYS,

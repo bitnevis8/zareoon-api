@@ -34,6 +34,7 @@ router.get("/conversations", controller.listConversations);
 router.post("/conversations", controller.createConversation);
 router.get("/unread-count", controller.unreadCount);
 router.get("/users/search", controller.searchUsers);
+router.get("/translation-options", controller.getTranslationOptions);
 
 router.get("/conversations/:id", controller.getConversation);
 router.get("/conversations/:id/messages", controller.getMessages);

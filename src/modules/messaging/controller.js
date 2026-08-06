@@ -9,6 +9,7 @@ const File = require("../fileUpload/model");
 const ftpService = require("../fileUpload/services/ftpService");
 const { optimizeMessageImage } = require("./services/imageOptimizer");
 const sequelize = require("../../core/database/mysql/connection");
+const { translateChatText, getChatTranslateOptionsPublic } = require("../ai");
 
 const USER_ATTRS = ["id", "firstName", "lastName", "username", "mobile", "nationalId", "avatar"];
 
@@ -74,11 +75,20 @@ function formatMessage(msg) {
         originalName: m.attachment.originalName,
       }
     : null;
+  const translatedBody = m.translatedBody || null;
+  const translationStatus = m.translationStatus || "none";
   return {
     id: m.id,
     conversationId: m.conversationId,
     senderId: m.senderId,
     body: m.body,
+    /** Primary delivery text when translation succeeded; else original. */
+    displayBody: translationStatus === "ok" && translatedBody ? translatedBody : m.body,
+    translatedBody,
+    sourceLang: m.sourceLang || null,
+    targetLang: m.targetLang || null,
+    translationStatus,
+    translationModel: m.translationModel || null,
     messageType: m.messageType,
     attachment,
     readAt: m.readAt,
@@ -152,8 +162,8 @@ const createConversation = async (req, res) => {
       return res.status(400).json({ success: false, message: "گیرنده نامعتبر است" });
     }
 
-    const recipient = await User.findByPk(recipientId, { attributes: USER_ATTRS });
-    if (!recipient || !recipient.isActive) {
+    const recipient = await User.findByPk(recipientId, { attributes: USER_ATTRS.concat(["isActive"]) });
+    if (!recipient || recipient.isActive === false) {
       return res.status(404).json({ success: false, message: "کاربر یافت نشد" });
     }
 
@@ -286,11 +296,53 @@ const sendTextMessage = async (req, res) => {
       return res.status(400).json({ success: false, message: "پیام بیش از حد طولانی است" });
     }
 
-    const preview = body.length > 120 ? `${body.slice(0, 120)}…` : body;
+    const targetLang = req.body?.targetLang || req.body?.translateTo || null;
+    const sourceLang = req.body?.sourceLang || null;
+    const preferredModelId =
+      req.body?.modelId || req.body?.translateModel || req.body?.preferredModelId || null;
+
+    let translatedBody = null;
+    let translationStatus = "none";
+    let translationModel = null;
+    let translationWarning = null;
+    let resolvedTarget = null;
+
+    if (targetLang) {
+      const tr = await translateChatText({
+        userId,
+        text: body,
+        targetLang,
+        sourceLang,
+        preferredModelId,
+      });
+      resolvedTarget = tr.targetLang;
+      translationModel = tr.modelId;
+      translationWarning = tr.warning;
+      if (tr.status === "ok" && tr.translatedBody) {
+        translatedBody = tr.translatedBody;
+        translationStatus = "ok";
+      } else if (tr.status === "skipped") {
+        translationStatus = "skipped";
+      } else if (tr.status === "unavailable") {
+        translationStatus = "failed";
+      } else {
+        translationStatus = "failed";
+      }
+    }
+
+    const previewSource =
+      translationStatus === "ok" && translatedBody ? translatedBody : body;
+    const preview = previewSource.length > 120 ? `${previewSource.slice(0, 120)}…` : previewSource;
+
     const message = await Message.create({
       conversationId: conversation.id,
       senderId: userId,
       body,
+      translatedBody,
+      sourceLang: sourceLang || null,
+      targetLang: resolvedTarget,
+      translationStatus,
+      translationModel,
       messageType: "text",
     });
 
@@ -307,7 +359,11 @@ const sendTextMessage = async (req, res) => {
       ],
     });
 
-    res.status(201).json({ success: true, data: formatMessage(message) });
+    res.status(201).json({
+      success: true,
+      data: formatMessage(message),
+      translationWarning: translationWarning || undefined,
+    });
   } catch (error) {
     console.error("messaging sendTextMessage:", error);
     res.status(500).json({ success: false, message: "خطا در ارسال پیام" });
@@ -331,6 +387,37 @@ const sendImageMessage = async (req, res) => {
     }
 
     const caption = (req.body?.body || "").trim().slice(0, 500);
+    const targetLang = req.body?.targetLang || req.body?.translateTo || null;
+    const sourceLang = req.body?.sourceLang || null;
+    const preferredModelId =
+      req.body?.modelId || req.body?.translateModel || req.body?.preferredModelId || null;
+
+    let translatedBody = null;
+    let translationStatus = "none";
+    let translationModel = null;
+    let translationWarning = null;
+    let resolvedTarget = null;
+
+    if (caption && targetLang) {
+      const tr = await translateChatText({
+        userId,
+        text: caption,
+        targetLang,
+        sourceLang,
+        preferredModelId,
+      });
+      resolvedTarget = tr.targetLang;
+      translationModel = tr.modelId;
+      translationWarning = tr.warning;
+      if (tr.status === "ok" && tr.translatedBody) {
+        translatedBody = tr.translatedBody;
+        translationStatus = "ok";
+      } else if (tr.status === "skipped") {
+        translationStatus = "skipped";
+      } else if (targetLang) {
+        translationStatus = "failed";
+      }
+    }
 
     const { outputPath, mimeType, size } = await optimizeMessageImage(req.file.path);
     optimizedPath = outputPath;
@@ -361,15 +448,22 @@ const sendImageMessage = async (req, res) => {
       conversationId: conversation.id,
       senderId: userId,
       body: caption || null,
+      translatedBody,
+      sourceLang: sourceLang || null,
+      targetLang: resolvedTarget,
+      translationStatus,
+      translationModel,
       messageType: "image",
       fileId: file.id,
     });
 
     await file.update({ entityId: message.id });
 
+    const previewCaption =
+      translationStatus === "ok" && translatedBody ? translatedBody : caption;
     await conversation.update({
       lastMessageAt: new Date(),
-      lastMessagePreview: caption || "📷 تصویر",
+      lastMessagePreview: previewCaption || "📷 تصویر",
       lastMessageType: "image",
     });
 
@@ -380,7 +474,11 @@ const sendImageMessage = async (req, res) => {
       ],
     });
 
-    res.status(201).json({ success: true, data: formatMessage(message) });
+    res.status(201).json({
+      success: true,
+      data: formatMessage(message),
+      translationWarning: translationWarning || undefined,
+    });
   } catch (error) {
     console.error("messaging sendImageMessage:", error);
     res.status(500).json({ success: false, message: "خطا در ارسال تصویر" });
@@ -521,6 +619,16 @@ const searchUsers = async (req, res) => {
   }
 };
 
+const getTranslationOptions = async (_req, res) => {
+  try {
+    const data = await getChatTranslateOptionsPublic();
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error("messaging getTranslationOptions:", error);
+    res.status(500).json({ success: false, message: "خطا در دریافت تنظیمات ترجمه" });
+  }
+};
+
 module.exports = {
   listConversations,
   createConversation,
@@ -531,4 +639,5 @@ module.exports = {
   markConversationRead,
   unreadCount,
   searchUsers,
+  getTranslationOptions,
 };

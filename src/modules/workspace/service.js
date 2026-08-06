@@ -26,19 +26,28 @@ const { buildPublicBadges, normalizeLevel } = require("./badges");
 const { isSeller, isServiceProvider } = require("../../utils/roles");
 
 async function ensurePersonVerification(userId, userRow) {
-  let row = await UserPersonVerification.findOne({ where: { userId } });
-  if (row) return row;
   const mobileStatus = userRow?.isMobileVerified ? VERIFICATION_STATUS.VERIFIED : VERIFICATION_STATUS.NONE;
   const emailStatus = userRow?.isEmailVerified ? VERIFICATION_STATUS.VERIFIED : VERIFICATION_STATUS.NONE;
-  row = await UserPersonVerification.create({
-    userId,
-    mobileStatus,
-    emailStatus,
-    nationalIdStatus: VERIFICATION_STATUS.NONE,
-    identityReviewStatus: VERIFICATION_STATUS.NONE,
-    overallStatus: VERIFICATION_STATUS.NONE,
-  });
-  return row;
+  try {
+    const [row] = await UserPersonVerification.findOrCreate({
+      where: { userId },
+      defaults: {
+        mobileStatus,
+        emailStatus,
+        nationalIdStatus: VERIFICATION_STATUS.NONE,
+        identityReviewStatus: VERIFICATION_STATUS.NONE,
+        overallStatus: VERIFICATION_STATUS.NONE,
+      },
+    });
+    return row;
+  } catch (err) {
+    // درخواست‌های موازی گاهی هم‌زمان create می‌زنند
+    if (err?.name === "SequelizeUniqueConstraintError" || err?.parent?.code === "ER_DUP_ENTRY") {
+      const existing = await UserPersonVerification.findOne({ where: { userId } });
+      if (existing) return existing;
+    }
+    throw err;
+  }
 }
 
 async function getMembership(userId, workspaceId) {

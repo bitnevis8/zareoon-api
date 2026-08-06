@@ -17,6 +17,16 @@ Message.init(
       references: { model: "users", key: "id" },
     },
     body: { type: DataTypes.TEXT, allowNull: true },
+    /** Translated delivery text for peer (original stays in `body`). */
+    translatedBody: { type: DataTypes.TEXT, allowNull: true },
+    sourceLang: { type: DataTypes.STRING(8), allowNull: true },
+    targetLang: { type: DataTypes.STRING(8), allowNull: true },
+    translationStatus: {
+      type: DataTypes.ENUM("none", "ok", "failed", "skipped"),
+      allowNull: false,
+      defaultValue: "none",
+    },
+    translationModel: { type: DataTypes.STRING(120), allowNull: true },
     messageType: {
       type: DataTypes.ENUM("text", "image"),
       allowNull: false,

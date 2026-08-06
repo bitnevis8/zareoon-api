@@ -23,6 +23,7 @@ const publicSlugRouter = require('../modules/publicSlug/route');
 const workspaceRouter = require('../modules/workspace/route');
 const productLandingRouter = require('../modules/productLanding/route');
 const barterRouter = require('../modules/barter/route');
+const exportPathwayRouter = require('../modules/exportPathway/route');
 
 // Use routers
 baseRouter.use('/user', userRouter);
@@ -47,5 +48,6 @@ baseRouter.use('/public-slug', publicSlugRouter);
 baseRouter.use('/workspace', workspaceRouter);
 baseRouter.use('/product-landing', productLandingRouter);
 baseRouter.use('/barter', barterRouter);
+baseRouter.use('/export-pathway', exportPathwayRouter);
 
 module.exports = baseRouter;

@@ -93,5 +93,25 @@
     "MERCHANT": "6a5acfa1188878a8f75c7013",
     "SANDBOX": true,
     "CALLBACK_URL": "http://localhost:3001/pricing/callback"
+  },
+  "AI_FREE_PARSPACK_API_KEY": "",
+  "AI": {
+    "PARSPACK": {
+      "BASE_URL": "https://ai.parspack.com/v1",
+      "TIMEOUT_MS": 45000,
+      "ENABLED": true,
+      "FEATURES": {
+        "CHAT_TRANSLATE": true
+      },
+      "CHAT_TRANSLATE": {
+        "MODEL_ID": "google/gemma-3n-e2b-it",
+        "FALLBACK_MODEL_IDS": [],
+        "ALLOW_DEEPSEEK_FALLBACK": true,
+        "MODEL_MATCH": ["gemma", "3n", "e2b"],
+        "MAX_CHARS": 4000,
+        "RATE_PER_MINUTE": 20,
+        "RATE_PER_DAY": 200
+      }
+    }
   }
 }

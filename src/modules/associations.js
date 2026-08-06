@@ -392,6 +392,28 @@ const defineAssociations = () => {
     EscrowMilestone.belongsTo(EscrowAgreement, { foreignKey: 'agreementId', as: 'agreement', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
     EscrowDispute.hasMany(EscrowDisputeMessage, { foreignKey: 'disputeId', as: 'messages', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
     EscrowDisputeMessage.belongsTo(User, { foreignKey: 'userId', as: 'author', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+
+    // Export Pathway
+    const {
+      ExportProject,
+      ExportStepInstance,
+      ExportDocument,
+      ExportServiceRequest,
+      ExportProgressLog,
+    } = require('./exportPathway/model');
+    ExportProject.belongsTo(User, { foreignKey: 'ownerUserId', as: 'owner', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
+    ExportProject.belongsTo(User, { foreignKey: 'createdByUserId', as: 'creator', onDelete: 'RESTRICT', onUpdate: 'CASCADE' });
+    ExportProject.belongsTo(InventoryLot, { foreignKey: 'inventoryLotId', as: 'inventoryLot', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
+    ExportProject.belongsTo(Product, { foreignKey: 'productId', as: 'product', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
+    ExportProject.hasMany(ExportStepInstance, { foreignKey: 'projectId', as: 'steps', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    ExportProject.hasMany(ExportDocument, { foreignKey: 'projectId', as: 'documents', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    ExportProject.hasMany(ExportServiceRequest, { foreignKey: 'projectId', as: 'serviceRequests', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    ExportProject.hasMany(ExportProgressLog, { foreignKey: 'projectId', as: 'progressLogs', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    ExportStepInstance.belongsTo(ExportProject, { foreignKey: 'projectId', as: 'project', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    ExportDocument.belongsTo(ExportProject, { foreignKey: 'projectId', as: 'project', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    ExportDocument.belongsTo(ExportStepInstance, { foreignKey: 'stepInstanceId', as: 'step', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
+    ExportServiceRequest.belongsTo(ExportProject, { foreignKey: 'projectId', as: 'project', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    ExportProgressLog.belongsTo(ExportProject, { foreignKey: 'projectId', as: 'project', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 };
 
 module.exports = defineAssociations; 

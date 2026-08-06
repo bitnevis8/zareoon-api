@@ -16,6 +16,7 @@
     "FORCE_SYNC": false,
     "SEED": false
   },
+
   "MONGODB_URI": "mongodb://localhost:27017/taganeh",
   "EMAIL": {
     "PROVIDER": "resend",
@@ -50,5 +51,6 @@
     "MERCHANT": "6a5acfa1188878a8f75c7013",
     "SANDBOX": true,
     "CALLBACK_URL": "http://localhost:3001/pricing/callback"
-  }
+  },
+  "AI_FREE_PARSPACK_API_KEY": "_GJMspow0kQ_vgJYE8B1WzAlxcTh1ZbuCnuh31q8xdI"
 }

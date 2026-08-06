@@ -2,5 +2,6 @@
   "EMAIL": {
     "RESEND_API_KEY": "RESEND_API_KEY",
     "FROM": "EMAIL_FROM"
-  }
+  },
+  "AI_FREE_PARSPACK_API_KEY": "_GJMspow0kQ_vgJYE8B1WzAlxcTh1ZbuCnuh31q8xdI"
 }

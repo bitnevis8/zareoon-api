@@ -47,6 +47,7 @@ require("../../modules/workspace/model");
 require("../../modules/productLanding/model");
 require("../../modules/productLanding/templateModel");
 require("../../modules/barter/model");
+require("../../modules/exportPathway/model");
 
 // Import and define all associations
 const defineAssociations = require("../../modules/associations");
@@ -143,6 +144,146 @@ const initializeDatabase = async (options = { force: false, seed: false, useMong
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
         "ALTER TABLE inventory_lots ADD COLUMN fx_rate_source VARCHAR(16) NULL",
         "ALTER TABLE inventory_lots ADD COLUMN fx_rate_manual DECIMAL(18,2) NULL",
+        `CREATE TABLE IF NOT EXISTS export_projects (
+          id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          reference_code VARCHAR(32) NOT NULL,
+          workspace_id INT NOT NULL,
+          owner_user_id INT NOT NULL,
+          created_by_user_id INT NOT NULL,
+          title VARCHAR(255) NOT NULL,
+          status ENUM('draft','active','on_hold','completed','cancelled') NOT NULL DEFAULT 'active',
+          export_family VARCHAR(64) NOT NULL DEFAULT 'general',
+          template_version VARCHAR(32) NOT NULL,
+          inventory_lot_id INT NULL,
+          product_id INT NULL,
+          product_snapshot JSON NULL,
+          origin_country VARCHAR(8) NOT NULL DEFAULT 'IR',
+          origin_city VARCHAR(120) NULL,
+          destination_country VARCHAR(8) NULL,
+          destination_city VARCHAR(120) NULL,
+          quantity DECIMAL(18,3) NULL,
+          unit VARCHAR(50) NULL,
+          estimated_value DECIMAL(18,2) NULL,
+          currency VARCHAR(10) NOT NULL DEFAULT 'USD',
+          customer_type VARCHAR(32) NOT NULL DEFAULT 'unknown',
+          packaging_type VARCHAR(80) NULL,
+          transport_mode VARCHAR(32) NOT NULL DEFAULT 'unspecified',
+          incoterm VARCHAR(16) NOT NULL DEFAULT 'unspecified',
+          payment_method VARCHAR(32) NOT NULL DEFAULT 'unspecified',
+          planned_ship_date DATE NULL,
+          notes TEXT NULL,
+          flags JSON NULL,
+          matched_rule_ids JSON NULL,
+          pathway_snapshot JSON NULL,
+          progress_percent INT NOT NULL DEFAULT 0,
+          total_cost_recorded DECIMAL(18,2) NOT NULL DEFAULT 0,
+          completed_at DATETIME NULL,
+          created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          UNIQUE KEY uq_export_projects_ref (reference_code),
+          KEY idx_export_projects_workspace (workspace_id),
+          KEY idx_export_projects_owner (owner_user_id),
+          KEY idx_export_projects_status (status),
+          KEY idx_export_projects_lot (inventory_lot_id),
+          KEY idx_export_projects_product (product_id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+        `CREATE TABLE IF NOT EXISTS export_step_instances (
+          id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          project_id INT NOT NULL,
+          code VARCHAR(64) NOT NULL,
+          title VARCHAR(255) NOT NULL,
+          description TEXT NULL,
+          phase VARCHAR(32) NOT NULL,
+          sort_order INT NOT NULL DEFAULT 0,
+          required TINYINT(1) NOT NULL DEFAULT 1,
+          status ENUM('locked','ready','in_progress','waiting_for_provider','waiting_for_document','needs_revision','completed','optional','not_applicable') NOT NULL DEFAULT 'locked',
+          dependencies JSON NULL,
+          documents JSON NULL,
+          warnings JSON NULL,
+          service_links JSON NULL,
+          tool_links JSON NULL,
+          help_content TEXT NULL,
+          responsible_party VARCHAR(32) NULL,
+          estimated_duration VARCHAR(64) NULL,
+          required_output VARCHAR(80) NULL,
+          template_snapshot JSON NULL,
+          notes TEXT NULL,
+          cost_amount DECIMAL(18,2) NULL,
+          cost_currency VARCHAR(10) NULL,
+          provider_id INT NULL,
+          provider_name VARCHAR(200) NULL,
+          tool_outputs JSON NULL,
+          started_at DATETIME NULL,
+          completed_at DATETIME NULL,
+          created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          UNIQUE KEY uniq_export_step_project_code (project_id, code),
+          KEY idx_export_steps_project (project_id),
+          KEY idx_export_steps_status (status),
+          CONSTRAINT fk_export_steps_project FOREIGN KEY (project_id) REFERENCES export_projects(id) ON DELETE CASCADE ON UPDATE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+        `CREATE TABLE IF NOT EXISTS export_documents (
+          id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          project_id INT NOT NULL,
+          step_instance_id INT NULL,
+          workspace_id INT NOT NULL,
+          uploaded_by_user_id INT NOT NULL,
+          title VARCHAR(255) NOT NULL,
+          doc_type VARCHAR(80) NULL,
+          file_url VARCHAR(500) NULL,
+          file_upload_id INT NULL,
+          status ENUM('pending','uploaded','approved','rejected') NOT NULL DEFAULT 'pending',
+          notes TEXT NULL,
+          created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          KEY idx_export_docs_project (project_id),
+          KEY idx_export_docs_step (step_instance_id),
+          CONSTRAINT fk_export_docs_project FOREIGN KEY (project_id) REFERENCES export_projects(id) ON DELETE CASCADE ON UPDATE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+        `CREATE TABLE IF NOT EXISTS export_service_requests (
+          id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          project_id INT NOT NULL,
+          step_instance_id INT NULL,
+          workspace_id INT NOT NULL,
+          requested_by_user_id INT NOT NULL,
+          service_key VARCHAR(80) NULL,
+          category_id VARCHAR(80) NULL,
+          subcategory_id VARCHAR(80) NULL,
+          provider_id INT NULL,
+          title VARCHAR(255) NOT NULL,
+          message TEXT NULL,
+          status ENUM('draft','sent','quoted','accepted','rejected','cancelled') NOT NULL DEFAULT 'sent',
+          quote_amount DECIMAL(18,2) NULL,
+          quote_currency VARCHAR(10) NULL,
+          meta JSON NULL,
+          created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          KEY idx_export_sr_project (project_id),
+          KEY idx_export_sr_workspace (workspace_id),
+          KEY idx_export_sr_status (status),
+          CONSTRAINT fk_export_sr_project FOREIGN KEY (project_id) REFERENCES export_projects(id) ON DELETE CASCADE ON UPDATE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+        `CREATE TABLE IF NOT EXISTS export_progress_logs (
+          id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          project_id INT NOT NULL,
+          step_instance_id INT NULL,
+          workspace_id INT NOT NULL,
+          actor_user_id INT NULL,
+          action VARCHAR(80) NOT NULL,
+          from_status VARCHAR(40) NULL,
+          to_status VARCHAR(40) NULL,
+          message TEXT NULL,
+          meta JSON NULL,
+          created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          KEY idx_export_logs_project (project_id),
+          KEY idx_export_logs_created (created_at),
+          CONSTRAINT fk_export_logs_project FOREIGN KEY (project_id) REFERENCES export_projects(id) ON DELETE CASCADE ON UPDATE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+        "ALTER TABLE messages ADD COLUMN translated_body TEXT NULL",
+        "ALTER TABLE messages ADD COLUMN source_lang VARCHAR(8) NULL",
+        "ALTER TABLE messages ADD COLUMN target_lang VARCHAR(8) NULL",
+        "ALTER TABLE messages ADD COLUMN translation_status ENUM('none','ok','failed','skipped') NOT NULL DEFAULT 'none'",
+        "ALTER TABLE messages ADD COLUMN translation_model VARCHAR(120) NULL",
       ];
       for (const sql of alters) {
         try {
@@ -178,6 +319,19 @@ const initializeDatabase = async (options = { force: false, seed: false, useMong
     } catch (e) {
       console.warn("⚠️ Escrow rules seed skipped:", e.message);
     }
+
+    // Warm ParsPack model catalog (non-blocking for chat translate)
+    setImmediate(() => {
+      try {
+        const { isAiEnabled, resolveChatTranslateModelId } = require("../../modules/ai");
+        if (!isAiEnabled()) return;
+        resolveChatTranslateModelId({ force: true }).catch((e) => {
+          console.warn("⚠️ ParsPack model resolve skipped:", e.message);
+        });
+      } catch (e) {
+        console.warn("⚠️ AI warm-up skipped:", e.message);
+      }
+    });
     
     console.log(`✅ MySQL Database ${options.force ? "recreated" : "synchronized"} successfully.`);
 
